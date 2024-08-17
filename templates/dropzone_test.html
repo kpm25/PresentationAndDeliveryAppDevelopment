@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout Design</title>
+
+    <script src="/static/dependencies/dropzone.min.js"></script>
+    <script src="/static/dependencies/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" href="static/css/dropzone_styles.css">
+    <script src="static/js/dropzone_setup_script.js"></script>
+    <!-- call javasript_tool_functions.js which is one folder up in the root dir -->
+    <script src="static/js/javascript_tool_functions.js"></script>
+    <style>
+        .dropzone.dz-started .dz-message {
+
+            display: block !important;
+        }
+    .dropzone-files {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+}
+.dz-preview {
+    display: inline-flex;
+    margin-right: 10px;
+}
+/*        stop horiz and vert scroll*/
+body {
+    overflow: hidden;
+}
+
+.select-button {
+    padding: 10px 20px; /* Increase the size of the buttons */
+    margin: 10px; /* Add space around the buttons */
+    border-radius: 20px; /* Make the buttons rounded */
+    font-size: 1.2em; /* Increase the font size */
+    border: 2px solid #007bff;    /* a bold blue border */
+    cursor: pointer; /* Change the cursor when hovering over the buttons */
+}
+
+/* You can also add some hover effects */
+.select-button :hover {
+    background-color: #ddd; /* Change the background color */
+    color: #333; /* Change the text color */
+}
+#historyLog {
+    width: 100%;
+    height: 200px; /* Adjust as needed */
+    overflow: auto;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-half">
+
+            <div class="left-header-label">
+              <span class="label-text">Semester</span>
+              <label class="radio-container" for="semester-radio">
+                <span id="reset-button">&nbsp&nbsp<button onclick="resetSelections();">Reset</button>&nbsp&nbsp</span>
+                  <input type="radio" id="semester-radio" name="semester-radio" value="semester" onclick="toggleSemesterDropzone()" unchecked>
+                  Show Semester Level Dropzone
+              </label>
+           </div>
+            <div class="semester-selector"  id="semester-selector">
+                <button id="semester1" class="semester" value="S1">1</button>
+                <button id="semester2" class="semester" value="S2">2</button>
+            </div>
+            <!-- <div class="left-header-label">Grade <span id="test-data">&nbsp&nbsp<button onclick="test()">Test Button</button></span></div> -->
+            <div class="left-header-label">
+              <span class="label-text">Grade</span>
+              
+              <label class="radio-container" for="grade-radio">
+                <span id="test-data">&nbsp&nbsp<button onclick="test()">Testing...</button>&nbsp&nbsp</span>
+                  <input type="radio" id="grade-radio" name="grade-radio" value="grade" onclick="toggleGradeDropzone()" unchecked>
+                  Show Grade Level Dropzone
+              </label>
+            </div>
+            <div class="grade-selector" id="grade-selector">
+                <button id="grade1" class="grade" value="G1">1</button>
+                <button id="grade2" class="grade" value="G2">2</button>
+                <button id="grade3" class="grade" value="G3">3</button>
+                <button id="grade4" class="grade" value="G4">4</button>
+                <button id="grade5" class="grade" value="G5">5</button>
+
+            </div>
+
+            <div class="header-container">
+              <div class="left-header-label">
+                <span class="label-text">Week</span>
+                <label class="radio-container" for="week-radio">
+                    <input type="radio" id="week-radio" name="week-radio" value="week" onclick="toggleWeekDropzone()" unchecked>
+                    Show Week Level Dropzone
+                </label>
+              </div>
+            </div>
+            <div class="week-selector" id="week-selector">
+                <button id="week1" class="week" value="W1">1</button>
+                <button id="week2" class="week" value="W2">2</button>
+                <button id="week3" class="week" value="W3">3</button>
+                <button id="week4" class="week" value="W4">4</button>
+                <button id="week5" class="week" value="W5">5</button>
+                <button id="week6" class="week" value="W6">6</button>
+                <button id="week7" class="week" value="W7">7</button>
+                <button id="week8" class="week" value="W8">8</button>
+                <button id="week9" class="week" value="W9">9</button>
+                <button id="week10" class="week" value="W10">10</button>
+                <button id="week11" class="week" value="W11">11</button>
+                <button id="week12" class="week" value="W12">12</button>
+                <button id="week13" class="week" value="W13">13</button>
+                <button id="week14" class="week" value="W14">14</button>
+                <button id="week15" class="week" value="W15">15</button>
+                <button id="week16" class="week" value="W16">16</button>
+                <button id="week17" class="week" value="W17">17</button>
+                <div class="empty"></div>
+                <div class="empty"></div>
+                <div class="empty"></div>
+
+
+                    <!-- Add this at the bottom -->
+                   <button class="select-button" id="uploadButton">Upload From File</button>
+                   <button  class="select-button" id="startUpload">Start Upload</button>
+                    <audio id="successAudio">
+                       <source src="/static/audio/sound.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+
+                 <button  class="select-button" onclick="playSuccessSound()"   id="playButton">Play Success Sound</button>
+<!--                button with link to display route-->
+<!--                <button class="select-button" onclick="window.location.href='/display'">Display Files</button>-->
+                <button class="select-button" onclick="redirectToDisplayZone()">Display Files</button>
+            </div>
+            <div class="history-log">
+                <h2>History Log</h2>
+                <textarea id="historyLog" readonly></textarea>
+            </div>
+
+
+    </div> <!-- left-half -->
+
+
+
+    <div class="right-half">
+        <div class="right-header-label">Dropbox Container</div>
+        <div class="right-side-container">
+            <div class="lesson-labels-container">
+                <div class="lesson-label" id="lesson1" data-target="singleDropzone" data-value="L1">Lesson 1</div>
+                <div class="lesson-label" id="lesson2" data-target="singleDropzone" data-value="L2">Lesson 2</div>
+                <div class="lesson-label" id="lesson3" data-target="singleDropzone" data-value="L3">Lesson 3</div>
+                <div class="lesson-label" id="lesson4" data-target="singleDropzone" data-value="L4">Lesson 4</div>
+                <div class="lesson-label" id="lesson5" data-target="singleDropzone" data-value="L5">Lesson 5</div>
+                <div class="lesson-label" id="lesson6" data-target="singleDropzone" data-value="L6">Lesson 6</div>
+                <div class="lesson-label" id="lesson7" data-target="singleDropzone" data-value="TP">Teaching Plans</div>
+                <div class="lesson-label" id="lesson8" data-target="singleDropzone" data-value="MS">Miscellaneous Materials</div>
+            </div>
+
+            <div class="dropzone" id="singleDropzone">
+                <div class="drop-message">Drop Content Here</div>
+                <div class="dropzone-files">
+                    <!-- Files will be added here -->
+                </div>
+            </div>
+        </div>
+    </div> <!-- right-half -->
+
+</div> <!-- container -->
+ <script>
+     //dictionaries to convert from selectedSemester path
+    const semesterDict = {
+        "S1": 'Semester1',
+        "S2":  'Semester2'
+    }
+    const gradeDict = {
+        "G1": 'Grade1',
+        "G2": 'Grade2',
+        "G3": 'Grade3',
+        "G4": 'Grade4',
+        "G5": 'Grade5'
+    }
+    const weekDict = {
+        "W1": 'Week1',
+        "W2": 'Week2',
+        "W3": 'Week3',
+        "W4": 'Week4',
+        "W5": 'Week5',
+        "W6": 'Week6',
+        "W7": 'Week7',
+        "W8": 'Week8',
+        "W9": 'Week9',
+        "W10": 'Week10',
+        "W11": 'Week11',
+        "W12": 'Week12',
+        "W13": 'Week13',
+        "W14": 'Week14',
+        "W15": 'Week15',
+        "W16": 'Week16',
+        "W17": 'Week17'
+    }
+    const lessonDict = {
+        "L1": 'Lesson1',
+        "L2": 'Lesson2',
+        "L3": 'Lesson3',
+        "L4": 'Lesson4',
+        "L5": 'Lesson5',
+        "L6": 'Lesson6',
+        "TP": 'TeachPlans',
+        "MS": 'MiscMaterials'
+    }
+
+
+
+
+    // Declare global variables to store the selected grade, semester, week, and lesson
+    let selectedGrade = null;
+    let selectedSemester = null;
+    let selectedWeek = null;
+    let selectedLesson = null;
+
+
+
+
+// Log the variables to the console
+console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemester}, selectedWeek: ${selectedWeek}, selectedLesson: ${selectedLesson}`);
+
+
+
+    let dropzoneInstance = null; // Declare dropzoneInstance here
+
+    // Add event listeners to your buttons
+    document.querySelectorAll('.semester').forEach(function(button) {
+        button.addEventListener('click', function() {
+            selectedSemester = this.value;
+            console.log("selected semester is: ", selectedSemester);
+        });
+    });
+
+    document.querySelectorAll('.grade').forEach(function(button) {
+        button.addEventListener('click', function() {
+            selectedGrade = this.value;
+            console.log("selected grade is: ", selectedGrade);
+        });
+    });
+    document.querySelectorAll('.week').forEach(function(button) {
+        button.addEventListener('click', function() {
+            selectedWeek = this.value;
+            console.log("selected week is: ", selectedWeek);
+        });
+    });
+
+    // Add event listener to the lesson labels to set the selected lesson
+    document.querySelectorAll('.lesson-label').forEach(function(label) {
+        label.addEventListener('click', function() {
+            // Set the selected lesson
+            selectedLesson = this.dataset.value;
+        });
+    });
+
+
+    // Disable Dropzone's auto-discover feature
+    Dropzone.autoDiscover = false;
+
+    // Your existing JavaScript code here
+    function playSuccessSound() {
+        const audio = document.getElementById('successAudio');
+        if (audio) {
+            // Catch promise rejection when trying to play the audio
+            audio.play().catch(function(error) {
+                console.error('Error playing audio:', error);
+            });
+        }
+    }
+    document.getElementById('playButton').addEventListener('click', playSuccessSound);
+
+    // Function to initialize Dropzone for a lesson
+    function initializeDropzone() {
+        // Construct the file path outside of the url function
+        const filePath = `${selectedSemester}/${selectedGrade}/${selectedWeek}/${selectedLesson}`;
+
+        const dropzoneConfig = {
+            url: function(files) {
+                // Get the first file in the array
+                const file = files[0];
+
+                const path_to_return = `/dropzone_lessons/${filePath}/${file.name}`;
+                    // Log the file path
+                console.log('path_to_return:', path_to_return);
+
+
+                // Return the URL
+                return  path_to_return;
+            },
+            autoProcessQueue: false,
+            paramName: "file",
+            uploadMultiple: true,
+            parallelUploads: 50, // Increase this number
+            clickable: "#uploadButton",
+            maxFiles: null, // Allow unlimited files
+     /*       renameFile: function(file) {
+                var newName = `${selectedGrade}_${selectedSemester}_${selectedWeek}_${selectedLesson}_${file.name}`;
+                return newName;
+            },*/
+            init: function() {
+                 let fileCount = 0; // Initialize a counter for the uploaded files
+            this.on('success', function(file, response) {
+                    console.log('File uploaded successfully:', file.name);
+                    fileCount++; // Increment the counter for each successful upload
+                });
+            this.on('queuecomplete', function() {
+                // This code will run once after all files have been uploaded
+                console.log('All files have been uploaded.');
+                //get path names
+
+                 const fileFolderPath = `${semesterDict[selectedSemester]}/${gradeDict[selectedGrade]}/${weekDict[selectedWeek]}/${lessonDict[selectedLesson]}`;
+              //   const filePath = `${selectedSemester}/${selectedGrade}/${selectedWeek}/${selectedLesson}`;
+
+                appendLog(`${fileFolderPath} `, new Date().toISOString(), `${fileCount}`); // Log the file path and count
+                postLog(`${fileFolderPath}`, `${fileCount}`); // Send the log to the server
+                playSuccessSound();
+                  //write success message with file upload info in the dropzone:
+                 const messageElement = this.element.querySelector('.drop-message');
+                messageElement.innerHTML = `All files have been uploaded successfully.<br> Total files uploaded: ${fileCount}<br>`;
+                messageElement.innerHTML += "Files uploaded to: " + `${fileFolderPath}`;
+
+                this.removeAllFiles();
+                fileCount = 0; // Reset the counter after setting the message
+            });
+            this.on('error', function(file, errorMessage) {
+                    console.error('Error uploading file:', errorMessage);
+                });
+            this.on('addedfile', function(file) {
+                    // Update the URL when a file is added
+                    this.options.url = function() {
+                        // Construct the file path
+//                        const filePath = `${selectedSemester}/${selectedGrade}/${selectedWeek}/${selectedLesson}/${file.name}`;
+
+                        // Return the URL
+                        return `/dropzone_lessons/${file.name}`;
+                    };
+                });
+                this.on('sending', function(file, xhr, formData) {
+                    // Construct the file prefix
+                    const filePrefix = `${selectedGrade}_${selectedSemester}_${selectedWeek}_${selectedLesson}_`;
+
+                    // Add the file prefix to the filename
+                 //   file.upload.filename = `${filePrefix}_${file.name}`;
+
+                    console.log("file name is: ", file.upload.filename);
+
+                    // Use the global variables
+                    xhr.setRequestHeader('X-Grade', selectedGrade);
+                    xhr.setRequestHeader('X-Semester', selectedSemester);
+                    xhr.setRequestHeader('X-Week', selectedWeek);
+                    xhr.setRequestHeader('X-Lesson', selectedLesson);
+                    //pass the file prefix to the server
+                    xhr.setRequestHeader('X-File-Prefix', filePrefix);
+                });
+            }
+        };
+
+        const dropzoneElement = document.querySelector('#singleDropzone');
+        if (dropzoneElement) {
+             dropzoneInstance = new Dropzone(dropzoneElement, dropzoneConfig);
+
+            // Add event listener to the lesson labels to start the upload
+            document.querySelectorAll('.drop-zone-label').forEach(function(label) {
+                label.addEventListener('click', function() {
+                    // Set the selected lesson
+                    selectedLesson = this.dataset.value;
+
+                    // Start the upload
+                    dropzoneInstance.processQueue();
+                });
+            });
+        }
+    }
+
+    // Get the current month
+    const currentMonth = new Date().getMonth();
+
+    console.log("current month is: ", currentMonth);
+
+    // Check if the current month is between March and August
+    if (currentMonth >= 2 && currentMonth <= 7) {
+        // Select Semester 2 by default
+        $('#semester2').addClass('selected');
+        console.log("semester 2 selected");
+        selectedSemester =  $('#semester2').val();
+        console.log("selected semester is: ", selectedSemester);
+    } else {
+        // Select Semester 1 by default
+        $('#semester1').addClass('selected');
+        console.log("semester 1 selected");
+        selectedSemester =  $('#semester1').val();
+        console.log("selected semester is: ", selectedSemester);
+    }
+
+$(document).ready(function() {
+    // Initialize Dropzone instance
+    initializeDropzone();
+
+    // Add event listener for the upload button
+    $('#startUpload').click(function() {
+        // Check if a lesson has been selected
+        if (selectedLesson !== null) {
+            console.log(`Selected lesson: ${selectedLesson}`);
+
+            // Start the upload
+            if (dropzoneInstance) {
+                dropzoneInstance.processQueue();
+            } else {
+                alert('Dropzone instance not found for the selected lesson.');
+            }
+        } else {
+            alert('Please select a lesson before starting the upload.');
+        }
+    });
+});
+
+
+       //Code to deal with the selection of the semester, grade, week, and lesson and redirect to the display page
+    //so that the selected labels are displayed in the display page are the same as the selected labels in the dropzone page
+
+    function getSelectedId(buttonClass) {
+        let selectedIds = [];
+        document.querySelectorAll(`.${buttonClass}`).forEach(function(button) {
+            if (button.classList.contains('selected')) {
+                selectedIds.push(button.id);
+            }
+        });
+
+        // If no button or more than one button is selected, return null
+        if (selectedIds.length !== 1) {
+            return null;
+        }
+
+        // Otherwise, return the numeric part of the ID of the selected button
+        return selectedIds[0].replace(/\D/g, '');
+    }
+
+    function redirectToDisplayZone() {
+        let url = new URL(window.location.origin + '/display');
+
+        // Get the ID of the selected semester, grade, week, and lesson
+        let semesterId = getSelectedId('semester');
+        let gradeId = getSelectedId('grade');
+        let weekId = getSelectedId('week');
+        let lessonId = getSelectedId('lesson-label');
+
+        // Only append the parameters if their corresponding selections are made
+        if (semesterId !== null) {
+            url.searchParams.append('currentSemester', semesterId);
+        }
+        if (gradeId !== null) {
+            url.searchParams.append('currentGrade', gradeId);
+        }
+        if (weekId !== null) {
+            url.searchParams.append('currentWeek', weekId);
+        }
+        if (lessonId !== null) {
+            url.searchParams.append('currentLesson', lessonId);
+        }
+
+        console.log("*** redirectToDisplayZone,url: ", url);
+
+        window.location.href = url;
+    }
+
+
+     //function to take a current semester as int and return the selected semester as string
+        function getSemester(semesterInt) {
+            if (semesterInt === 1) {
+                return "S1";
+            } else {
+                return "S2";
+            }
+        }
+     //function to take a current grade as int and return the selected grade as string
+        function getGrade(gradeInt) {
+            return "G" + gradeInt;
+        }
+        //function to take a current week as int and return the selected week as string
+        function getWeek(weekInt) {
+            return "W" + weekInt;
+        }
+        //function to take a current lesson as int and return the selected lesson as string
+        function getLesson(lessonInt) {
+           //if lesson is 7 or 8 return TP or MS
+            if (lessonInt === 7) {
+                return "TP";
+            } else if (lessonInt === 8) {
+                return "MS";
+            } else {
+                return "L" + lessonInt;
+            }
+        }
+
+
+
+$(document).ready(function() {
+
+
+
+
+     //get params from url to select the labels if they are in the url:
+
+         // Get the URL search parameters
+   let params = new URLSearchParams(window.location.search);
+
+    // Only execute the code if there are parameters in the URL
+    if (params.toString()) {
+           //set the selected semester based on the URL parameters
+            let selectedSemesterInt = parseInt(params.get('currentSemester') || null);
+            if (isNaN(selectedSemesterInt)) {
+                selectedSemester = null;
+            }else{
+                selectedSemester = getSemester(selectedSemesterInt);
+               // Set the selected semester button
+                $(`#semester${selectedSemesterInt}`).addClass('selected');
+                //all other semester buttons should be unselected
+                $(`#semester${selectedSemesterInt === 1 ? 2 : 1}`).removeClass('selected');
+                //set the semester buttons to unselected
+                $(`#semester${selectedSemesterInt === 1 ? 2 : 1}`).addClass('unselected');
+            }
+
+            // Set the variables based on the URL parameters
+            let selectedGradeInt = parseInt(params.get('currentGrade') || null);
+            if (isNaN(selectedGradeInt)) {
+                selectedGrade = null;
+            }else{
+                selectedGrade = getGrade(selectedGradeInt);
+                // Set the selected grade button
+               $(`#grade${selectedGradeInt}`).addClass('selected');
+                //all other grade buttons should be unselected
+                for (let i = 1; i <= 5; i++) {
+                    if (i !== selectedGradeInt) {
+                        $(`#grade${i}`).removeClass('selected');
+                        //set the grade buttons to unselected
+                        $(`#grade${i}`).addClass('unselected');
+                    }
+                }
+
+
+            }
+            // Set the selected week
+            let selectedWeekInt = parseInt(params.get('currentWeek') || null);
+            if (isNaN(selectedWeekInt)) {
+                selectedWeek = null;
+            }else{
+                selectedWeek = getWeek(selectedWeekInt);
+                // Set the selected week button
+               $(`#week${selectedWeekInt}`).addClass('selected');
+                //all other week buttons should be unselected
+                for (let i = 1; i <= 17; i++) {
+                    if (i !== selectedWeekInt) {
+                        $(`#week${i}`).removeClass('selected');
+                        //set the week buttons to unselected
+                        $(`#week${i}`).addClass('unselected');
+                    }
+                }
+            }
+            // Set the selected lesson
+            let selectedLessonInt = parseInt(params.get('currentLesson') || null);
+            if (isNaN(selectedLessonInt)) {
+                selectedLesson = null;
+            }else{
+                selectedLesson = getLesson(selectedLessonInt);
+                // Set the selected lesson button
+                $(`#lesson${selectedLessonInt}`).addClass('selected');
+
+
+
+                //all other lesson buttons should be unselected
+                for (let i = 1; i <= 8; i++) {
+                    if (i !== selectedLessonInt) {
+                        $(`#lesson${i}`).removeClass('selected');
+                        //set the lesson buttons to unselected
+                        $(`#lesson${i}`).addClass('unselected');
+                    }
+                }
+
+
+            }
+
+         //****************
+
+
+
+/*          //if a lesson is selected, with a selected semester, grade, week, and lesson, then initialize the dropzone
+            if (selectedLesson !== null && selectedSemester !== null && selectedGrade !== null && selectedWeek !== null) {
+//               //set dopzone to selected
+//                $('#singleDropzone').addClass('selected');
+//                //set dropzone to not class dropcontent
+//                $('#singleDropzone').addClass('drop-content');
+                //click the selected lesson label
+                $(`#lesson${selectedLessonInt}`).click();
+            }else{
+                console.log("selected lesson, semester, grade, or week is null or not selected");
+                console.log("selectedLesson: ", selectedLesson);
+                console.log("selectedSemester: ", selectedSemester);
+                console.log("selectedGrade: ", selectedGrade);
+                console.log("selectedWeek: ", selectedWeek);
+            }*/
+    }else{
+        console.log("no params in url");
+    }
+
+
+
+
+
+
+    // Your existing code...
+
+    // Add this function
+    function checkSelectionsAndClickLabel() {
+        // Check if all selections have been made
+        if (selectedSemester !== null && selectedGrade !== null && selectedWeek !== null && selectedLesson !== null) {
+            // Simulate a click on the selected lesson label
+            $(`#lesson${selectedLesson}`).click();
+        }
+    }
+
+    // Call the function
+    checkSelectionsAndClickLabel();
+         console.log("selectedSemester: ", selectedSemester);
+            console.log("selectedGrade: ", selectedGrade);
+            console.log("selectedWeek: ", selectedWeek);
+            console.log("selectedLesson: ", selectedLesson);
+
+     //if all selections have been are not null then activate the dropzone
+    if (selectedSemester !== null && selectedGrade !== null && selectedWeek !== null && selectedLesson !== null) {
+        //get target dropzone from the selected lesson id
+                // Get the URL search parameters
+     let params = new URLSearchParams(window.location.search);
+
+        const selectedLessonInt = parseInt(params.get('currentLesson') || null);
+        const targetId =  $(`#lesson${selectedLessonInt}`).data('target');
+        const targetDropzone = document.getElementById(targetId);
+
+        // Toggle the dropzone state
+        targetDropzone.classList.toggle('showcontent');
+        targetDropzone.classList.toggle('dropcontent');
+
+    }
+//
+//                     const targetId =  $(`#lesson${selectedLessonInt}`).data('target');
+//               const targetDropzone = document.getElementById(targetId);
+//               const messageElement = targetDropzone.querySelector('.drop-message');
+//
+//              // Toggle the dropzone state
+//              targetDropzone.classList.toggle('showcontent');
+//              targetDropzone.classList.toggle('dropcontent');
+//            $(`#lesson${selectedLessonInt}`).click();
+});
+
+
+     //history log:
+
+        //method to send post request to append log
+    function postLog(filepath, fileCount) {
+        // Send a POST request to the server to append the log
+        fetch('/append_log', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "path": filepath,
+                "filecount":  fileCount
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Extract the JSON body of the response
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Log appended successfully:", data);
+        })
+        .catch(error => {
+            console.error('Error logging:', error);
+        });
+    }
+
+     function appendLog(path, timestamp, fileCount) {
+        const historyLog = document.getElementById('historyLog');
+        const newLogEntry = `Path: ${path}, Timestamp: ${timestamp} File Count: ${fileCount}\n`;
+       //place the new log entry at the top of the history log
+           historyLog.value = newLogEntry + historyLog.value;
+
+    }
+
+
+
+     //use this server code to initialize the history log text area
+//     # get history logs
+//        @blueprint.route('/get_logs', methods=['GET'])
+//        def get_logs():
+//            # Get the history logs
+//            result = get_history_logs()
+//
+//            print('result: ', result)
+//
+//            return jsonify(result), 200
+
+
+      //use this server code to append the log
+    function initialize_log() {
+        // Send a GET request to the server to get the history logs
+        fetch('/get_logs', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Extract the JSON body of the response
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Logs retrieved successfully:", data);
+            // Initialize the history log text area
+            const historyLog = document.getElementById('historyLog');
+            data.forEach(log => {
+             //Yes, the get_history_logs function you provided is correct in terms of handling JSON log entries in the format {'path': path, 'timestamp': timestamp, 'filecount': filecount}.
+                const newLogEntry = `Path: ${log.path}, Timestamp: ${log.timestamp}, File Count: ${log.filecount}\n`;
+                historyLog.value += newLogEntry;
+            });
+        })
+        .catch(error => {
+            console.error('Error retrieving logs:', error);
+        });
+    }
+
+    initialize_log();
+
+</script>
+
+
+
+
+</body>
+</html>
