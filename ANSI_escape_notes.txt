@@ -1,0 +1,108 @@
+ANSI escape codes. These codes are used to control the formatting, color, and other output options on text terminals.
+\x1b is the escape character in hexadecimal, and [ is the start of the command sequence.
+
+Reset: \x1b[0m
+Bright: \x1b[1m
+Dim: \x1b[2m
+Underscore: \x1b[4m
+Blink: \x1b[5m
+Reverse: \x1b[7m
+Hidden: \x1b[8m
+
+
+Colors:
+Black: \x1b[30m
+Red: \x1b[31m
+Green: \x1b[32m
+Yellow: \x1b[33m
+Blue: \x1b[34m
+Magenta: \x1b[35m
+Cyan: \x1b[36m
+White: \x1b[37m
+
+
+Background colors:
+Black: \x1b[40m
+Red: \x1b[41m
+Green: \x1b[42m
+Yellow: \x1b[43m
+Blue: \x1b[44m
+Magenta: \x1b[45m
+Cyan: \x1b[46m
+White: \x1b[47m
+
+For example, if you want to print a string in green, you would use:
+
+console.log("\x1b[32m", "This text will be green");
+
+after you're done, to prevent the color from bleeding into the rest of your terminal output:
+
+console.log("\x1b[32m", "This text will be green", "\x1b[0m");
+
+
+These codes might not work in all environments. They are widely supported in Unix-based systems
+(like Linux and MacOS), but Windows command prompt does not support them by default. However,
+they do work in Windows Subsystem for Linux and in many Windows terminal applications.
+
+The blink ANSI escape code \x1b[5m is used to make the text blink or flash on and off. However,
+ please note that support for this feature is not universal across all terminals and environments.
+  Some terminals might ignore this code or interpret it differently.
+
+
+
+  The \x1b[0m ANSI escape code is used to reset the text formatting and color to the default settings.
+
+
+
+  you can string multiple ANSI escape codes together to apply multiple styles to your text. To do this,
+  you simply separate each code with a semicolon (;). Here's an example:
+
+  console.log("\x1b[31;1m", "This text will be bright red", "\x1b[0m");
+
+  In this example, 31 sets the text color to red, and 1 makes the text bright. The \x1b[0m at the end resets the
+   text style to the default.  You can combine as many codes as you want in this way. Just remember to reset the
+   text style at the end to prevent the styles from affecting subsequent console output.
+
+Here are a few more examples of using ANSI escape codes in JavaScript:
+To print a string in bright yellow:
+
+console.log("\x1b[33;1m", "This text will be bright yellow", "\x1b[0m");
+
+To print a string in cyan with a red background:
+
+console.log("\x1b[36;41m", "This text will be cyan with a red background", "\x1b[0m");
+
+To print a string with an underscore:
+
+console.log("\x1b[4m", "This text will be underscored", "\x1b[0m");
+
+To print a string with a blinking effect:
+
+console.log("\x1b[5m", "This text will blink", "\x1b[0m");
+
+To print a string in dim blue:
+
+console.log("\x1b[34;2m", "This text will be dim blue", "\x1b[0m");
+
+To print a string with a green background:
+
+console.log("\x1b[42m", "This text will have a green background", "\x1b[0m");
+
+To print a string that is underlined:
+
+console.log("\x1b[4m", "This text will be underlined", "\x1b[0m");
+
+To print a string that is bright, underlined, and has a red background:
+
+console.log("\x1b[31;1;4;41m", "This text will be bright, underlined, and have a red background", "\x1b[0m");
+
+Remember to always reset the text style at the end with \x1b[0m to prevent the styles from affecting
+ subsequent console output.
+
+ examples with formatting:
+
+console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+console.log(`\x1b[33;1m after..xxxxxFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+console.log(`\x1b[1;4;41m after..yyyyyFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+console.log(`\x1b[5m after..zzzzzile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+

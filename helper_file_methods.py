@@ -146,7 +146,8 @@ def save_file(file, dest_folder, file_type, file_prefix):
     file_path = os.path.join(full_dest_folder, filename_with_prefix)
     file.save(file_path)
     print(f'\033[37m ==> Saved file to: {file_path}' + '\033[0m')  # Print the path in white color
-
+    #return the file name and path
+    return filename_with_prefix
 
 
 if __name__ == '__main__':

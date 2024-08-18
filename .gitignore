@@ -1,6 +1,18 @@
 #Personal gitignore file
 /LessonFolders/
+# Node related files
+/my_nodejs_app/node_modules/
 
+# Ignore files in the dependencies directory except for the following files
+/static/dependencies/*
+
+# But do not ignore these specific files
+!/static/dependencies/dropzone.min.css
+!/static/dependencies/dropzone.min.js
+!/static/dependencies/jquery-3.6.0.min.js
+!/static/dependencies/socket.io.min.js
+!/static/dependencies/toastr.min.css
+!/static/dependencies/toastr.min.js
 
 # Python related
 __pycache__/

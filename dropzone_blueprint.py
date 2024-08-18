@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, request, jsonify, render_template, redirect, url_for, g, current_app
+from flask import Flask, Blueprint, request, jsonify, render_template, redirect, url_for, g, current_app, send_file
 from helper_file_methods import is_audio, is_image, is_compressed, is_video, save_file, setup_lesson_folders
 from werkzeug.utils import secure_filename
 import datetime
@@ -6,7 +6,7 @@ import json
 import os
 
 # Create a Blueprint object
-blueprint = Blueprint('blueprint', __name__)
+dropzone = Blueprint('blueprint', __name__)
 
 # Define the upload folder relative to the project root
 UPLOAD_FOLDER = 'LessonFolders'
@@ -17,7 +17,7 @@ valid_file_types = ['zip', 'mp4', 'pptx', 'jpg']
 history_logs = []
 
 
-@blueprint.route('/')
+@dropzone.route('/')
 def index():
     # if the folder structure is not set up, set it up
     if not os.path.exists('LessonFolders'):
@@ -27,40 +27,10 @@ def index():
     else:
         # debug cyan
         print("\033[32m" + '***Lesson folders structure already exists')
-    return render_template('dropzone_test.html')
+    return render_template('dropzone.html')
 
 
-# @blueprint.route('/upload/<lesson>/<file_type>', methods=['POST'])
-# def upload_files(lesson, file_type):
-#     print("\033[96m" + f'***Uploading file for lesson: {lesson}, file type: {file_type}')
-#
-#     if lesson not in valid_lessons:
-#         return jsonify({'error': f'Invalid lesson: {lesson}'}), 400
-#     if file_type not in valid_file_types:
-#         return jsonify({'error': f'Invalid file type: {file_type}'}), 400
-#
-#     file = request.files['file']
-#     if file:
-#         filename = secure_filename(file.filename)
-#         target_dir = os.path.join(UPLOAD_FOLDER, lesson, file_type)
-#         os.makedirs(target_dir, exist_ok=True)
-#         file_path = os.path.join(target_dir, filename)
-#
-#         file.save(file_path)
-#
-#         return jsonify({'message': f'File "{filename}" uploaded successfully.'}), 200
-#     else:
-#         return jsonify({'error': 'No file uploaded.'}), 400
-
-
-# @blueprint.route('/upload/success', methods=['POST'])
-# def ajax_success():
-#     data = request.get_json()
-#     # Process additional data received via AJAX if needed
-#     message = data.get('message')
-#     return jsonify({'message': message}), 200
-
-@blueprint.route('/display', methods=['GET'])
+@dropzone.route('/display', methods=['GET'])
 def display_files():
     # Define your semester, grade, week, and lesson here
     semester = 'Semester1'
@@ -75,7 +45,7 @@ def display_files():
     return render_template('display.html', result=result, lesson_labels=lesson_labels)
 
 
-@blueprint.route('/list_files/<semester>/<grade>/<week>/<lesson>', methods=['GET'])
+@dropzone.route('/list_files/<semester>/<grade>/<week>/<lesson>', methods=['GET'])
 def list_files(semester, grade, week, lesson):
     _dir = os.path.join(UPLOAD_FOLDER, semester, grade, week, lesson)
     current_app.logger.info(f'Searching directory: {_dir}')
@@ -96,7 +66,7 @@ def list_files(semester, grade, week, lesson):
         return jsonify({'message': '✔️Files Found!', 'files': files, 'directory': _dir, 'file_count': file_count}), 200
 
 
-# test route to display dropzone_test.html
+# test route to display dropzone.html
 # @blueprint.route('/dropzone_test')
 # def dropzone_test():
 #     #if the folder structure is not set up, set it up
@@ -107,10 +77,10 @@ def list_files(semester, grade, week, lesson):
 #     else:
 #         #debug cyan
 #         print("\033[32m" + '***Lesson folders structure already exists')
-#     return render_template('dropzone_test.html')
+#     return render_template('dropzone.html')
 
 
-@blueprint.route('/dropzone_lessons', methods=['POST'])
+@dropzone.route('/dropzone_lessons', methods=['POST'])
 def dropzone_lessons():
     # Handle the file upload here
     file = request.files['file']
@@ -119,7 +89,95 @@ def dropzone_lessons():
     return 'File uploaded successfully'
 
 
-@blueprint.route('/dropzone_lessons/<path:file_path>', methods=['POST'])
+# @dropzone.route('/dropzone_lessons/<path:file_path>', methods=['POST'])
+# def dropzone_lessons_path(file_path):
+#     print('\n\nfilename received: ', file_path + '\n\n')
+#     # Extract the file name and extension
+#     file_name = os.path.basename(file_path)
+#     file_extension = os.path.splitext(file_path)[1]
+#     print(f"\033[33m file extension: {file_extension}")
+#
+#     # Extract the extra information from the request headers
+#     grade = request.headers.get('X-Grade')
+#     semester = request.headers.get('X-Semester')
+#     week = request.headers.get('X-Week')
+#     lesson = request.headers.get('X-Lesson')
+#     # xhr.setRequestHeader('X-File-Prefix', filePrefix);
+#     file_prefix = request.headers.get('X-File-Prefix')
+#
+#     # Reset the variables to their initial values
+#     grade = grade.split(',')[0]
+#     semester = semester.split(',')[0]
+#     week = week.split(',')[0]
+#     lesson = lesson.split(',')[0]
+#     file_prefix = file_prefix.split(',')[0]
+#
+#     # Map the lesson to the correct folder name
+#     if lesson == 'TP':
+#         lesson_folder = 'TeachPlans'
+#     elif lesson == 'MS':
+#         lesson_folder = 'MiscMaterials'
+#     else:
+#         lesson_number = lesson[1:]  # Extract the number from the lesson variable
+#         lesson_folder = 'Lesson' + lesson_number
+#
+#     dest_folder = None
+#     # Iterate over each file in the request
+#     for file_key in request.files:
+#         file = request.files[file_key]
+#         if file:
+#             # Secure the filename
+#             secure_file_name = secure_filename(file.filename)
+#
+#             # Update the file name for each file in the request
+#             file_name = secure_file_name
+#
+#             # Determine the type of the file
+#             if is_audio(file_name):
+#                 file_type = 'audio'
+#             elif is_image(file_name):
+#                 file_type = 'image'
+#             elif is_compressed(file_name):
+#                 file_type = 'compressed'
+#             elif is_video(file_name):
+#                 file_type = 'video'
+#             else:
+#                 file_type = ''
+#
+#             print(f"Determined file type: {file_type}")
+#
+#             # Construct the full path to the destination folder
+#             # if file_type:
+#             #     dest_folder = os.path.join('LessonFolders', 'Semester' + semester[1:], 'Grade' + grade[1:],
+#             #                                'Week' + week[1:], lesson_folder, file_type)
+#             # else:
+#             #     dest_folder = os.path.join('LessonFolders', 'Semester' + semester[1:], 'Grade' + grade[1:],
+#             #                                'Week' + week[1:], lesson_folder)
+#             # In dropzone_lessons_path function
+#             dest_folder = os.path.join('LessonFolders', 'Semester' + semester[1:], 'Grade' + grade[1:],
+#                                        'Week' + week[1:], lesson_folder)
+#
+#             os.makedirs(dest_folder, exist_ok=True)
+#
+#             # Construct the new filename
+#             new_file_name = f'{grade}_{semester}_{week}_{lesson}_{secure_file_name}'
+#             print(f'New file name: {new_file_name}')
+#
+#             # Save the file to the destination folder
+#             file_path = os.path.join(dest_folder, new_file_name)
+#             print(f'Saving file to: {file_path}')
+#             # file.save(file_path)
+#
+#             # Save the file to the appropriate subfolder
+#             filename_with_prefix = save_file(file, dest_folder, file_type, file_prefix)
+#
+#     # Redirect to the /dropzone_lessons_result route
+#     # return redirect(url_for('blueprint.dropzone_lessons_result'))
+#     return jsonify(
+#         {'message': '#####Files uploaded successfully', 'file_path': dest_folder}), 200
+
+
+@dropzone.route('/dropzone_lessons/<path:file_path>', methods=['POST'])
 def dropzone_lessons_path(file_path):
     print('\n\nfilename received: ', file_path + '\n\n')
     # Extract the file name and extension
@@ -151,6 +209,12 @@ def dropzone_lessons_path(file_path):
         lesson_number = lesson[1:]  # Extract the number from the lesson variable
         lesson_folder = 'Lesson' + lesson_number
 
+    dest_folder = None
+    # Initialize lists to store all files and duplicate files
+    all_files = []
+    duplicate_files = []
+    accepted_files = []  # Initialize the list of accepted files
+
     # Iterate over each file in the request
     for file_key in request.files:
         file = request.files[file_key]
@@ -176,35 +240,47 @@ def dropzone_lessons_path(file_path):
             print(f"Determined file type: {file_type}")
 
             # Construct the full path to the destination folder
-            # if file_type:
-            #     dest_folder = os.path.join('LessonFolders', 'Semester' + semester[1:], 'Grade' + grade[1:],
-            #                                'Week' + week[1:], lesson_folder, file_type)
-            # else:
-            #     dest_folder = os.path.join('LessonFolders', 'Semester' + semester[1:], 'Grade' + grade[1:],
-            #                                'Week' + week[1:], lesson_folder)
-            # In dropzone_lessons_path function
             dest_folder = os.path.join('LessonFolders', 'Semester' + semester[1:], 'Grade' + grade[1:],
                                        'Week' + week[1:], lesson_folder)
 
             os.makedirs(dest_folder, exist_ok=True)
 
             # Construct the new filename
+            # Construct the new filename
             new_file_name = f'{grade}_{semester}_{week}_{lesson}_{secure_file_name}'
             print(f'New file name: {new_file_name}')
 
-            # Save the file to the destination folder
-            file_path = os.path.join(dest_folder, new_file_name)
-            print(f'Saving file to: {file_path}')
-            # file.save(file_path)
+            # Save the file to the destination folder if not a duplicate
+            file_path_to_check = os.path.join(dest_folder, file_type, new_file_name)
+            all_files.append(file_path_to_check)
+            print(f'\033[92mFile path to check: {file_path_to_check}')
+            if os.path.exists(file_path_to_check):
+                duplicate_files.append(file_path_to_check)  # Add the full path to the list
+                print(f'File already exists: {file_path_to_check}')
+            else:
+                print(f'Saving file to: {file_path}')
+                # Save the file to the appropriate subfolder
+                filename_with_prefix = save_file(file, dest_folder, file_type, file_prefix)
+                accepted_files.append(new_file_name)  # Add the file to the list of accepted files
 
-            # Save the file to the appropriate subfolder
-            save_file(file, dest_folder, file_type , file_prefix)
+    # print in pink all files
+    print("\033[95m" + '***All files: ', all_files)
+    # print in pink duplicate files
+    print("\033[95m" + '***Duplicate files: ', duplicate_files)
 
-    # Redirect to the /dropzone_lessons_result route
-    return redirect(url_for('blueprint.dropzone_lessons_result'))
+    # Check if all files are duplicates
+    if all_files == duplicate_files:
+        # debug in pink
+        print("\033[95m" + '***All files are duplicates')
+        return jsonify({'message': 'All files are duplicates'}), 409
+    else:
+        # Remove duplicates from the list of all files
+        accepted_files = [file for file in all_files if file not in duplicate_files]
+        return jsonify({'message': 'Files uploaded successfully', 'file_path': dest_folder,
+                        'accepted_files': accepted_files, 'duplicate_files': duplicate_files}), 200
 
 
-@blueprint.route('/dropzone_lessons_result')
+@dropzone.route('/dropzone_lessons_result')
 def dropzone_lessons_result():
     # Retrieve the file name and extension from where you stored it
 
@@ -212,13 +288,20 @@ def dropzone_lessons_result():
     return render_template('dropzone_lessons_result.html')
 
 
-@blueprint.route('/append_log', methods=['POST'])
+@dropzone.route('/append_log', methods=['POST'])
 def log_history():
     # Get the path from the request data
     path = request.json.get('path')
     filecount = request.json.get('filecount')
     # Get the current timestamp
-    timestamp = datetime.datetime.now().isoformat()
+    timestamp = request.json.get('timestamp')  # datetime.datetime.now().isoformat()
+
+    # if filecount == 1 then it is for a single file and we can check if the file exists, if so ignore
+    # if filecount == 1:
+    #     if os.path.exists(path):
+    #         # debug in cyan
+    #         print("\033[92m" + '***File already exists: ', path)
+    #         return jsonify({'message': 'File already exists'}), 409
 
     # Create a dictionary for the log entry
     log_entry = {'path': path, 'timestamp': timestamp, 'filecount': filecount}
@@ -234,12 +317,12 @@ def log_history():
 
 
 # get history logs
-@blueprint.route('/get_logs', methods=['GET'])
+@dropzone.route('/get_logs', methods=['GET'])
 def get_logs():
     # Get the history logs
     result = get_history_logs()
 
-    print('result: ', result)
+    # print('result: ', result)
 
     return jsonify(result), 200
 
@@ -271,7 +354,18 @@ def get_history_logs():
     return logs[::-1]  # Reverse the list before returning it
 
 
-@blueprint.route('/delete_file', methods=['DELETE'])
+@dropzone.route('/clear_history_log', methods=['DELETE'])
+def clear_history_log():
+    # Clear the history log file if it exists
+    if os.path.exists('history.log'):
+        with open('history.log', 'w') as f:
+            f.write('')
+        return jsonify({'message': 'History log cleared successfully'}), 200
+    else:
+        return jsonify({'message': 'History log not found'}), 404
+
+
+@dropzone.route('/delete_file', methods=['DELETE'])
 def delete_file():
     # Get the path from the request data
     path = request.json.get('path')
@@ -285,3 +379,9 @@ def delete_file():
         return jsonify({'message': 'File deleted successfully'}), 200
     else:
         return jsonify({'message': 'File not found'}), 404
+
+
+@dropzone.route('/get_file')
+def get_file():
+    path = request.args.get('path')
+    return send_file(os.path.abspath(path), as_attachment=True)

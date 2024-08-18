@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout Design</title>
+
+    <script src="/static/dependencies/dropzone.min.js"></script>
+    <link rel="stylesheet" href="static/css/dropzone_styles.css">
+    <script src="/static/dependencies/jquery-3.6.0.min.js"></script>
+    <script src="/static/dependencies/socket.io.min.js"></script>
+<!--    toastr-->
+    <script src="/static/dependencies/toastr.min.js"></script>
+    <link rel="stylesheet" href="static/dependencies/toastr.min.css">
+
+
+    <script src="static/js/javascript_tool_functions.js"></script>
+
+    <style>
+        .dropzone.dz-started .dz-message {
+
+            display: block !important;
+        }
+        .dropzone-files {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: start;
+        }
+        .dz-preview {
+            display: inline-flex;
+            margin-right: 10px;
+        }
+        /*        stop horiz and vert scroll*/
+        body {
+            overflow: hidden;
+        }
+
+        .select-button {
+            padding: 10px 20px; /* Increase the size of the buttons */
+            margin: 10px; /* Add space around the buttons */
+            border-radius: 20px; /* Make the buttons rounded */
+            font-size: 1.2em; /* Increase the font size */
+            border: 2px solid #007bff;    /* a bold blue border */
+            cursor: pointer; /* Change the cursor when hovering over the buttons */
+        }
+
+        /* You can also add some hover effects */
+        .select-button :hover {
+            background-color: #ddd; /* Change the background color */
+            color: #333; /* Change the text color */
+        }
+        #historyLog {
+            width: 100%;
+            height: 200px; /* Adjust as needed */
+            overflow: auto;
+        }
+        .tiny-select-button {
+            padding: 1px 4px; /* Reduce padding */
+            margin: 2px;
+            border-radius: 2px; /* Reduce border radius */
+            font-size: 0.6em; /* Reduce font size */
+            border: 2px solid #ff0080;
+            cursor: pointer;
+            float: right;
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-half">
+
+            <div class="left-header-label">
+              <span class="label-text">Semester</span>
+             <!-- <label class="radio-container" for="semester-radio">
+                <span id="reset-button">&nbsp&nbsp<button onclick="resetSelections();">Reset</button>&nbsp&nbsp</span>
+                  <input type="radio" id="semester-radio" name="semester-radio" value="semester" onclick="toggleSemesterDropzone()" unchecked>
+                  Show Semester Level Dropzone
+              </label>-->
+           </div>
+            <div class="semester-selector"  id="semester-selector">
+                <button id="semester1" class="semester" value="S1">1</button>
+                <button id="semester2" class="semester" value="S2">2</button>
+            </div>
+            <!-- <div class="left-header-label">Grade <span id="test-data">&nbsp&nbsp<button onclick="test()">Test Button</button></span></div> -->
+            <div class="left-header-label">
+              <span class="label-text">Grade</span>
+              
+     <!--         <label class="radio-container" for="grade-radio">
+                <span id="test-data">&nbsp&nbsp<button onclick="test()">Testing...</button>&nbsp&nbsp</span>
+                  <input type="radio" id="grade-radio" name="grade-radio" value="grade" onclick="toggleGradeDropzone()" unchecked>
+                  Show Grade Level Dropzone
+              </label>-->
+            </div>
+            <div class="grade-selector" id="grade-selector">
+                <button id="grade1" class="grade" value="G1">1</button>
+                <button id="grade2" class="grade" value="G2">2</button>
+                <button id="grade3" class="grade" value="G3">3</button>
+                <button id="grade4" class="grade" value="G4">4</button>
+                <button id="grade5" class="grade" value="G5">5</button>
+
+            </div>
+
+            <div class="header-container">
+              <div class="left-header-label">
+                <span class="label-text">Week</span>
+               <!-- <label class="radio-container" for="week-radio">
+                    <input type="radio" id="week-radio" name="week-radio" value="week" onclick="toggleWeekDropzone()" unchecked>
+                    Show Week Level Dropzone
+                </label>-->
+              </div>
+            </div>
+            <div class="week-selector" id="week-selector">
+                <button id="week1" class="week" value="W1">1</button>
+                <button id="week2" class="week" value="W2">2</button>
+                <button id="week3" class="week" value="W3">3</button>
+                <button id="week4" class="week" value="W4">4</button>
+                <button id="week5" class="week" value="W5">5</button>
+                <button id="week6" class="week" value="W6">6</button>
+                <button id="week7" class="week" value="W7">7</button>
+                <button id="week8" class="week" value="W8">8</button>
+                <button id="week9" class="week" value="W9">9</button>
+                <button id="week10" class="week" value="W10">10</button>
+                <button id="week11" class="week" value="W11">11</button>
+                <button id="week12" class="week" value="W12">12</button>
+                <button id="week13" class="week" value="W13">13</button>
+                <button id="week14" class="week" value="W14">14</button>
+                <button id="week15" class="week" value="W15">15</button>
+                <button id="week16" class="week" value="W16">16</button>
+                <button id="week17" class="week" value="W17">17</button>
+                <div class="empty"></div>
+                <div class="empty"></div>
+                <div class="empty"></div>
+
+
+                    <!-- Add this at the bottom -->
+                   <button class="select-button" id="uploadButton">Upload From Folder</button>
+                   <button  class="select-button" id="startUpload">Start Upload</button>
+                    <audio id="successAudio">
+                       <source src="/static/audio/sound.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+
+                 <button  class="select-button" onclick="playSuccessSound()"   id="playButton">Play Success Sound</button>
+<!--                button with link to display route-->
+<!--                <button class="select-button" onclick="window.location.href='/display'">Display Files</button>-->
+                <button class="select-button" onclick="redirectToDisplayZone()">Display Files</button>
+                <button class="select-button" onclick="socketTest()">Socket Test</button>
+            </div>
+            <div class="history-log">
+               <h2 style="display: flex; justify-content: space-between; align-items: center;">
+                    History Log
+                    <div>
+                        <input type="checkbox" id="muteSound" name="muteSound">
+                        <label for="muteSound" style="font-size: 0.6em; text-align: center; font-family: Arial, sans-serif;">Mute Sound</label>
+                    </div>
+                    <button class="tiny-select-button" onclick="clearHistoryLog()">Clear History Log</button>
+                </h2>
+                <textarea id="historyLog" readonly></textarea>
+            </div>
+
+
+    </div> <!-- left-half -->
+
+
+
+    <div class="right-half">
+        <div class="right-header-label">Dropbox Container</div>
+        <div class="right-side-container">
+            <div class="lesson-labels-container">
+                <div class="lesson-label" id="lesson1" data-target="singleDropzone" data-value="L1">Lesson 1</div>
+                <div class="lesson-label" id="lesson2" data-target="singleDropzone" data-value="L2">Lesson 2</div>
+                <div class="lesson-label" id="lesson3" data-target="singleDropzone" data-value="L3">Lesson 3</div>
+                <div class="lesson-label" id="lesson4" data-target="singleDropzone" data-value="L4">Lesson 4</div>
+                <div class="lesson-label" id="lesson5" data-target="singleDropzone" data-value="L5">Lesson 5</div>
+                <div class="lesson-label" id="lesson6" data-target="singleDropzone" data-value="L6">Lesson 6</div>
+                <div class="lesson-label" id="lesson7" data-target="singleDropzone" data-value="TP">Teaching Plans</div>
+                <div class="lesson-label" id="lesson8" data-target="singleDropzone" data-value="MS">Miscellaneous Materials</div>
+            </div>
+
+            <div class="dropzone" id="singleDropzone">
+                <div class="drop-message">Drop Content Here</div>
+                <div class="dropzone-files">
+                    <!-- Files will be added here -->
+                </div>
+            </div>
+        </div>
+    </div> <!-- right-half -->
+
+</div> <!-- container -->
+
+
+
+<!--    javascript references-->
+<script src="static/js/dropzone_html.js"></script>
+
+<script src="static/js/dropzone_setup_script.js"></script>
+
+
+</body>
+</html>

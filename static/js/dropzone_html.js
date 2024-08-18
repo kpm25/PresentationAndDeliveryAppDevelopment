@@ -1,173 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layout Design</title>
+const socket = io.connect('http://192.168.1.24:4000');
 
-    <script src="/static/dependencies/dropzone.min.js"></script>
-    <script src="/static/dependencies/jquery-3.6.0.min.js"></script>
+   //toastr configuration
+   toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": false,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": true,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "1000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
 
-    <link rel="stylesheet" href="static/css/dropzone_styles.css">
-    <script src="static/js/dropzone_setup_script.js"></script>
-    <!-- call javasript_tool_functions.js which is one folder up in the root dir -->
-    <script src="static/js/javascript_tool_functions.js"></script>
-    <style>
-        .dropzone.dz-started .dz-message {
+//setup time function based on time zone
+function getLocalISOTime() {
+    let date = new Date();
+    let timezoneOffset = date.getTimezoneOffset() * 60000; //offset in milliseconds
+    let localISOTime = new Date(Date.now() - timezoneOffset);
 
-            display: block !important;
-        }
-    .dropzone-files {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: start;
-}
-.dz-preview {
-    display: inline-flex;
-    margin-right: 10px;
-}
-/*        stop horiz and vert scroll*/
-body {
-    overflow: hidden;
-}
+    let options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+    };
 
-.select-button {
-    padding: 10px 20px; /* Increase the size of the buttons */
-    margin: 10px; /* Add space around the buttons */
-    border-radius: 20px; /* Make the buttons rounded */
-    font-size: 1.2em; /* Increase the font size */
-    border: 2px solid #007bff;    /* a bold blue border */
-    cursor: pointer; /* Change the cursor when hovering over the buttons */
+    return localISOTime.toLocaleString('en-US', options);
 }
 
-/* You can also add some hover effects */
-.select-button :hover {
-    background-color: #ddd; /* Change the background color */
-    color: #333; /* Change the text color */
-}
-#historyLog {
-    width: 100%;
-    height: 200px; /* Adjust as needed */
-    overflow: auto;
-}
-</style>
-</head>
-<body>
-    <div class="container">
-        <div class="left-half">
+// Now you can use getLocalISOTime() to get the current time in your local timezone
+console.log('Timestamp:', getLocalISOTime());
 
-            <div class="left-header-label">
-              <span class="label-text">Semester</span>
-              <label class="radio-container" for="semester-radio">
-                <span id="reset-button">&nbsp&nbsp<button onclick="resetSelections();">Reset</button>&nbsp&nbsp</span>
-                  <input type="radio" id="semester-radio" name="semester-radio" value="semester" onclick="toggleSemesterDropzone()" unchecked>
-                  Show Semester Level Dropzone
-              </label>
-           </div>
-            <div class="semester-selector"  id="semester-selector">
-                <button id="semester1" class="semester" value="S1">1</button>
-                <button id="semester2" class="semester" value="S2">2</button>
-            </div>
-            <!-- <div class="left-header-label">Grade <span id="test-data">&nbsp&nbsp<button onclick="test()">Test Button</button></span></div> -->
-            <div class="left-header-label">
-              <span class="label-text">Grade</span>
-              
-              <label class="radio-container" for="grade-radio">
-                <span id="test-data">&nbsp&nbsp<button onclick="test()">Testing...</button>&nbsp&nbsp</span>
-                  <input type="radio" id="grade-radio" name="grade-radio" value="grade" onclick="toggleGradeDropzone()" unchecked>
-                  Show Grade Level Dropzone
-              </label>
-            </div>
-            <div class="grade-selector" id="grade-selector">
-                <button id="grade1" class="grade" value="G1">1</button>
-                <button id="grade2" class="grade" value="G2">2</button>
-                <button id="grade3" class="grade" value="G3">3</button>
-                <button id="grade4" class="grade" value="G4">4</button>
-                <button id="grade5" class="grade" value="G5">5</button>
-
-            </div>
-
-            <div class="header-container">
-              <div class="left-header-label">
-                <span class="label-text">Week</span>
-                <label class="radio-container" for="week-radio">
-                    <input type="radio" id="week-radio" name="week-radio" value="week" onclick="toggleWeekDropzone()" unchecked>
-                    Show Week Level Dropzone
-                </label>
-              </div>
-            </div>
-            <div class="week-selector" id="week-selector">
-                <button id="week1" class="week" value="W1">1</button>
-                <button id="week2" class="week" value="W2">2</button>
-                <button id="week3" class="week" value="W3">3</button>
-                <button id="week4" class="week" value="W4">4</button>
-                <button id="week5" class="week" value="W5">5</button>
-                <button id="week6" class="week" value="W6">6</button>
-                <button id="week7" class="week" value="W7">7</button>
-                <button id="week8" class="week" value="W8">8</button>
-                <button id="week9" class="week" value="W9">9</button>
-                <button id="week10" class="week" value="W10">10</button>
-                <button id="week11" class="week" value="W11">11</button>
-                <button id="week12" class="week" value="W12">12</button>
-                <button id="week13" class="week" value="W13">13</button>
-                <button id="week14" class="week" value="W14">14</button>
-                <button id="week15" class="week" value="W15">15</button>
-                <button id="week16" class="week" value="W16">16</button>
-                <button id="week17" class="week" value="W17">17</button>
-                <div class="empty"></div>
-                <div class="empty"></div>
-                <div class="empty"></div>
-
-
-                    <!-- Add this at the bottom -->
-                   <button class="select-button" id="uploadButton">Upload From File</button>
-                   <button  class="select-button" id="startUpload">Start Upload</button>
-                    <audio id="successAudio">
-                       <source src="/static/audio/sound.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
-
-                 <button  class="select-button" onclick="playSuccessSound()"   id="playButton">Play Success Sound</button>
-<!--                button with link to display route-->
-<!--                <button class="select-button" onclick="window.location.href='/display'">Display Files</button>-->
-                <button class="select-button" onclick="redirectToDisplayZone()">Display Files</button>
-            </div>
-            <div class="history-log">
-                <h2>History Log</h2>
-                <textarea id="historyLog" readonly></textarea>
-            </div>
-
-
-    </div> <!-- left-half -->
-
-
-
-    <div class="right-half">
-        <div class="right-header-label">Dropbox Container</div>
-        <div class="right-side-container">
-            <div class="lesson-labels-container">
-                <div class="lesson-label" id="lesson1" data-target="singleDropzone" data-value="L1">Lesson 1</div>
-                <div class="lesson-label" id="lesson2" data-target="singleDropzone" data-value="L2">Lesson 2</div>
-                <div class="lesson-label" id="lesson3" data-target="singleDropzone" data-value="L3">Lesson 3</div>
-                <div class="lesson-label" id="lesson4" data-target="singleDropzone" data-value="L4">Lesson 4</div>
-                <div class="lesson-label" id="lesson5" data-target="singleDropzone" data-value="L5">Lesson 5</div>
-                <div class="lesson-label" id="lesson6" data-target="singleDropzone" data-value="L6">Lesson 6</div>
-                <div class="lesson-label" id="lesson7" data-target="singleDropzone" data-value="TP">Teaching Plans</div>
-                <div class="lesson-label" id="lesson8" data-target="singleDropzone" data-value="MS">Miscellaneous Materials</div>
-            </div>
-
-            <div class="dropzone" id="singleDropzone">
-                <div class="drop-message">Drop Content Here</div>
-                <div class="dropzone-files">
-                    <!-- Files will be added here -->
-                </div>
-            </div>
-        </div>
-    </div> <!-- right-half -->
-
-</div> <!-- container -->
- <script>
-     //dictionaries to convert from selectedSemester path
+//dictionaries to convert from selectedSemester path
     const semesterDict = {
         "S1": 'Semester1',
         "S2":  'Semester2'
@@ -261,10 +134,13 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
     // Disable Dropzone's auto-discover feature
     Dropzone.autoDiscover = false;
 
-    // Your existing JavaScript code here
+   //sound related code, is muted if the checkbox is checked
     function playSuccessSound() {
         const audio = document.getElementById('successAudio');
-        if (audio) {
+        const muteCheckbox = document.getElementById('muteSound');
+
+        // Only play the sound if the checkbox is not checked
+        if (audio && (!muteCheckbox || !muteCheckbox.checked)) {
             // Catch promise rejection when trying to play the audio
             audio.play().catch(function(error) {
                 console.error('Error playing audio:', error);
@@ -277,6 +153,8 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
     function initializeDropzone() {
         // Construct the file path outside of the url function
         const filePath = `${selectedSemester}/${selectedGrade}/${selectedWeek}/${selectedLesson}`;
+
+        let lastSuccessResponse = null; // Declare a variable to store the last response
 
         const dropzoneConfig = {
             url: function(files) {
@@ -304,30 +182,110 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
             init: function() {
                  let fileCount = 0; // Initialize a counter for the uploaded files
             this.on('success', function(file, response) {
-                    console.log('File uploaded successfully:', file.name);
-                    fileCount++; // Increment the counter for each successful upload
-                });
+
+                lastSuccessResponse = response; // Store the last response
+ /*                  // Check if response.accepted_files is defined and is an array
+                    if (Array.isArray(response.accepted_files)) {
+                        // Iterate over each file in the accepted_files list
+                         // Iterate over each file in the accepted_files list
+                            response.accepted_files.forEach(function(acceptedFile) {
+                                console.log(`CHECKING FILENAME: ${acceptedFile}`);
+                                console.log(`\x1b[32m File uploaded successfully! , filepath: ${acceptedFile} response: ${response.message}\x1b[0m`);
+                                socket.emit('fileAdded', acceptedFile);
+                                fileCount++; // Increment the counter for each successful upload
+                                // Log each individual file upload
+                                postLog(`$${acceptedFile}`, `${1}`, getLocalISOTime()); // Send the log to the server
+                                //console log in green color
+                                 console.log(`\x1b[32m File uploaded successfully: ${acceptedFile}\x1b[0m`);
+                            });
+                    }
+
+
+                      // Check if response.duplicate_files is defined and is an array
+                    if (Array.isArray(response.duplicate_files)) {
+                            // Iterate over each file in the duplicate_files list
+                            response.duplicate_files.forEach(function(duplicateFile) {
+                                //console log in orange color
+                                console.log(`\x1b[33mFile uploaded was a duplicate: ${duplicateFile}\x1b[0m`);
+                                toastr.warning(`File uploaded was a duplicate: ${duplicateFile}`);
+                            });
+                    }*/
+
+
+            });
             this.on('queuecomplete', function() {
+
+
+                if(lastSuccessResponse){
+                     if (Array.isArray(lastSuccessResponse.accepted_files)) {
+                        // Iterate over each file in the accepted_files list
+                         // Iterate over each file in the accepted_files list
+                            lastSuccessResponse.accepted_files.forEach(function(acceptedFile) {
+                                console.log(`CHECKING FILENAME: ${acceptedFile}`);
+                                console.log(`\x1b[32m File uploaded successfully! , filepath: ${acceptedFile} response: ${lastSuccessResponse.message}\x1b[0m`);
+                                socket.emit('fileAdded', acceptedFile);
+                                fileCount++; // Increment the counter for each successful upload
+                                // Log each individual file upload
+                                postLog( `$${acceptedFile}`, `${1}`, getLocalISOTime()); // Send the log to the server
+                                //console log in green color
+                                 console.log(`\x1b[32m File uploaded successfully: ${acceptedFile}\x1b[0m`);
+                            });
+                    }
+
+
+                      // Check if response.duplicate_files is defined and is an array
+                    if (Array.isArray(lastSuccessResponse.duplicate_files)) {
+                            // Iterate over each file in the duplicate_files list
+                            lastSuccessResponse.duplicate_files.forEach(function(duplicateFile) {
+                                //console log in orange color
+                                console.log(`\x1b[33mFile uploaded was a duplicate: ${duplicateFile}\x1b[0m`);
+                                toastr.warning(`File uploaded was a duplicate: ${duplicateFile}`);
+                            });
+                    }
+
+                }
+
+
                 // This code will run once after all files have been uploaded
                 console.log('All files have been uploaded.');
                 //get path names
 
                  const fileFolderPath = `${semesterDict[selectedSemester]}/${gradeDict[selectedGrade]}/${weekDict[selectedWeek]}/${lessonDict[selectedLesson]}`;
               //   const filePath = `${selectedSemester}/${selectedGrade}/${selectedWeek}/${selectedLesson}`;
+                const timestamp = getLocalISOTime();
+//                appendLog(`${fileFolderPath} `, timestamp, `${fileCount}`); // Log the file path and count
 
-                appendLog(`${fileFolderPath} `, new Date().toISOString(), `${fileCount}`); // Log the file path and count
-                postLog(`${fileFolderPath}`, `${fileCount}`); // Send the log to the server
-                playSuccessSound();
-                  //write success message with file upload info in the dropzone:
-                 const messageElement = this.element.querySelector('.drop-message');
-                messageElement.innerHTML = `All files have been uploaded successfully.<br> Total files uploaded: ${fileCount}<br>`;
-                messageElement.innerHTML += "Files uploaded to: " + `${fileFolderPath}`;
+                if(fileCount > 1){
+                    postLog(`${fileFolderPath}`, `${fileCount}`,getLocalISOTime()); // Send the log to the server
+                }
+                if(fileCount !== 0){
+                     update_log();
+                    playSuccessSound();
+                      //write success message with file upload info in the dropzone:
+                     const messageElement = this.element.querySelector('.drop-message');
+                    messageElement.innerHTML = `All files have been uploaded successfully.<br> Total files uploaded: ${fileCount}<br>`;
+                    messageElement.innerHTML += "Files uploaded to: " + `${fileFolderPath}`;
+
+                    // Emit 'fileUploaded' event
+                    socket.emit('filesUploaded', { path: fileFolderPath, count: fileCount });
+                }else{
+                    //write error message in the dropzone:
+                    const messageElement = this.element.querySelector('.drop-message');
+                    messageElement.innerHTML = `No files were uploaded, probably because they were duplicates.`;
+                    toastr.error(`No files were uploaded. Probably because they were duplicates.`);
+                }
+
+                lastSuccessResponse = null; // Reset the last response
+
 
                 this.removeAllFiles();
                 fileCount = 0; // Reset the counter after setting the message
             });
+
             this.on('error', function(file, errorMessage) {
-                    console.error('Error uploading file:', errorMessage);
+                   //console log as red color
+                  console.log(`\x1b[33m ##Error uploading file:  ${errorMessage} for file: ${file.name}\x1b[0m`);
+                   toastr.error(`Error uploading file: ${errorMessage} for file: ${file.name}`);
                 });
             this.on('addedfile', function(file) {
                     // Update the URL when a file is added
@@ -359,18 +317,19 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
             }
         };
 
-        const dropzoneElement = document.querySelector('#singleDropzone');
+       const dropzoneElement = document.querySelector('#singleDropzone');
         if (dropzoneElement) {
              dropzoneInstance = new Dropzone(dropzoneElement, dropzoneConfig);
 
             // Add event listener to the lesson labels to start the upload
             document.querySelectorAll('.drop-zone-label').forEach(function(label) {
                 label.addEventListener('click', function() {
-                    // Set the selected lesson
-                    selectedLesson = this.dataset.value;
+                    //if the
+                            // Set the selected lesson
+                            selectedLesson = this.dataset.value;
 
-                    // Start the upload
-                    dropzoneInstance.processQueue();
+                            // Start the upload
+                            dropzoneInstance.processQueue();
                 });
             });
         }
@@ -402,20 +361,67 @@ $(document).ready(function() {
 
     // Add event listener for the upload button
     $('#startUpload').click(function() {
-        // Check if a lesson has been selected
-        if (selectedLesson !== null) {
-            console.log(`Selected lesson: ${selectedLesson}`);
+         if(canUploadFiles()){
 
-            // Start the upload
-            if (dropzoneInstance) {
-                dropzoneInstance.processQueue();
-            } else {
-                alert('Dropzone instance not found for the selected lesson.');
-            }
-        } else {
-            alert('Please select a lesson before starting the upload.');
+                    // Check if a lesson has been selected
+                    if (selectedLesson !== null) {
+                        console.log(`Selected lesson: ${selectedLesson}`);
+
+                        // Start the upload
+                        if (dropzoneInstance) {
+                            dropzoneInstance.processQueue();
+                        } else {
+                            alert('Dropzone instance not found for the selected lesson.');
+                        }
+                    } else {
+                        alert('Please select a lesson before starting the upload.');
+                    }
+        }else{
+            alert('Please select a semester, grade, week, and lesson before starting the upload.');
         }
     });
+
+
+
+          // Function to check files can be uploaded by checking if exactly one of a semester, grade, week, and lesson has been selected
+        function canUploadFiles() {
+            // Check if exactly one semester, grade, week, and lesson has a selected class
+            let semester_count = 0;
+            let grade_count = 0;
+            let week_count = 0;
+            let lesson_count = 0;
+
+            document.querySelectorAll('.semester').forEach(function(button) {
+                if (button.classList.contains('selected')) {
+                    semester_count++;
+                }
+            });
+            document.querySelectorAll('.grade').forEach(function(button) {
+                if (button.classList.contains('selected')) {
+                    grade_count++;
+                }
+            });
+            document.querySelectorAll('.week').forEach(function(button) {
+                if (button.classList.contains('selected')) {
+                    week_count++;
+                }
+            });
+            document.querySelectorAll('.lesson-label').forEach(function(label) {
+                if (label.classList.contains('selected')) {
+                    lesson_count++;
+                }
+            });
+
+            // If exactly one of each category is selected, return true
+            if(semester_count === 1 && grade_count === 1 && week_count === 1 && lesson_count === 1) {
+                console.log("can upload files");
+                return true;
+            }
+            // If not, return false
+            console.log("cannot upload files");
+            return false;
+        }
+
 });
 
 
@@ -583,35 +589,13 @@ $(document).ready(function() {
 
             }
 
-         //****************
 
 
-
-/*          //if a lesson is selected, with a selected semester, grade, week, and lesson, then initialize the dropzone
-            if (selectedLesson !== null && selectedSemester !== null && selectedGrade !== null && selectedWeek !== null) {
-//               //set dopzone to selected
-//                $('#singleDropzone').addClass('selected');
-//                //set dropzone to not class dropcontent
-//                $('#singleDropzone').addClass('drop-content');
-                //click the selected lesson label
-                $(`#lesson${selectedLessonInt}`).click();
-            }else{
-                console.log("selected lesson, semester, grade, or week is null or not selected");
-                console.log("selectedLesson: ", selectedLesson);
-                console.log("selectedSemester: ", selectedSemester);
-                console.log("selectedGrade: ", selectedGrade);
-                console.log("selectedWeek: ", selectedWeek);
-            }*/
     }else{
         console.log("no params in url");
     }
 
 
-
-
-
-
-    // Your existing code...
 
     // Add this function
     function checkSelectionsAndClickLabel() {
@@ -644,22 +628,68 @@ $(document).ready(function() {
         targetDropzone.classList.toggle('dropcontent');
 
     }
-//
-//                     const targetId =  $(`#lesson${selectedLessonInt}`).data('target');
-//               const targetDropzone = document.getElementById(targetId);
-//               const messageElement = targetDropzone.querySelector('.drop-message');
-//
-//              // Toggle the dropzone state
-//              targetDropzone.classList.toggle('showcontent');
-//              targetDropzone.classList.toggle('dropcontent');
-//            $(`#lesson${selectedLessonInt}`).click();
+
 });
 
+
+
+
+//sockets code
+//debug print socket version to console
+console.log("socket version: ", socket.io.engine.transport.query.EIO);
+console.log("socket protocol....: ", socket.io.engine.transport.query.transport);
+
+   //code to play sound
+   // Listen for 'playsound' events from the server
+    socket.on('playsound', () => {
+        console.log('Playing sound');
+        playSuccessSound();
+         socket.emit('test_event');
+    });
+
+
+   //socket test
+    function socketTest() {
+        // Emit a 'test_event' event
+          playSuccessSound();
+          socket.emit('test_event');
+        console.log('Test event emitted');
+        console.log('\x1b[31m%s\x1b[0m', 'A sound was played');
+        //cyan debug message
+        console.log('\x1b[36m%s\x1b[0m', 'A file was uploaded');
+        toastr.success("A test event was fired");
+    }
+
+    socket.on('test_event', (data) => {
+       toastr.warning(data);
+    });
+
+
+       // Listen for 'filesUploadedResponse' events from the server
+    socket.on('filesUploadedResponse', function(fileData) {
+      toastr.success(`Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`);
+      playSuccessSound();
+        update_log(); // Update the log
+    } );
+
+
+
+
+
+//logs related code:
 
      //history log:
 
         //method to send post request to append log
-    function postLog(filepath, fileCount) {
+    function postLog(filepath, fileCount, timestamp) {
+        console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+        //after removing $ from the filepath
+        filepath = filepath.substring(1);
+          console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+        console.log(`\x1b[33;1m after..xxxxxFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+        console.log(`\x1b[1;4;41m after..yyyyyFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+        console.log(`\x1b[5m after..zzzzzile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+
         // Send a POST request to the server to append the log
         fetch('/append_log', {
             method: 'POST',
@@ -668,7 +698,8 @@ $(document).ready(function() {
             },
             body: JSON.stringify({
                 "path": filepath,
-                "filecount":  fileCount
+                "filecount": Number(fileCount),
+                "timestamp": timestamp
             })
         })
         .then(response => {
@@ -686,30 +717,51 @@ $(document).ready(function() {
         });
     }
 
-     function appendLog(path, timestamp, fileCount) {
+   /*  function appendLog(path, timestamp, fileCount) {
         const historyLog = document.getElementById('historyLog');
         const newLogEntry = `Path: ${path}, Timestamp: ${timestamp} File Count: ${fileCount}\n`;
        //place the new log entry at the top of the history log
            historyLog.value = newLogEntry + historyLog.value;
 
+    }*/
+
+
+
+
+
+    //clear the history log
+    function clearHistoryLog() {
+        // Send a DELETE request to the server to clear the log
+        fetch('/clear_history_log', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Extract the JSON body of the response
+                console.log("response not ok clearing log");
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        }
+        )
+        .then(data => {
+            console.log("Log cleared successfully, response message:", data.message);
+            // Initialize the history log text area
+            const historyLog = document.getElementById('historyLog');
+            //update the log
+            playSuccessSound();
+            socket.emit('clearHistory');
+            update_log();
+
+        })
     }
 
 
-
-     //use this server code to initialize the history log text area
-//     # get history logs
-//        @blueprint.route('/get_logs', methods=['GET'])
-//        def get_logs():
-//            # Get the history logs
-//            result = get_history_logs()
-//
-//            print('result: ', result)
-//
-//            return jsonify(result), 200
-
-
       //use this server code to append the log
-    function initialize_log() {
+    function update_log() {
         // Send a GET request to the server to get the history logs
         fetch('/get_logs', {
             method: 'GET',
@@ -728,10 +780,26 @@ $(document).ready(function() {
             console.log("Logs retrieved successfully:", data);
             // Initialize the history log text area
             const historyLog = document.getElementById('historyLog');
+//            const logLines = historyLog.value.split('\n').length;
+            //loglines is the count of history log lines
+            const logLinesOfSingleFileData = data.filter(log => log.filecount === 1).length;
+            //log in yellow color
+            console.log('\x1b[33m%s\x1b[0m', 'log Lines Of Single File Data:', logLinesOfSingleFileData);
+            //clear the history log
+            historyLog.value = '';
+            let count = logLinesOfSingleFileData;
             data.forEach(log => {
              //Yes, the get_history_logs function you provided is correct in terms of handling JSON log entries in the format {'path': path, 'timestamp': timestamp, 'filecount': filecount}.
-                const newLogEntry = `Path: ${log.path}, Timestamp: ${log.timestamp}, File Count: ${log.filecount}\n`;
+                //count of historyLog lines
+                let newLogEntry = '';
+                if(log.filecount === 1){
+                     newLogEntry = `${count--}.) ${log.path},  ${log.timestamp}, File Count: ${log.filecount}\n`;
+                }else{
+                     newLogEntry = `${log.path},  ${log.timestamp}, File Count: ${log.filecount}\n`;
+                }
                 historyLog.value += newLogEntry;
+                //console in magenta color
+//                console.log('\x1b[35m%s\x1b[0m', 'Log entry:', newLogEntry);
             });
         })
         .catch(error => {
@@ -739,12 +807,13 @@ $(document).ready(function() {
         });
     }
 
-    initialize_log();
+       //clearHistoryResponse
+        socket.on('clearHistoryResponse', () => {
+           // Message to show history log cleared successfully
+           toastr.info('History log cleared!');
+           // Update the log
+            update_log();
+       });
 
-</script>
-
-
-
-
-</body>
-</html>
+   //update the log when the page loads
+    update_log();

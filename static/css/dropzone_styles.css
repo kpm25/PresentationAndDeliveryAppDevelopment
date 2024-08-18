@@ -280,3 +280,60 @@ body, html {
     grid-template-rows: repeat(8, 12.5%);
     overflow: auto; /* Add this line */
 }
+
+/*        toastr style*/
+
+#toast-container .toast-success {
+    background-color: #51A351;
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 6px #B9B9B9;
+}
+
+#toast-container .toast-success .toast-message {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/*        all toast messages in the screen vertical horizonatal middle*/
+#toast-container {
+    position: fixed;
+    top: 0; /* Align to the top of the screen */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust horizontal position to truly center it */
+
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+    z-index: 9999;
+}
+
+/* Media query for screens smaller than 600px (typical breakpoint for mobile devices) */
+@media only screen and (max-width: 600px) {
+  .container {
+    flex-direction: column; /* Stack the left and right halves vertically */
+  }
+
+  .left-half, .right-half {
+    height: 50vh; /* Each half takes up half the viewport height */
+  }
+
+  .right-side-container {
+    grid-template-columns: 1fr; /* Stack the labels and dropzones vertically */
+  }
+
+  .grade, .semester, .week {
+    font-size: 3vw; /* Use viewport width units for font size to keep text readable */
+  }
+
+  .left-header-label, .right-header-label {
+    font-size: 4vw; /* Increase header font size for readability */
+  }
+
+  .lesson-label {
+    font-size: 3.5vw; /* Increase lesson label font size for readability */
+  }
+
+
+
+}
