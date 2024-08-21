@@ -267,8 +267,8 @@ function testVariousANSI(){
 //let ansi = new Ansi();
 //console.log(ansi.text("hello world").redText().orangeBackground().underline().toString());
 
-  //function to test the ansi_text.js library
-  function testAnsiLibrary(){
+
+ function testAnsiLibrary(){
 
 
       let ansi = new Ansi();
@@ -321,7 +321,7 @@ function testVariousANSI(){
       //underlined
         console.log(ansi.underline().text("This is underlined text").getLine());
       //bold orange text on cyan background with strikethrough and italic
-        console.log(ansi.rgbBackground(0, 255, 255).rgbText(255, 165, 0).strikethroughOn().italic().bold().text("This is bold orange text on a cyan background with strikethrough and italic").getLine());
+        console.log(ansi.rgbBackground(0, 255, 255).rgbText(255, 165, 0).strikethroughOn().italic().bold().underline().text("This is bold orange text on a cyan background with strikethrough ,italic and underlined").getLine());
 
        //plain strike through text
            console.log(ansi.strikethroughOff().strikethroughOn().text("This is strikethrough text").getLine());
@@ -342,7 +342,7 @@ function testVariousANSI(){
 //       console.log(ansi.randomColorText("This is MORE random color text", 255, 255, 255).rgbBackground(255, 0, 0).getText());
       console.log(ansi.randomColorText("This is MORE random color text").getLine());
 
-       console.log(ansi.randomColorText("This is MORE random color text", 255, 255, 255).getLine());
+       console.log(ansi.randomColorText("This is MORE random color text", 255, 0, 255).getLine());
 
       //blinking random color text
         console.log(ansi.randomColorText("This is blinking random color text").getLine());
@@ -355,7 +355,6 @@ function testVariousANSI(){
   }
 
   testAnsiLibrary();
-
 
 
 

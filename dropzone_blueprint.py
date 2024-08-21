@@ -4,6 +4,9 @@ from werkzeug.utils import secure_filename
 import datetime
 import json
 import os
+from datetime import datetime
+
+print(f'...current working time: { datetime.now().strftime('%B %d, %Y at %I:%M:%S %p')}')
 
 # Create a Blueprint object
 dropzone = Blueprint('dropzone', __name__)
@@ -294,7 +297,9 @@ def log_history():
     path = request.json.get('path')
     filecount = request.json.get('filecount')
     # Get the current timestamp
-    timestamp = request.json.get('timestamp')  # datetime.datetime.now().isoformat()
+    # timestamp = request.json.get('timestamp')  # datetime.datetime.now().isoformat()
+    # Get the current timestamp
+    timestamp = datetime.now().strftime('%B %d, %Y at %I:%M:%S %p')
 
     # if filecount == 1 then it is for a single file and we can check if the file exists, if so ignore
     # if filecount == 1:

@@ -607,10 +607,8 @@ $(document).ready(function() {
 
               RefreshFileList(getSelectedLabel('lesson-label'));
 
-            console.log('\x1b[35m%s\x1b[0m', 'A file was uploaded');
-            //green color debug message
-            console.log('\x1b[32m%s\x1b[0m', 'A sound was played');
-
+            const ansi = new Ansi();
+           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('A file was upload').getLine());
 
         });
 
@@ -628,6 +626,10 @@ $(document).ready(function() {
 
             // Refresh the file list
             RefreshFileList(getSelectedLabel('lesson-label'));
+
+            const ansi = new Ansi();
+
+             console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('A file was deleted').getLine());
 
             // Play success sound
             playSuccessSound();

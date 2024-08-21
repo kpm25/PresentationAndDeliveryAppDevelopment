@@ -14,6 +14,8 @@ app = Flask(__name__, static_url_path='/static')
 # Register the blueprint with the main app
 app.register_blueprint(dropzone, url_prefix='/')
 
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024  # 2GB
+
 node_process: Optional[subprocess.Popen] = None
 
 
@@ -67,7 +69,7 @@ def stop_node_app():
         os.remove('node_server_flag.txt')
 
     # Get the current directory
-    #current_dir = os.path.dirname(os.path.realpath(__file__))
+    # current_dir = os.path.dirname(os.path.realpath(__file__))
     # Use os.path.realpath(__file__) if __file__ is defined, otherwise use os.getcwd()
     current_dir = os.path.dirname(os.path.realpath(__file__)) if '__file__' in globals() else os.getcwd()
 
@@ -102,7 +104,6 @@ def stop_node_app():
 #     app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
 
 
-
 # if __name__ == '__main__':
 #     print(f"Debug mode: {app.debug}")
 #     print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")
@@ -114,7 +115,6 @@ def stop_node_app():
 #         start_node_app()
 #         atexit.register(stop_node_app)
 #     app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
-
 
 
 # if __name__ == '__main__':
@@ -132,14 +132,14 @@ def stop_node_app():
 
 if __name__ == '__main__':
     print(f"Debug mode: {app.debug}")
-    print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")\
+    print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")
+    print(f"Flag file exists: {os.path.exists('node_server_flag.txt')}")
 
-    #does node server flag exist??
+    # does node server flag exist??
     if os.path.exists('node_server_flag.txt'):
         print("Node server flag exists")
     else:
         print("Node server flag does not exist")
-
 
     # Only start the Node.js app if the Flask app is not in debug mode
     # or if the current run is from the reloader

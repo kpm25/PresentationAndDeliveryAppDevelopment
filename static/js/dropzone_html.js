@@ -6,6 +6,8 @@ try {
     console.error('Error connecting to Socket.IO server:', error);
 }
 
+
+
 //toastr configuration
 toastr.options = {
     "closeButton": true,
@@ -181,6 +183,7 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
             parallelUploads: 50, // Increase this number
             clickable: "#uploadButton",
             maxFiles: null, // Allow unlimited files
+              maxFilesize: 2048, // Set the maximum file size to 2GB.
      /*       renameFile: function(file) {
                 var newName = `${selectedGrade}_${selectedSemester}_${selectedWeek}_${selectedLesson}_${file.name}`;
                 return newName;
@@ -232,7 +235,8 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
                                 socket.emit('fileAdded', acceptedFile);
                                 fileCount++; // Increment the counter for each successful upload
                                 // Log each individual file upload
-                                postLog( `$${acceptedFile}`, `${1}`, getLocalISOTime()); // Send the log to the server
+//                                postLog( `$${acceptedFile}`, `${1}`, getLocalISOTime()); // Send the log to the server
+                                postLog(acceptedFile, 1); // Send the log to the server
                                 //console log in green color
                                  console.log(`\x1b[32m File uploaded successfully: ${acceptedFile}\x1b[0m`);
                             });
@@ -262,9 +266,10 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
 //                appendLog(`${fileFolderPath} `, timestamp, `${fileCount}`); // Log the file path and count
 
                 if(fileCount > 1){
-                    postLog(`${fileFolderPath}`, `${fileCount}`,getLocalISOTime()); // Send the log to the server
+//                    postLog(`${fileFolderPath}`, `${fileCount}`,getLocalISOTime()); // Send the log to the server
+                    postLog(fileFolderPath, fileCount); // Send the log to the server
                 }
-                if(fileCount !== 0){
+                if(fileCount !== 0 ){
                      update_log();
                     playSuccessSound();
                       //write success message with file upload info in the dropzone:
@@ -705,14 +710,16 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
 
    //socket test
     function socketTest() {
+
         // Emit a 'test_event' event
           playSuccessSound();
           socket.emit('test_event');
         console.log('Test event emitted');
-        console.log('\x1b[31m%s\x1b[0m', 'A sound was played');
-        //cyan debug message
-        console.log('\x1b[36m%s\x1b[0m', 'A file was uploaded');
+          const ansi = new Ansi();
+           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('Test event emitted').getLine());
         toastr.success("A test event was fired");
+        console.log(new Ansi().rgbBackground(122, 122, 0).rgbText(0, 0, 255).text(`test message...`).getLine());
+
     }
 
     socket.on('test_event', (data) => {
@@ -723,6 +730,8 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
        // Listen for 'filesUploadedResponse' events from the server
     socket.on('filesUploadedResponse', function(fileData) {
       toastr.success(`Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`);
+          const ansi = new Ansi();
+           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text(`Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`).getLine());
       playSuccessSound();
         update_log(); // Update the log
     } );
@@ -734,6 +743,8 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
         socket.on('fileDeletedResponse', function(filepath) {
             // Message to show file deleted successfully
             toastr.success('File deleted successfully: ' + filepath);
+           const ansi = new Ansi();
+           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('File deleted successfully: ' + filepath).getLine());
 
             // Refresh the file list
             RefreshFileList(getSelectedLabel('lesson-label'));
@@ -752,14 +763,16 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
      //history log:
 
         //method to send post request to append log
-    function postLog(filepath, fileCount, timestamp) {
-        console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+    function postLog(filepath, fileCount) {
+ /*       console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
         //after removing $ from the filepath
         filepath = filepath.substring(1);
           console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
         console.log(`\x1b[33;1m after..xxxxxFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
         console.log(`\x1b[1;4;41m after..yyyyyFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
-        console.log(`\x1b[5m after..zzzzzile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+        console.log(`\x1b[5m after..zzzzzile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);*/
+          const ansi = new Ansi();
+        console.log(ansi.rgbBackground(122, 122, 0).rgbText(0, 0, 255).text(`filepath: ${filepath} fileCount: ${fileCount}`).getLine());
 
         // Send a POST request to the server to append the log
         fetch('/append_log', {
@@ -769,8 +782,8 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
             },
             body: JSON.stringify({
                 "path": filepath,
-                "filecount": Number(fileCount),
-                "timestamp": timestamp
+                "filecount": Number(fileCount)
+//                "timestamp": timestamp
             })
         })
         .then(response => {
@@ -828,6 +841,7 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
             update_log();
 
         })
+
     }
 
 
@@ -855,7 +869,9 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
             //loglines is the count of history log lines
             const logLinesOfSingleFileData = data.filter(log => log.filecount === 1).length;
             //log in yellow color
-            console.log('\x1b[33m%s\x1b[0m', 'log Lines Of Single File Data:', logLinesOfSingleFileData);
+
+            const ansi = new Ansi();
+           console.log(ansi.rgbBackground(122, 122, 0).rgbText(0, 0, 255).text(`log Lines Of Single File Data:: ${logLinesOfSingleFileData}`).getLine());
             //clear the history log
             historyLog.value = '';
             let count = logLinesOfSingleFileData;
