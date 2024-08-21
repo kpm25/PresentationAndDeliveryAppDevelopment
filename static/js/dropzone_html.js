@@ -1,7 +1,13 @@
-const socket = io.connect('http://192.168.1.24:4000');
+let socket; // Declare socket in an outer scope
 
-   //toastr configuration
-   toastr.options = {
+try {
+    socket = io.connect('https://192.168.1.24:5000');
+} catch (error) {
+    console.error('Error connecting to Socket.IO server:', error);
+}
+
+//toastr configuration
+toastr.options = {
     "closeButton": true,
     "debug": false,
     "newestOnTop": false,
@@ -335,27 +341,34 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
         }
     }
 
-    // Get the current month
-    const currentMonth = new Date().getMonth();
+    // Function to set default month
+    function setDefaultSemester() {
+            // Get the current month
+            const currentMonth = new Date().getMonth();
 
-    console.log("current month is: ", currentMonth);
+            console.log("current month is: ", currentMonth);
 
-    // Check if the current month is between March and August
-    if (currentMonth >= 2 && currentMonth <= 7) {
-        // Select Semester 2 by default
-        $('#semester2').addClass('selected');
-        console.log("semester 2 selected");
-        selectedSemester =  $('#semester2').val();
-        console.log("selected semester is: ", selectedSemester);
-    } else {
-        // Select Semester 1 by default
-        $('#semester1').addClass('selected');
-        console.log("semester 1 selected");
-        selectedSemester =  $('#semester1').val();
-        console.log("selected semester is: ", selectedSemester);
+            // Check if the current month is between March and August
+            if (currentMonth >= 2 && currentMonth <= 7) {
+                // Select Semester 2 by default
+                $('#semester2').addClass('selected');
+                console.log("semester 2 selected");
+                selectedSemester =  $('#semester2').val();
+                console.log("selected semester is: ", selectedSemester);
+            } else {
+                // Select Semester 1 by default
+                $('#semester1').addClass('selected');
+                console.log("semester 1 selected");
+                selectedSemester =  $('#semester1').val();
+                console.log("selected semester is: ", selectedSemester);
+            }
     }
 
+
 $(document).ready(function() {
+
+    // Set the default month
+    setDefaultSemester();
     // Initialize Dropzone instance
     initializeDropzone();
 
@@ -629,12 +642,54 @@ $(document).ready(function() {
 
     }
 
+
+
+
+/*        //if a grade is not selected, select the first grade
+        if (!selectedGrade) {
+            selectedGrade = 'Grade1';
+            $('#grade1').addClass('selected');
+        }
+         //click grade that is selected
+            if (selectedGrade) {
+                //get current selected grade with class selected
+                let currentSelectedGrade =  $(`#grade${selectedGrade === 'G1' ? 1 : selectedGrade === 'G2' ? 2 : selectedGrade === 'G3' ? 3 : selectedGrade === 'G4' ? 4 : 5}`);
+                //click the label  currentSelectedGrade
+                currentSelectedGrade.click();
+            }
+     //if a week is not selected, select the first week
+        if (!selectedWeek) {
+            selectedWeek = 'Week1';
+            $('#week1').addClass('selected');
+
+        }
+            //click week that is selected
+            if (selectedWeek) {
+                //get current selected week with class selected
+                let currentSelectedWeek =  $(`#week${selectedWeek === 'W1' ? 1 : selectedWeek === 'W2' ? 2 : selectedWeek === 'W3' ? 3 : selectedWeek === 'W4' ? 4 : selectedWeek === 'W5' ? 5 : selectedWeek === 'W6' ? 6 : selectedWeek === 'W7' ? 7 : selectedWeek === 'W8' ? 8 : selectedWeek === 'W9' ? 9 : selectedWeek === 'W10' ? 10 : selectedWeek === 'W11' ? 11 : selectedWeek === 'W12' ? 12 : selectedWeek === 'W13' ? 13 : selectedWeek === 'W14' ? 14 : selectedWeek === 'W15' ? 15 : selectedWeek === 'W16' ? 16 : 17}`);
+                //click the label  currentSelectedWeek
+                currentSelectedWeek.click();
+            }
+        //if a lesson is not selected, select the first lesson
+        if (!selectedLesson) {
+            selectedLesson = 'Lesson1';
+            $('#lesson1').addClass('selected');
+        }
+            //click lesson that is selected
+            if (selectedLesson) {
+                //get current selected lesson with class selected
+                let currentSelectedLesson =  $(`#lesson${selectedLesson === 'L1' ? 1 : selectedLesson === 'L2' ? 2 : selectedLesson === 'L3' ? 3 : selectedLesson === 'L4' ? 4 : selectedLesson === 'L5' ? 5 : selectedLesson === 'L6' ? 6 : selectedLesson === 'TP' ? 7 : 8}`);
+                //click the label  currentSelectedLesson
+                currentSelectedLesson.click();
+            }*/
+
+
 });
 
 
 
 
-//sockets code
+//SOCKET.IO CODE:
 //debug print socket version to console
 console.log("socket version: ", socket.io.engine.transport.query.EIO);
 console.log("socket protocol....: ", socket.io.engine.transport.query.transport);
@@ -671,6 +726,22 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
       playSuccessSound();
         update_log(); // Update the log
     } );
+
+
+
+
+        // Listen for 'fileDeletedResponse' events from the server
+        socket.on('fileDeletedResponse', function(filepath) {
+            // Message to show file deleted successfully
+            toastr.success('File deleted successfully: ' + filepath);
+
+            // Refresh the file list
+            RefreshFileList(getSelectedLabel('lesson-label'));
+
+            // Play success sound
+            playSuccessSound();
+             update_log(); // Update the log
+        });
 
 
 

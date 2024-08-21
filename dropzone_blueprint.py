@@ -6,7 +6,7 @@ import json
 import os
 
 # Create a Blueprint object
-dropzone = Blueprint('blueprint', __name__)
+dropzone = Blueprint('dropzone', __name__)
 
 # Define the upload folder relative to the project root
 UPLOAD_FOLDER = 'LessonFolders'
@@ -379,6 +379,17 @@ def delete_file():
         return jsonify({'message': 'File deleted successfully'}), 200
     else:
         return jsonify({'message': 'File not found'}), 404
+
+
+#route /page1 display image1.html
+@dropzone.route('/image1')
+def image1():
+    return render_template('image1.html')
+
+# route /page2 display image2.html
+@dropzone.route('/image2')
+def image2():
+     return render_template('image2.html')
 
 
 @dropzone.route('/get_file')

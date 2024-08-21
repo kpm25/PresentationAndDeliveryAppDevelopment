@@ -31,6 +31,49 @@ Magenta: \x1b[45m
 Cyan: \x1b[46m
 White: \x1b[47m
 
+https://gist.github.com/upsilun/4a85ab3bc7cf92e8acde720c6eb7ddea:
+
+// Text formatting
+"\033[0m" // Reset all text attributes to default
+"\033[1m" // Bold on
+"\033[2m" // Faint off
+"\033[3m" // Italic on
+"\033[4m" // Underline on
+"\033[5m" // Slow blink on
+"\033[6m" // Rapid blink on
+"\033[7m" // Reverse video on
+"\033[8m" // Conceal on
+"\033[9m" // Crossed-out on
+"\033[22m" // Bold off
+"\033[23m" // Italic off
+"\033[24m" // Underline off
+"\033[25m" // Blink off
+"\033[27m" // Reverse video off
+"\033[28m" // Conceal off
+"\033[29m" // Crossed-out off
+
+// Text color
+"\033[30m" // Set text color to black
+"\033[31m" // Set text color to red
+"\033[32m" // Set text color to green
+"\033[33m" // Set text color to yellow
+"\033[34m" // Set text color to blue
+"\033[35m" // Set text color to magenta
+"\033[36m" // Set text color to cyan
+"\033[37m" // Set text color to white
+"\033[39m" // Reset text color to default
+
+// Background color
+"\033[40m" // Set background color to black
+"\033[41m" // Set background color to red
+"\033[42m" // Set background color to green
+"\033[43m" // Set background color to yellow
+"\033[44m" // Set background color to blue
+"\033[45m" // Set background color to magenta
+"\033[46m" // Set background color to cyan
+"\033[47m" // Set background color to white
+"\033[49m" // Reset background color to default
+
 For example, if you want to print a string in green, you would use:
 
 console.log("\x1b[32m", "This text will be green");
@@ -105,4 +148,14 @@ console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath
 console.log(`\x1b[33;1m after..xxxxxFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
 console.log(`\x1b[1;4;41m after..yyyyyFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
 console.log(`\x1b[5m after..zzzzzile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+
+
+The ANSI color codes you listed are the standard ones for basic colors. However, many modern terminals support 256 colors, and some even support 24-bit true color.
+  For 256 colors, the code is \033[38;5;#m for foreground and \033[48;5;#m for background, where # is a number from 0 to 255.  For 24-bit true color,
+  the code is \033[38;2;R;G;Bm for foreground and \033[48;2;R;G;Bm for background, where R, G, and B are numbers from 0 to 255 representing the
+  red, green, and blue color channels.  Please note that not all terminals support 256 colors or 24-bit true color, and the actual colors displayed
+  may vary depending on the terminal's color scheme and settings.
+
+
+
 

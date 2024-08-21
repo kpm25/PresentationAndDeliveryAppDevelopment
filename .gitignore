@@ -3,6 +3,12 @@
 # Node related files
 /my_nodejs_app/node_modules/
 
+# certificates
+new_cert.csr
+new_cert.pem
+new_cert.pfx
+new_key_no_passphrase.pem
+
 # Ignore files in the dependencies directory except for the following files
 /static/dependencies/*
 
@@ -28,6 +34,8 @@ instance/
 
 # PyCharm related
 .idea/
+
+
 
 # Distribution / packaging
 .Python
@@ -81,6 +89,7 @@ celerybeat-schedule
 
 # virtualenv
 venv/
+.venv/
 ENV/
 
 # Spyder project settings

@@ -1,5 +1,10 @@
-   const socket = io.connect('http://192.168.1.24:4000');
+let socket; // Declare socket in an outer scope
 
+try {
+    socket = io.connect('https://192.168.1.24:5000');
+} catch (error) {
+    console.error('Error connecting to Socket.IO server:', error);
+}
    //toastr configuration will make in a base template later on and any other common code
    toastr.options = {
     "closeButton": true,
@@ -224,7 +229,7 @@ function RefreshFileList(selectedLabel) {
     // the same as the ones selected on this page
 
     //function to get lesson int from selectedLesson
-    function getLessonInt(lessonString) {
+/*    function getLessonInt(lessonString) {
         //if lesson is TP or MS return 7 or 8
         if (lessonString === "TeachPlans") {
             return 7;
@@ -235,10 +240,27 @@ function RefreshFileList(selectedLabel) {
         } else{
             return null;
         }
-    }
+    }*/
 
+   function getLessonInt(lessonString) {
+        if (!lessonString) {
+            return null;
+        }
+        if (lessonString === "TeachPlans") {
+            return 7;
+        } else if (lessonString === "MiscMaterials") {
+            return 8;
+        } else if (lessonString.includes('Lesson')){
+            return parseInt(lessonString.replace('Lesson', ''));
+        } else{
+            return null;
+        }
+    }
     //function to get Selected int id for semester, grade and week selected
     function getSelectedIntId(selectedString) {
+        if (!selectedString) {
+            return null;
+        }
         if (selectedString === "Semester1") {
             return 1;
         } else if (selectedString === "Semester2") {
@@ -309,7 +331,8 @@ $(document).ready(function() {
             let selectedSemesterInt = parseInt(params.get('currentSemester') || null);
             if (isNaN(selectedSemesterInt)) {
                 console.log("Invalid semester parameter in URL");
-                selectedSemester = null;
+//                selectedSemester = null;
+                setDefaultSemester();
             } else {
                 selectedSemester = getSemester(selectedSemesterInt);
                 // Set the selected semester button
@@ -325,7 +348,8 @@ $(document).ready(function() {
             let selectedGradeInt = parseInt(params.get('currentGrade') || null);
             if (isNaN(selectedGradeInt)) {
                 console.log("Invalid grade parameter in URL");
-                selectedGrade = null;
+//                selectedGrade = null;
+                setDefaultGrade();
             } else {
                 selectedGrade = getGrade(selectedGradeInt);
                 // Set the selected grade button
@@ -343,7 +367,8 @@ $(document).ready(function() {
             let selectedWeekInt = parseInt(params.get('currentWeek') || null);
             if (isNaN(selectedWeekInt)) {
                 console.error("Invalid week parameter in URL");
-                selectedWeek = null;
+//                selectedWeek = null;
+                setDefaultWeek();
             } else {
                 selectedWeek = getWeek(selectedWeekInt);
                 // Set the selected week button
@@ -360,7 +385,8 @@ $(document).ready(function() {
             let selectedLessonInt = parseInt(params.get('currentLesson') || null);
             if (isNaN(selectedLessonInt)) {
                 console.log("Invalid lesson parameter in URL");
-                selectedLesson = null;
+//                selectedLesson = null;
+                setDefaultLesson();
             } else {
                 selectedLesson = getLesson(selectedLessonInt);
                 // Set the selected lesson button
@@ -382,10 +408,100 @@ $(document).ready(function() {
         //debug after loading the page
         console.log(`#####selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemester}, selectedWeek: ${selectedWeek}, selectedLesson: ${selectedLesson}`);
 
+         // Function to set default month
+    function setDefaultSemester() {
+            // Get the current month
+            const currentMonth = new Date().getMonth();
+
+            console.log("current month is: ", currentMonth);
+
+            // Check if the current month is between March and August
+            if (currentMonth >= 2 && currentMonth <= 7) {
+                // Select Semester 2 by default
+                $('#semester2').addClass('selected');
+                console.log("semester 2 selected");
+                selectedSemester =  $('#semester2').val();
+                console.log("selected semester is: ", selectedSemester);
+            } else {
+                // Select Semester 1 by default
+                $('#semester1').addClass('selected');
+                console.log("semester 1 selected");
+                selectedSemester =  $('#semester1').val();
+                console.log("selected semester is: ", selectedSemester);
+            }
+    }
+
+
+      function setDefaultGrade(){
+                 //if a week is not selected, select the first week
+                if (!selectedGrade) {
+                    selectedGrade = 'Grade1';
+                    $('#grade1').addClass('selected');
+                }
+               //click grade that is selected
+                if (selectedGrade) {
+                    //get current selected grade with class selected
+                    let currentSelectedGrade =  $(`#grade${selectedGrade === 'Grade1' ? 1 : selectedGrade === 'Grade2' ? 2 : selectedGrade === 'Grade3' ? 3 : selectedGrade === 'Grade4' ? 4 : 5}`);
+                    //click the label  currentSelectedGrade
+                    currentSelectedGrade.click();
+                }
+       }
+
+      function setDefaultWeek(){
+           //if a week is not selected, select the first week
+            if (!selectedWeek) {
+                selectedWeek = 'Week1';
+                $('#week1').addClass('selected');
+
+            }
+            //click week that is selected
+            if (selectedWeek) {
+
+                //get current selected week with class selected
+                let currentSelectedWeek =  $(`#week${selectedWeek === 'Week1' ? 1 : selectedWeek === 'Week2' ? 2 : selectedWeek === 'Week3' ? 3 : selectedWeek === 'Week4' ? 4 : selectedWeek === 'Week5' ? 5 : selectedWeek === 'Week6' ? 6 : selectedWeek === 'Week7' ? 7 : selectedWeek === 'Week8' ? 8 : selectedWeek === 'Week9' ? 9 : selectedWeek === 'Week10' ? 10 : selectedWeek === 'Week11' ? 11 : selectedWeek === 'Week12' ? 12 : selectedWeek === 'Week13' ? 13 : selectedWeek === 'Week14' ? 14 : selectedWeek === 'Week15' ? 15 : selectedWeek === 'Week16' ? 16 : 17}`);
+                //click the label  currentSelectedWeek
+                currentSelectedWeek.click();
+
+            }
+      }
+
+      function setDefaultLesson() {
+        // If a lesson is not selected, select the first lesson
+        if (!selectedLesson) {
+            selectedLesson = 'Lesson1';
+            $('#lesson1').addClass('selected');
+        }
+        // Click lesson that is selected
+        if (selectedLesson) {
+            // Get current selected lesson with class selected
+            let currentSelectedLesson = $(`#lesson${selectedLesson === 'Lesson1' ? 1 : selectedLesson === 'Lesson2' ? 2 : selectedLesson === 'Lesson3' ? 3 : selectedLesson === 'Lesson4' ? 4 : selectedLesson === 'Lesson5' ? 5 : selectedLesson === 'Lesson6' ? 6 : selectedLesson === 'TeachPlans' ? 7 : 8}`);
+            // Click the label currentSelectedLesson
+            currentSelectedLesson.click();
+        }
+    }
+
+
+/*    //set the default semester, grade, week and lesson if not selected
+           if (!selectedSemester) {
+                setDefaultSemester();
+            }
+            if (!selectedGrade) {
+                setDefaultGrade();
+            }
+            if (!selectedWeek) {
+                setDefaultWeek();
+            }
+            if (!selectedLesson) {
+                setDefaultLesson();
+            }*/
+
+
          //Refresh the file list if a lesson is selected
         if (selectedLesson) {
             RefreshFileList(getSelectedLabel('lesson-label'));
         }
+
+
 
 
 
@@ -431,23 +547,45 @@ $(document).ready(function() {
 
 
 
+
      //function to reset the selections
-        function fetchAndDisplayFiles() {
-            //get a reference to the selected lesson  and call the labelClickEvent function
-            const selectedLesson = document.querySelector('.lesson-label.selected');
-            if (selectedLesson) {
-                labelClickEvent.call(selectedLesson);
-            }
-
-
+    function fetchAndDisplayFiles() {
+        //get a reference to the selected lesson  and call the labelClickEvent function
+        const selectedLesson = document.querySelector('.lesson-label.selected');
+        if (selectedLesson) {
+            labelClickEvent.call(selectedLesson);
         }
 
 
-       // Listen for 'playsound' events from the server
-        socket.on('playsound', () => {
-            console.log('Playing sound');
-            playSuccessSound();
+    }
+
+  //SOCKET IO RELATED CODE:
+
+   // Listen for 'playsound' events from the server
+    socket.on('playsound', () => {
+        console.log('Playing sound');
+        playSuccessSound();
+    });
+
+   //socket test
+    function socketTest() {
+        // Emit a 'test_event' event
+          playSuccessSound();
+          socket.emit('test_event');
+        console.log('Test event emitted');
+        console.log('\x1b[31m%s\x1b[0m', 'A sound was played');
+        //cyan debug message
+        console.log('\x1b[36m%s\x1b[0m', 'A file was uploaded');
+        toastr.success("A test event was fired");
+    }
+
+
+        socket.on('test_event', (data) => {
+           toastr.warning(data);
         });
+
+
+
 
 
      // Helper method to get selected label
@@ -576,3 +714,4 @@ $(document).ready(function() {
        });
        //update the log when the page loads
         update_log();
+

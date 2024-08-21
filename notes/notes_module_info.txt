@@ -1,0 +1,53 @@
+The shutil module in Python is used for high-level file operations. It comes under Python's standard utility modules.
+This module helps in automating process of copying and removal of files and directories.  Here are some common methods
+provided by the shutil module:
+shutil.copy(src, dst): Copies the file src to the file or directory dst.
+shutil.copy2(src, dst): Similar to shutil.copy(), but preserves file metadata (e.g., timestamps).
+shutil.copyfile(src, dst): Copies the contents of the file named src to a file named dst.
+shutil.move(src, dst): Moves a file or directory (src) to another location (dst).
+shutil.rmtree(path): Removes an entire directory tree; path must point to a directory (but not a symbolic link to a directory).
+These functions greatly simplify the process of working with files and directories, and are a key part of many Python programs
+that need to interact with the filesystem.
+
+
+The os module in Python can also perform file and directory operations. However, it provides a lower-level interface that can be more
+ complex and verbose to use for some tasks. For example, to copy a file with the os module, you would need to open the source and
+destination files and manually read from one and write to the other.  The shutil module, on the other hand, provides higher-level functions
+like shutil.copy() and shutil.copyfile() that handle these details for you, making it easier to perform common file operations.
+That's why it's often preferred for tasks like copying and moving files or directories.
+
+Here's an example of how you might copy a file with the os module:
+
+import os
+
+def copy_file(src, dst):
+    with open(src, 'rb') as fsrc:
+        with open(dst, 'wb') as fdst:
+            fdst.write(fsrc.read())
+
+copy_file('source.txt', 'destination.txt')
+
+
+And here's the equivalent code using the shutil module:
+
+import shutil
+
+shutil.copy('source.txt', 'destination.txt')
+
+import shutil
+
+shutil.copyfile('source.txt', 'destination.txt')
+
+
+The shutil.copy() and shutil.copyfile() functions in Python both copy files, but they behave slightly differently:
+shutil.copy(src, dst): This function copies the file src to the file or directory dst. If dst is a directory, a
+file with the same basename as src is created (or overwritten) in the directory specified. shutil.copy() also
+ preserves the file's permissions.
+
+shutil.copyfile(src, dst): This function copies the contents of the file named src to a file named dst.
+The destination location must be writable; otherwise, an IOError exception will be raised. If dst already
+exists, it will be replaced. Special files such as character or block devices and pipes cannot be created
+with shutil.copyfile().
+
+In summary, shutil.copy() can copy to a destination directory and preserves file permissions,
+while shutil.copyfile() only copies to a destination file and does not preserve permissions.
