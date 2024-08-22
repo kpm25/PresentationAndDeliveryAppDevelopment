@@ -1,3 +1,15 @@
+/*
+ideas to add:
+
+cleaner way to add text and color, example
+new Ansi().green().bgBlack().write('showProgressBarPopup()')
+
+....
+
+
+
+*/
+
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {

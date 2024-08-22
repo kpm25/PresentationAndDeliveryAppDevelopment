@@ -14,7 +14,7 @@ app = Flask(__name__, static_url_path='/static')
 # Register the blueprint with the main app
 app.register_blueprint(dropzone, url_prefix='/')
 
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024  # 2GB
+app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024 * 1024  # 4GB
 
 node_process: Optional[subprocess.Popen] = None
 

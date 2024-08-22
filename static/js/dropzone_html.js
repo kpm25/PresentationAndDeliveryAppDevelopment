@@ -8,6 +8,7 @@ try {
 
   let timeCompleted = 0;
    let uploadCompleted = false;
+   let intervalId = null;
 
 
 //toastr configuration
@@ -160,6 +161,7 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
     function playSuccessSound() {
         const audio = document.getElementById('successAudio');
         const muteCheckbox = document.getElementById('muteSound');
+       //   testProgressBar();
 
         // Only play the sound if the checkbox is not checked
         if (audio && (!muteCheckbox || !muteCheckbox.checked)) {
@@ -199,7 +201,7 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
             parallelUploads: 50, // Increase this number
             clickable: "#uploadButton",
             maxFiles: null, // Allow unlimited files
-              maxFilesize: 2048, // Set the maximum file size to 2GB.
+              maxFilesize: 4048, // Set the maximum file size to 4GB.
      /*       renameFile: function(file) {
                 var newName = `${selectedGrade}_${selectedSemester}_${selectedWeek}_${selectedLesson}_${file.name}`;
                 return newName;
@@ -424,7 +426,7 @@ $(document).ready(function() {
     setDefaultSemester();
     // Initialize Dropzone instance
     initializeDropzone();
-    let intervalId;
+
     // Add event listener for the upload button
     $('#startUpload').click(function() {
          if(canUploadFiles()){
@@ -469,7 +471,7 @@ $(document).ready(function() {
 //                                            }
                                         //amount of data to send to the server
                                         expectedCompleteFolderSize =  response.totalFileSize + response.initialSize;
-                                        alert(`Initial size is: ${response.initialSize}, totalFileSize: ${totalFileSizeToSend} , expectedCompleteFolderSize: ${expectedCompleteFolderSize}`);
+                                      //  alert(`Initial size is: ${response.initialSize}, totalFileSize: ${totalFileSizeToSend} , expectedCompleteFolderSize: ${expectedCompleteFolderSize}`);
                                         // Check if the Dropzone instance has files
                                             if (dropzoneInstance.files.length > 0) {
                                                 // The server responded successfully and there are files in the Dropzone, now you can start the upload process
@@ -478,15 +480,18 @@ $(document).ready(function() {
 
                                                 // Call getFolderSize every second
                                                 const interval = 500;
-                                                intervalId = setInterval(function() {
-                                                    getFolderSize({
-                                                        uploadDirToCheck: uploadDirToCheck,
-                                                        totalFileSize: totalFileSizeToSend,
-                                                        initialSize: response.initialSize,
-                                                        expectedCompleteFolderSize: expectedCompleteFolderSize,
-                                                        deltatime: interval
-                                                    });
-                                                }, interval);
+                                                if (intervalId === null) {
+
+                                                        intervalId = setInterval(function() {
+                                                            getFolderSize({
+                                                                uploadDirToCheck: uploadDirToCheck,
+                                                                totalFileSize: totalFileSizeToSend,
+                                                                initialSize: response.initialSize,
+                                                                expectedCompleteFolderSize: expectedCompleteFolderSize,
+                                                                deltatime: interval
+                                                            });
+                                                        }, interval);
+                                                }
                                             } else {
                                                 // There are no files in the Dropzone, refuse to start the upload process
                                                 alert('No files to upload. Please add files to the Dropzone before starting the upload process.');
@@ -556,7 +561,7 @@ $(document).ready(function() {
 */
 
 
-    function getFolderSize(params) {
+   /* function getFolderSize(params) {
 
 
 
@@ -569,37 +574,76 @@ $(document).ready(function() {
                     url: `https://192.168.1.24:5000/getFolderSize?path=${encodeURIComponent(params.uploadDirToCheck)}`,
                     type: 'GET',
                     success: function(response) {
-                        console.log(`Current folder size: ${response.folderSize}`);
-                        const percentage = (response.folderSize / params.totalFileSize) * 100;
-                        console.log(`Upload completion: ${percentage}% , time completed: ${timeCompleted}`);
-                        console.log(ansi.rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}`).getLine());
+                         if(intervalId !== null){
+                                 try{
+                                          console.log(`Current folder size: ${response.folderSize}`);
+                                         const percentage = (response.folderSize / params.totalFileSize) * 100;
+                                         console.log(`Upload completion: ${percentage}% , time completed: ${timeCompleted}`);
+                                         console.log(ansi.rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}`).getLine());
 
-                       /* if(response.folderSize >= params.expectedCompleteFolderSize || timeCompleted > 10000){
-                            console.log(`Upload completion: ${percentage}%`);
-                            uploadCompleted = true; // Set the flag to true when the upload is complete
-                        } else {
-                            // Only schedule the next call if the upload is not complete
-                            timeCompleted += params.deltatime;
-                            console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`Seconds: ${seconds}`).getLine());
-                            setTimeout(makeRequest, params.deltatime);
-                        }*/
-                         if(response.isComplete){
-                            console.log(`Upload completion: ${percentage}%`);
-//                            uploadCompleted = true; // Set the flag to true when the upload is complete
-//                             uploadStarted = false; // Set the flag to false when the upload is complete
-                             //break the interval
-                            clearInterval(intervalId);
-                                  timeCompleted = 0;
-                                  uploadCompleted = false;
-//                             //refresh the page
-//                            location.reload();
-                        } else {
-                            // Only schedule the next call if the upload is not complete
-                            timeCompleted += params.deltatime;
-                            console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`timeCompleted: ${timeCompleted}`).getLine());
-                            setTimeout(makeRequest, params.deltatime);
-                        }
-                    },
+
+
+
+                                         // Show the progress bar popup when the upload starts
+                                         if (!isProgressBarRunning) {
+                                             showProgressBarPopup();
+                                         }
+
+                                         // Calculate the number of squares to show
+                                         const numberOfSquaresToShow = Math.floor(percentage);
+
+                                         // Get the current number of squares in the progress bar
+                                         let progressBarPopup = document.getElementById('progressBarPopup');
+                                         let currentNumberOfSquares = progressBarPopup ? progressBarPopup.children[0].children.length : 0;
+
+                                         // Add squares to the progress bar popup based on the percentage progress
+                                         for (let i = currentNumberOfSquares; i < numberOfSquaresToShow; i++) {
+                                             addSquareToProgressBarPopup(i + 1); // i + 1 because square IDs start from 1
+                                         }
+
+
+                                         *//* if(response.folderSize >= params.expectedCompleteFolderSize || timeCompleted > 10000){
+                                                console.log(`Upload completion: ${percentage}%`);
+                                                uploadCompleted = true; // Set the flag to true when the upload is complete
+                                            } else {
+                                                // Only schedule the next call if the upload is not complete
+                                                timeCompleted += params.deltatime;
+                                                console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`Seconds: ${seconds}`).getLine());
+                                                setTimeout(makeRequest, params.deltatime);
+                                            }*//*
+                                         if(response.isComplete){
+                                             console.log(`Upload completion: ${percentage}%`);
+                                             //                            uploadCompleted = true; // Set the flag to true when the upload is complete
+                                             //                             uploadStarted = false; // Set the flag to false when the upload is complete
+                                             //break the interval
+                                             //                              clearInterval(intervalId);
+                                             intervalId = null;
+                                             timeCompleted = 0;
+                                             uploadCompleted = false;
+                                             //                             //refresh the page
+                                             //                            location.reload();
+                                             // Hide the progress bar popup when the upload is complete
+                                             hideProgressBarPopup();
+
+                                             //stop the interval method
+                                             clearInterval(intervalId);
+                                         } else {
+                                             // Only schedule the next call if the upload is not complete
+                                             timeCompleted += params.deltatime;
+                                             console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`timeCompleted: ${timeCompleted}`).getLine());
+                                             setTimeout(makeRequest, params.deltatime);
+                                         }
+                                     }else{
+                                         console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Interval id is null`).getLine());
+
+                                     }
+                         }catch(error){
+                                console.error('Error getting folder size:', error);
+
+                                }
+
+
+                      },
                     error: function(jqXHR, textStatus, errorThrown) {
                         console.error('Error getting folder size:', errorThrown);
                     }
@@ -609,7 +653,59 @@ $(document).ready(function() {
 
         // Start the first request
         makeRequest();
-    }
+    }*/
+
+    function getFolderSize(params) {
+                function makeRequest() {
+                    if (!uploadCompleted) {
+                        $.ajax({
+                            url: `https://192.168.1.24:5000/getFolderSize?path=${encodeURIComponent(params.uploadDirToCheck)}`,
+                            type: 'GET',
+                            success: function(response) {
+                                try {
+                                    console.log(`Current folder size: ${response.folderSize}`);
+                                    const percentage = (response.folderSize / params.totalFileSize) * 100;
+                                    console.log(`Upload completion: ${percentage}% , time completed: ${timeCompleted}`);
+                                    console.log(ansi.rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}`).getLine());
+
+                                    if (!isProgressBarRunning) {
+                                        showProgressBarPopup();
+                                    }
+
+                                    const numberOfSquaresToShow = Math.floor(percentage);
+                                    let progressBarPopup = document.getElementById('progressBarPopup');
+                                    let currentNumberOfSquares = progressBarPopup ? progressBarPopup.children[0].children.length : 0;
+
+                                    for (let i = currentNumberOfSquares; i < numberOfSquaresToShow; i++) {
+                                        addSquareToProgressBarPopup(i + 1);
+                                    }
+
+//                                    if(response.isComplete){
+                                    if(uploadCompleted){
+                                        console.log(`Upload completion: ${percentage}%`);
+                                        timeCompleted = 0;
+                                        uploadCompleted = false;
+                                        hideProgressBarPopup();
+//                                        clearInterval(intervalId);
+                                        //clear in socket response for uploaded files
+                                    } else {
+                                        timeCompleted += params.deltatime;
+                                        console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`timeCompleted: ${timeCompleted}`).getLine());
+                                        setTimeout(makeRequest, params.deltatime);
+                                    }
+                                } catch(error) {
+                                    console.error('Error getting folder size:', error);
+                                }
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.error('Error getting folder size:', errorThrown);
+                            }
+                        });
+                    }
+                }
+
+    makeRequest();
+}
 
           // Function to check files can be uploaded by checking if exactly one of a semester, grade, week, and lesson has been selected
         function canUploadFiles() {
@@ -943,7 +1039,13 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
           const ansi = new Ansi();
            console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text(`Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`).getLine());
       playSuccessSound();
-        update_log(); // Update the log
+        uploadCompleted = true; // Set the flag to true when the upload is complete
+          clearInterval(intervalId);
+
+        console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text(`Upload completed: ${fileData.path}, count: ${fileData.count}, uploadCompleted: ${uploadCompleted}`).getLine());
+        toastr.success(`Upload completed: ${fileData.path}, count: ${fileData.count}, uploadCompleted: ${uploadCompleted}`);
+
+         update_log(); // Update the log
     } );
 
 

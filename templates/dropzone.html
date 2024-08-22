@@ -66,6 +66,64 @@
             float: right;
             margin-bottom: 3px;
         }
+/*       #progressBarPopup {
+            position: fixed; *//* Position the progress bar at a fixed spot in the viewport *//*
+            top: 50%; *//* Position the progress bar in the middle of the viewport *//*
+            left: 50%;
+            transform: translate(-50%, -50%); *//* Center the progress bar *//*
+            width: 500px; *//* Set a width for the progress bar *//*
+            height: 20px; *//* Set a height for the progress bar *//*
+            background-color: #ddd; *//* Set a background color for the progress bar *//*
+            z-index: 1000;
+        }
+
+        .progress_square {
+            width: 10px;
+            height: 10px;
+            background-color: #00FF00; *//* florescent green *//*
+            display: inline-block; *//* Make the squares sit side-by-side *//*
+        }
+        .progress-bar {
+            display: flex;
+        }*/
+        #progressBarPopup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+/*            width: 80%; *//* Increase the width of the progress bar */
+/*         100* 10px +(99*2px) + 20px */
+
+            width:  1202px; /* Increase the width of the progress bar */
+            height: 40px;
+            background-color: #ddd;
+            z-index: 1000;
+/*            margin-right: 100px;*/
+
+        }
+
+        .progress_square {
+            width: 10px;
+            height: 36px;
+            background-color: #00FF00;
+            display: inline-block;
+            margin-right: 1px; /* Add a 1px gap between the squares */
+            margin-left: 1px; /* Add a 1px gap between the squares */
+            margin-top: 2px; /* Add a 1px gap between the squares */
+
+        }
+
+        .progress-bar {
+            display: flex;
+            align-items: center; /* Center the squares vertically */
+            justify-content: flex-start; /* Start the squares from the left */
+
+            margin-left: 2px;
+            margin-right: 2px;
+            /*margin-top: 10px;
+            margin-bottom: 10px;*/
+
+        }
     </style>
     <link rel="stylesheet" href="static/css/editable_table_styles.css" type="text/css">
 </head>
@@ -206,9 +264,161 @@
 
 
 
+<script>
+
+
+    let isProgressBarRunning = false;
+
+    //create progress bar popup
+    function createProgressBarPopup() {
+        let progressBarPopup = document.getElementById('progressBarPopup');
+        if (progressBarPopup) {
+            return;
+        }
+        progressBarPopup = document.createElement('div');
+        progressBarPopup.id = 'progressBarPopup';
+        progressBarPopup.style.display = 'none';
+        progressBarPopup.innerHTML = `
+            <div class="progress-bar">
+            </div>
+        `;
+        document.body.appendChild(progressBarPopup);
+    }
 
 
 
+    function showProgressBarPopup() {
+        let progressBarPopup = document.getElementById('progressBarPopup');
+           //debugging
+        console.log(new Ansi().redText().whiteBackground().bold().text('showProgressBarPopup.......').getLine());
+        if (!progressBarPopup) {
+            createProgressBarPopup();
+            progressBarPopup = document.getElementById('progressBarPopup');
+        }
+        // Check if progressBarPopup exists before trying to access its style property
+        if (progressBarPopup) {
+            progressBarPopup.style.display = 'block';
+        }
+    }
+
+
+
+    //hide progress bar popup
+    function hideProgressBarPopup() {
+        let progressBarPopup = document.getElementById('progressBarPopup');
+        //debugging
+        console.log(new Ansi().redText().whiteBackground().bold().text('hideProgressBarPopup.......').getLine());
+        if (!progressBarPopup) {
+            return;
+        }
+        // Remove all squares from the progress bar
+        removeAllSquaresFromProgressBarPopup();
+        progressBarPopup.style.display = 'none';
+    }
+
+
+
+        //add a square to the progress bar popup
+    function addSquareToProgressBarPopup(id) {
+        let progressBarPopup = document.getElementById('progressBarPopup');
+          //debugging
+            console.log(new Ansi().redText().whiteBackground().bold().text('removeSquareFromProgressBarPopup.......').getLine());
+        if (!progressBarPopup) {
+            createProgressBarPopup();
+            progressBarPopup = document.getElementById('progressBarPopup');
+        }
+        let progressSquare = document.createElement('div');
+        progressSquare.className = 'progress_square';
+        progressSquare.id = `square-${id}`;
+        progressBarPopup.children[0].appendChild(progressSquare);
+    }
+
+    //remove a square from the progress bar popup
+    function removeSquareFromProgressBarPopup() {
+        let progressBarPopup = document.getElementById('progressBarPopup');
+        //debugging
+        console.log(new Ansi().redText().whiteBackground().bold().text('removeSquareFromProgressBarPopup.......').getLine());
+        if (!progressBarPopup) {
+            return;
+        }
+        let progressSquares = progressBarPopup.children[0].children;
+        if (progressSquares.length === 0) {
+            return;
+        }
+        progressBarPopup.children[0].removeChild(progressSquares[progressSquares.length - 1]);
+    }
+
+
+
+    //remove all squares from the progress bar popup
+    function removeAllSquaresFromProgressBarPopup() {
+        //debugging
+        console.log(new Ansi().redText().whiteBackground().bold().text('removeAllSquaresFromProgressBarPopup.......').getLine());
+        let progressBarPopup = document.getElementById('progressBarPopup');
+        if (!progressBarPopup) {
+            return;
+        }
+        progressBarPopup.children[0].innerHTML = '';
+    }
+
+
+
+            function testProgressBar() {
+                    // If the progress bar is already running, return immediately
+                    if (isProgressBarRunning) {
+                        return;
+                    }
+
+                    // Set the flag to true
+                    isProgressBarRunning = true;
+
+                    // Show the progress bar popup
+                    showProgressBarPopup();
+
+                    // Add squares to the progress bar at intervals of 100 milliseconds
+                    let i = 1;
+                    let intervalId = setInterval(function() {
+                        if (i <= 100) {
+                            try {
+                                if (i<=100){
+                                      addSquareToProgressBarPopup(i);
+                                    // Make the square visible
+                                    document.getElementById(`square-${i}`).style.display = 'block';
+                                }
+
+                            } catch (error) {
+                                console.log(new Ansi().redText().whiteBackground().bold().text(`Error: ${error.message}`).getLine());
+                            }
+                            //flex the square vertically between top and bottom of uts parent, so its centered vertically
+                            // document.getElementById(`square-${i}`).style.alignSelf = 'center';
+                            console.log(new Ansi().yellowText().blueBackground().bold().text(`Square ${i} added`).getLine());
+                            //debug the number of squares in the progress bar
+                            console.log(new Ansi().blueText().orangeBackground().bold().text(`Number of children squares: ${document.getElementById('progressBarPopup').children[0].children.length}`).getLine());
+                            i++;
+                        } else {
+                            // Log when the interval is being cleared
+                            console.log(new Ansi().yellowText().redBackground().bold().text('Interval cleared').getLine());
+
+                            // After all squares have been added, hide the progress bar and clear the interval
+                            hideProgressBarPopup();
+                            clearInterval(intervalId);
+
+                            //on completion debug with green background, yellow text, BOLD
+                            console.log(new Ansi().yellowText().greenBackground().bold().text('Progress bar completed').getLine());
+
+                            // Reset the flag to false
+                            isProgressBarRunning = false;
+                        }
+                    }, 20);
+                }
+
+
+</script>
+
+<div id="progressBarPopup" style="display: none;">
+    <div class="progress-bar">
+    </div>
+</div>
 
 </body>
 </html>
