@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint, request, jsonify, render_template, redirect, url_for, g, current_app, send_file
-from helper_file_methods import is_audio, is_image, is_compressed, is_video, save_file, setup_lesson_folders
+from helper_file_methods import is_audio, is_image, is_compressed, is_video, save_file, setup_lesson_folders, format_bytes, reverse_format_bytes
 from werkzeug.utils import secure_filename
 import datetime
 import json

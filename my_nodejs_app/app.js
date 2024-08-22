@@ -126,6 +126,14 @@ io.on('connection', (socket) => {
            io.emit('filesUploadedResponse', fileData);
         //socket.emit('filesUploadedResponse',  {path: fileData.path, count: fileData.count});
 
+        //rainbow color debug message with cyan background
+         console.log(ansi.randomColorText(` socket.on('filesUploaded', (fileData) =>  Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`, 0, 255, 255).getLine());
+        // console.clear();
+
+            //wait 0.5 seconds and then clear the console
+          setTimeout(() => {
+            console.clear();
+           }, 3000);
     });
 
     //test "test_event" event in green debug color
@@ -157,10 +165,11 @@ io.on('connection', (socket) => {
         // Broadcast a 'fileAdded' event to all other clients
 
 //         socket.broadcast.emit('fileAddedResponse', filepath);
-        io.emit('fileAddedResponse', filepath);  //test for all clients temporarily
+         io.emit('fileAddedResponse', filepath);  //test for all clients temporarily
          // socket.emit('fileAddedResponse', file);
         //magenta color debug message
         console.log('\x1b[35m%s\x1b[0m', 'A file was added');
+
     } );
 
     // Listen for 'fileDeleted' events from this client
@@ -212,7 +221,7 @@ io.on('connection', (socket) => {
 app.post('/getInitialSize', (req, res) => {
  /*   if(!uploadeComplete){
         console.log(ansi.redBackground().whiteText().italic().bold().underline().text(`Cant get initial size,because upload is not complete`).getLine());
-        return res.json({ message: 'Upload is not complete' });
+    return res.json({ message: 'Upload is not complete' });
     }*/
   //   if(uploadComplete){ //if upload, this means that the upload was completed and we can get get another upload
         const data = req.body;
@@ -247,7 +256,8 @@ app.get('/getFolderSize', (req, res) => {
     const uploadCompleted =  calculatedFolderSize   >= expectedCompletionSize;
     if(uploadCompleted && !uploadComplete){
 
-        console.log(ansi.greenBackground().whiteText().italic().bold().underline().text(`Upload is complete, folder size is: ${calculatedFolderSize}, expectedCompletionSize is: ${expectedCompletionSize}`).getLine() );
+       //   console.log(ansi.randomColorText(`Upload is complete, folder size is: ${calculatedFolderSize}, expectedCompletionSize is: ${expectedCompletionSize}`).getLine() );
+          console.log(ansi.randomColorText(`Upload is complete, folder size is: ${calculatedFolderSize}, expectedCompletionSize is: ${expectedCompletionSize}`, 255, 0, 255).getLine());
        //initailize the variables
         initialSize = 0;
         expectedCompletionSize = 0;
@@ -256,14 +266,20 @@ app.get('/getFolderSize', (req, res) => {
 
         return res.json({ message: 'Upload is complete' , folderSize: calculatedFolderSize , isComplete: true });
 
-    }else{
+    } else{
              const folderPath = req.query.path; // Get the folder path from the query parameters
             const folderSize = calculateFolderSize(folderPath); // Use your existing function to calculate the folder size
             //debug in cyan color yellow text
-            console.log(ansi.cyanBackground().yellowText().italic().bold().underline().text(`\n\nFolder size is: ${folderSize} , folder path is: ${folderPath}\n\n`).getLine());
-            res.json({ folderSize: folderSize });
-    }
+             //  console.log(ansi.cyanBackground().yellowText().italic().bold().underline().text(`\n\nFolder size is: ${folderSize} , folder path is: ${folderPath}\n\n`).getLine());
+                console.log(ansi.randomColorText(`\n\nFolder size is: ${folderSize} , folder path is: ${folderPath}\n\n`, 255, 0, 255).getLine());
 
+             res.json({ folderSize: folderSize });
+           //send socket message to reload the page
+           ///  io.emit('reloadPage');
+             //cls the console
+       //     console.clear();
+
+    }
 
 });
 

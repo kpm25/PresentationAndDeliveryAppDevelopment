@@ -6,6 +6,9 @@
 # a flag file indicating that the server is running
 node_server_flag.txt
 
+#history log
+history.log
+
 # certificates
 new_cert.csr
 new_cert.pem

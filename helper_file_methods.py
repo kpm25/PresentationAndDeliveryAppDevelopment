@@ -1,4 +1,6 @@
 import os
+import math
+
 
 def setup_folder_structure():
     lesson_folders = ['lesson1', 'lesson2', 'lesson3']
@@ -14,7 +16,6 @@ def setup_folder_structure():
         for file_type in file_types:
             type_path = os.path.join(lesson_path, file_type)
             os.makedirs(type_path, exist_ok=True)
-
 
 
 # def setup_lesson_folders():
@@ -63,7 +64,7 @@ def setup_lesson_folders():
     semesters = ['Semester1', 'Semester2']
     grades = ['Grade' + str(i) for i in range(1, 6)]
     weeks = ['Week' + str(i) for i in range(1, 18)]
-    lessons = ['Lesson' + str(i) for i in range(1, 7)] + ['TeachPlans', 'MiscMaterials' ]
+    lessons = ['Lesson' + str(i) for i in range(1, 7)] + ['TeachPlans', 'MiscMaterials']
 
     base_dir = 'LessonFolders'
     os.makedirs(base_dir, exist_ok=True)
@@ -84,6 +85,7 @@ def setup_lesson_folders():
                     lesson_path = os.path.join(week_path, lesson)
                     os.makedirs(lesson_path, exist_ok=True)
 
+
 # This version of the function will create a directory structure like this:
 # LessonFolders/
 #     Semester1/
@@ -97,7 +99,7 @@ def setup_lesson_folders():
 #         ...
 
 
-#option to run the function
+# option to run the function
 
 
 # helper methods
@@ -146,8 +148,34 @@ def save_file(file, dest_folder, file_type, file_prefix):
     file_path = os.path.join(full_dest_folder, filename_with_prefix)
     file.save(file_path)
     print(f'\033[37m ==> Saved file to: {file_path}' + '\033[0m')  # Print the path in white color
-    #return the file name and path
+    # return the file name and path
     return filename_with_prefix
+
+
+# converting methods:
+def reverse_format_bytes(size_str):
+    sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    size, unit = size_str.split(' ')
+
+    i = sizes.index(unit)
+    if i == -1:
+        raise ValueError('Invalid unit')
+
+    _bytes = round(float(size) * math.pow(1024, i), 1)
+    return _bytes
+
+
+def format_bytes(_bytes, decimals=2):
+    if _bytes == 0:
+        return '0 Bytes'
+
+    k = 1024
+    dm = decimals if decimals > 0 else 0
+    sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+    i = math.floor(math.log(_bytes, k))
+
+    return f"{round(_bytes / math.pow(k, i), dm)} {sizes[i]}"
 
 
 if __name__ == '__main__':

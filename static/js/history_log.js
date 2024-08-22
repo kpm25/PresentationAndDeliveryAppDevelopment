@@ -178,7 +178,7 @@
 
 
                 //method to send post request to append log
-    function postLog(filepath, fileCount) {
+    function postLog(filepath, fileCount,filesize) {
 
   //      console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
         //after removing $ from the filepath
@@ -199,7 +199,8 @@
             },
             body: JSON.stringify({
                 "path": filepath,
-                "filecount": Number(fileCount)
+                "filecount": Number(fileCount),
+                "filesize": filesize
 //                "timestamp": timestamp
             })
         })
