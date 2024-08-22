@@ -7,6 +7,7 @@
      <link rel="stylesheet" href="static/css/dropzone_styles.css">
         <script src="/static/dependencies/jquery-3.6.0.min.js"></script>
         <script src="/static/dependencies/socket.io.min.js"></script>
+     <script src="static/dependencies/ansi_text.js"></script>
 
        <!--    toastr-->
     <script src="/static/dependencies/toastr.min.js"></script>
@@ -27,11 +28,11 @@
         background-color: #ddd; /* Change the background color */
         color: #333; /* Change the text color */
     }
-    #historyLog {
+/*    #historyLog {
         width: 100%;
-        height: 200px; /* Adjust as needed */
+        height: 200px; *//* Adjust as needed *//*
         overflow: auto;
-    }
+    }*/
         .tiny-select-button {
             padding: 1px 4px; /* Reduce padding */
             margin: 2px;
@@ -43,6 +44,7 @@
             margin-bottom: 3px;
         }
     </style>
+        <link rel="stylesheet" href="static/css/editable_table_styles.css" type="text/css">
 </head>
 <body>
 
@@ -125,9 +127,13 @@
                         <input type="checkbox" id="muteSound" name="muteSound">
                         <label for="muteSound" style="font-size: 0.6em; text-align: center; font-family: Arial, sans-serif;">Mute Sound</label>
                     </div>
+                   <button class="tiny-select-button" onclick="increaseHistoryLogFontSize()">+</button>
+                     <button class="tiny-select-button" onclick="decreaseHistoryLogFontSize()">-</button>
                     <button class="tiny-select-button" onclick="clearHistoryLog()">Clear History Log</button>
+
                 </h2>
-                <textarea id="historyLog" readonly></textarea>
+<!--                <textarea id="historyLog" readonly></textarea>-->
+                <table id="history_log_editableTable" class="editable-table"> </table>
             </div>
         </div> <!-- left-half -->
 
@@ -155,10 +161,13 @@
 
     </div>
 
+ <script src="static/js/display_html.js"></script>
+<script src="static/js/history_log.js"></script>
+
     <script src="static/js/display_files.js"></script>
 
- <script src="static/js/display_html.js"></script>
-  <script src="static/dependencies/ansi_text.js"></script>
+
+
 
 
 

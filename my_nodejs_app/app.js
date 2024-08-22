@@ -8,6 +8,7 @@ const express = require('express');
 //const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const path = require('path');
 const socketIO = require('socket.io');
 const cors = require('cors'); // Require the cors package
 console.log('Enter app.js file.....');
@@ -31,7 +32,9 @@ const NODEJS_HOST = process.env.NODEJS_HOST || 'localhost';
 
 // Get the client-side application's origin from an environment variable
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `https://localhost:4000`;
-
+let uploadComplete = true;
+let initialSize = 0;
+let expectedCompletionSize = 0;
 
 console.log(ansi.yellowBackground().blackText().italic().bold().underline().text(`   client origin is  ${CLIENT_ORIGIN}   `).getLine());
 
@@ -39,7 +42,7 @@ console.log(ansi.yellowBackground().blackText().italic().bold().underline().text
 app.use(cors({ origin: CLIENT_ORIGIN }));
 
 
-
+app.use(express.json());
 
 //certificate and key files
 const options = {
@@ -190,7 +193,108 @@ io.on('connection', (socket) => {
         io.emit('clearHistoryResponse'); //test for all clients temporarily
     });
 
+/*      socket.on('getInitialSize', (data) => {
+          console.log('\n\n\n\n'+`Data received from client: ${data.uploadDir}, ${data.totalFileSize}`+'\n\n\n\n');
+          const initialSize = calculateFolderSize(data.uploadDir);
+
+             console.log(`Initial size is: ${data.initialSize}, data.uploadDir is: ${data.uploadDir} , totalSize to reach  is: ${data.totalFileSize}`);
+            // Calculate the initial size of the upload directory
+            //const initialSize = calculateInitialSize(data.uploadDir);  // Replace this with your function to calculate the initial size
+         // Replace this with your function to calculate the initial size
+//        socket.emit('initialSize', { initialSize: initialSize });
+          console.log(`Initial size is: ${initialSize}, data.uploadDir is: ${data.uploadDir} , totalSize to reach  is: ${data.totalFileSize}`);
+          io.emit('initialSize', { initialSize: initialSize , totalFileSize:totalFileSizeToSend});
+     });*/
+
 });
+
+// Function to calculate the initial size of the upload directory
+app.post('/getInitialSize', (req, res) => {
+ /*   if(!uploadeComplete){
+        console.log(ansi.redBackground().whiteText().italic().bold().underline().text(`Cant get initial size,because upload is not complete`).getLine());
+        return res.json({ message: 'Upload is not complete' });
+    }*/
+  //   if(uploadComplete){ //if upload, this means that the upload was completed and we can get get another upload
+        const data = req.body;
+        initialSize = calculateFolderSize(data.uploadDir);
+        expectedCompletionSize = data.totalFileSize + initialSize;
+        console.log('\n\n\n\n'+`Data received from client: ${data.uploadDir}, ${data.totalFileSize}`+'\n\n\n\n');
+
+        console.log(`Initial size is: ${initialSize}, data.uploadDir is: ${data.uploadDir} , totalSize to reach  is: ${data.totalFileSize} , expectedCompletionSize is: ${expectedCompletionSize}`);
+        // Add a new property 'uploadStarted' to the response
+        res.json({
+            initialSize: initialSize,
+            totalFileSize: data.totalFileSize,
+            uploadStarted: false,
+            expectedCompletionSize: expectedCompletionSize
+        });
+        uploadComplete = false;
+    // }
+/*else {
+        // If the upload has already started, return a response indicating so
+        res.json({
+            message: 'Upload has already started',
+            uploadStarted: true
+
+        });
+    }*/
+});
+
+// Function to calculate the size of a folder
+app.get('/getFolderSize', (req, res) => {
+    //is folder size greater to or equal to expectedCompletionSize, if so then upload is complete and return the folder size
+    const calculatedFolderSize = calculateFolderSize(req.query.path);
+    const uploadCompleted =  calculatedFolderSize   >= expectedCompletionSize;
+    if(uploadCompleted && !uploadComplete){
+
+        console.log(ansi.greenBackground().whiteText().italic().bold().underline().text(`Upload is complete, folder size is: ${calculatedFolderSize}, expectedCompletionSize is: ${expectedCompletionSize}`).getLine() );
+       //initailize the variables
+        initialSize = 0;
+        expectedCompletionSize = 0;
+         uploadComplete = true;
+
+
+        return res.json({ message: 'Upload is complete' , folderSize: calculatedFolderSize , isComplete: true });
+
+    }else{
+             const folderPath = req.query.path; // Get the folder path from the query parameters
+            const folderSize = calculateFolderSize(folderPath); // Use your existing function to calculate the folder size
+            //debug in cyan color yellow text
+            console.log(ansi.cyanBackground().yellowText().italic().bold().underline().text(`\n\nFolder size is: ${folderSize} , folder path is: ${folderPath}\n\n`).getLine());
+            res.json({ folderSize: folderSize });
+    }
+
+
+});
+
+function calculateFolderSize(dirPath) {
+    let totalSize = 0;
+
+    // Check if the directory exists
+    if (fs.existsSync(dirPath)) {
+        // Synchronously read the directory
+        const files = fs.readdirSync(dirPath);
+
+        // Iterate over each file
+        for (let file of files) {
+            // Get the full path of the file
+            const filePath = path.join(dirPath, file);
+
+            // Get the stats of the file
+            const stats = fs.statSync(filePath);
+
+            // If the file is a directory, recursively calculate its size
+            if (stats.isDirectory()) {
+                totalSize += calculateFolderSize(filePath);
+            } else {
+                // If the file is a regular file, add its size to the total size
+                totalSize += stats.size;
+            }
+        }
+    }
+
+    return totalSize;
+}
 
 //a test route to check if the server is running
 app.get('/test_nodejs', (req, res) => {

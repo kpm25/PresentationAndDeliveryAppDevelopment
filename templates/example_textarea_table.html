@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clickable Lines Example</title>
+<style>
+/*    .editable-table {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ccc;
+        width: 200px;
+        height: 80px;
+        overflow-y: auto;
+        background-color: white;
+        font-family: monospace;
+*//*        font size*//*
+        font-size: 8px;
+        white-space: pre-wrap; *//* Preserve whitespace *//*
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+    .line {
+        cursor: pointer;
+        color: black;
+        text-decoration: none;
+        margin: 0;
+        padding: 0;
+    }
+    .line td {
+        line-height: 0.8; *//* Adjust this value as needed *//*
+        padding: 0;
+        margin: 0;
+        border: 0;
+    }
+    .line:hover {
+        background-color: #f0f0f0;
+    }
+    .log_button {
+        padding: 2px 2px; *//* Increase the size of the buttons *//*
+        margin: 2px; *//* Add space around the buttons *//*
+        border-radius: 5px; *//* Make the buttons rounded *//*
+        font-size: 0.4em; *//* Increase the font size *//*
+        border: 1px solid #007bff;    *//* a bold blue border *//*
+        cursor: pointer; *//* Change the cursor when hovering over the buttons *//*
+    }*/
+</style>
+<!--    get from link static/css/editable_table_styles.css-->
+
+     <link rel="stylesheet" href="../static/css/editable_table_styles.css">
+</head>
+<body>
+    <table id="history_log_editableTable" class="editable-table">
+    </table>
+
+    <button class="log_button" onclick="addRowDebug()">Add Row</button>
+    <button class="log_button" onclick="reverseList()">Reverse List</button>
+<!--    clear historyLogList and table-->
+    <button class="log_button" onclick="clearTable()">Clear Table</button>
+<!--    button increase font size-->
+    <button class="log_button" onclick="increaseFontSize()">Increase Font Size</button>
+<!--    button decrease font size-->
+    <button class="log_button" onclick="decreaseFontSize()">Decrease Font Size</button>
+<!--    togge auto numbering-->
+    <button class="log_button" onclick="toggleAutoNumbering()">Toggle Auto Numbering</button>
+<!--    is reversed h1-->
+    <h1 id="isReversed"></h1>
+<!--   autoNumbering h1-->
+    <h1 id="autoNumbering"></h1>
+
+    <script>
+/*        let history_log_count = 0;
+        let isReversed = false; // Add this line
+        let historyLogList = [];
+
+        function addRow() {
+            var table = document.getElementById('history_log_editableTable');
+            var row = document.createElement('tr');
+            var cell = document.createElement('td');
+
+            row.classList.add('line');
+            row.appendChild(cell);
+
+*//*            // Add new line to historyLogList
+            if (isReversed) {
+                historyLogList.unshift({ number: 1, string: randomString(10) });
+                table.insertBefore(row, table.firstChild);
+            } else {
+                historyLogList.push({ number: historyLogList.length + 1, string: randomString(10) });
+                table.appendChild(row);
+            }
+
+
+            // Update numbering
+            for (let i = 0; i < table.rows.length; i++) {
+                let index = isReversed ? table.rows.length - i - 1 : i;
+                historyLogList[index].number = index + 1;
+                table.rows[i].cells[0].textContent = `${historyLogList[index].number}.) ${historyLogList[index].string}`;
+            }*//*
+
+            // Add new line to historyLogList
+            if (isReversed) {
+                historyLogList.push({ number: historyLogList.length + 1, string: randomString(10) });
+                table.appendChild(row);
+            } else {
+                historyLogList.unshift({ number: 1, string: randomString(10) });
+                table.insertBefore(row, table.firstChild);
+            }
+
+            // Update numbering
+            for (let i = 0; i < table.rows.length; i++) {
+                let index = isReversed ? i : table.rows.length - i - 1;
+                historyLogList[index].number = index + 1;
+                table.rows[i].cells[0].textContent = `${historyLogList[index].number}.) ${historyLogList[index].string}`;
+            }
+
+            // Update count
+            history_log_count = table.rows.length;
+
+            // Update isReversed h1
+            document.getElementById('isReversed').textContent = isReversed ? `historyLogList is reversed: ${isReversed}` : `historyLogList is reversed: ${isReversed}`;
+        }
+
+*//*        function reverseList() {
+            historyLogList.reverse();
+            isReversed = !isReversed;
+            if(isReversed) {
+                document.getElementById('editableTable').innerHTML = '';
+                //display the historyLogList in reverse order but dont use addRow() function, use existing data in historyLogList
+                historyLogList.forEach((item) => {
+                    document.getElementById('editableTable').innerHTML += `<tr class="line"><td>${item.number}.) ${item.string}</td></tr>`;
+                });
+
+            } else {
+                 document.getElementById('editableTable').innerHTML = '';
+                historyLogList.forEach((item) => {
+                    document.getElementById('editableTable').innerHTML += `<tr class="line"><td>${item.number}.) ${item.string}</td></tr>`;
+                });
+            }
+
+      *//**//*      for (let i = 0; i < historyLogList.length; i++) {
+                document.getElementById('editableTable').rows[i].cells[0].textContent = `${historyLogList[i].number}.) ${historyLogList[i].string}`;
+            }*//**//*
+                // Update isReversed h1
+            document.getElementById('isReversed').textContent = isReversed ? `historyLogList is reversed: ${isReversed}` : `historyLogList is reversed: ${isReversed}`;
+        }*//*
+
+*//*        function reverseList() {
+                historyLogList.reverse();
+                isReversed = !isReversed;
+
+                // Clear the table
+                document.getElementById('editableTable').innerHTML = '';
+
+                // Add the rows back in the new order
+                historyLogList.forEach((item) => {
+                    document.getElementById('editableTable').innerHTML += `<tr class="line"><td>${item.number}.) ${item.string}</td></tr>`;
+                });
+
+                // Update isReversed h1
+                document.getElementById('isReversed').textContent = isReversed ? `historyLogList is reversed: ${isReversed}` : `historyLogList is reversed: ${isReversed}`;
+            }*//*
+
+        function reverseList() {
+            historyLogList.reverse();
+            isReversed = !isReversed;
+
+            var table = document.getElementById('history_log_editableTable');
+
+            // Create an array of the existing rows
+            var rows = Array.from(table.rows);
+
+            // Clear the table
+            while (table.firstChild) {
+                table.removeChild(table.firstChild);
+            }
+
+            // Add the rows back in the new order
+            for (let i = 0; i < rows.length; i++) {
+                if (isReversed) {
+                    table.insertBefore(rows[i], table.firstChild);
+                } else {
+                    table.appendChild(rows[i]);
+                }
+            }
+        }
+
+        //clear table and historyLogList
+        function clearTable() {
+            document.getElementById('history_log_editableTable').innerHTML = '';
+            historyLogList = [];
+            history_log_count = 0;
+            isReversed = false;
+            document.getElementById('isReversed').textContent = isReversed ? `historyLogList is reversed: ${isReversed}` : `historyLogList is reversed: ${isReversed}`;
+        }
+
+        //one line function to return random string of certain length
+        function randomString(length) {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        //increaseFontSize()
+        function increaseFontSize() {
+            let table = document.getElementById('history_log_editableTable');
+            let fontSize = parseInt(window.getComputedStyle(table).fontSize);
+            table.style.fontSize = `${fontSize + 1}px`;
+        }
+
+        //decreaseFontSize()
+        function decreaseFontSize() {
+            let table = document.getElementById('history_log_editableTable');
+            let fontSize = parseInt(window.getComputedStyle(table).fontSize);
+            table.style.fontSize = `${fontSize - 1}px`;
+        }
+
+
+         document.getElementById('isReversed').textContent = isReversed ? `historyLogList is reversed: ${isReversed}` : `historyLogList is reversed: ${isReversed}`;*/
+    </script>
+ <script src="../static/js/history_log.js"></script>
+</body>
+</html>

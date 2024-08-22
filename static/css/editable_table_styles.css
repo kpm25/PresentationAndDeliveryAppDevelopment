@@ -1,0 +1,44 @@
+    .editable-table {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ccc;
+        width: 200px;
+        height: 80px;
+        overflow-y: auto;
+        background-color: white;
+        font-family: monospace;
+/*        font size*/
+        font-size: 14px;
+        white-space: pre-wrap; /* Preserve whitespace */
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+    #history_log_editableTable {
+        width: 100%;
+        height: 200px; /* Adjust as needed */
+        overflow: auto;
+    }
+    .line {
+        cursor: pointer;
+        color: black;
+        text-decoration: none;
+        margin: 0;
+        padding: 0;
+    }
+    .line td {
+        line-height: 0.8; /* Adjust this value as needed */
+        padding: 0;
+        margin: 0;
+        border: 0;
+    }
+    .line:hover {
+        background-color: #f3dcb190;
+    }
+    .log_button {
+        padding: 2px 2px; /* Increase the size of the buttons */
+        margin: 2px; /* Add space around the buttons */
+        border-radius: 5px; /* Make the buttons rounded */
+        font-size: 0.4em; /* Increase the font size */
+        border: 1px solid #007bff;    /* a bold blue border */
+        cursor: pointer; /* Change the cursor when hovering over the buttons */
+    }

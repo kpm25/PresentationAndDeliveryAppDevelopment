@@ -639,7 +639,7 @@ $(document).ready(function() {
 
 
 
-     //LOG RELATED CODE:
+/*     //LOG RELATED CODE:
        //clear the history log
     function clearHistoryLog() {
         // Send a DELETE request to the server to clear the log
@@ -715,5 +715,5 @@ $(document).ready(function() {
             update_log();
        });
        //update the log when the page loads
-        update_log();
+        update_log();*/
 

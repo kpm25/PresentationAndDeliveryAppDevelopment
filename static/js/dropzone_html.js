@@ -6,6 +6,8 @@ try {
     console.error('Error connecting to Socket.IO server:', error);
 }
 
+  let timeCompleted = 0;
+   let uploadCompleted = false;
 
 
 //toastr configuration
@@ -91,6 +93,18 @@ console.log('Timestamp:', getLocalISOTime());
     }
 
 
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 
 
     // Declare global variables to store the selected grade, semester, week, and lesson
@@ -161,8 +175,10 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
     function initializeDropzone() {
         // Construct the file path outside of the url function
         const filePath = `${selectedSemester}/${selectedGrade}/${selectedWeek}/${selectedLesson}`;
+      //  let log_list = [];
 
         let lastSuccessResponse = null; // Declare a variable to store the last response
+        let hasSentGetInitialSizeToServer = false; // Declare a variable to check if the initial size has been sent to the server
 
         const dropzoneConfig = {
             url: function(files) {
@@ -192,51 +208,33 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
                  let fileCount = 0; // Initialize a counter for the uploaded files
             this.on('success', function(file, response) {
 
-                lastSuccessResponse = response; // Store the last response
- /*                  // Check if response.accepted_files is defined and is an array
-                    if (Array.isArray(response.accepted_files)) {
-                        // Iterate over each file in the accepted_files list
-                         // Iterate over each file in the accepted_files list
-                            response.accepted_files.forEach(function(acceptedFile) {
-                                console.log(`CHECKING FILENAME: ${acceptedFile}`);
-                                console.log(`\x1b[32m File uploaded successfully! , filepath: ${acceptedFile} response: ${response.message}\x1b[0m`);
-                                socket.emit('fileAdded', acceptedFile);
-                                fileCount++; // Increment the counter for each successful upload
-                                // Log each individual file upload
-                                postLog(`$${acceptedFile}`, `${1}`, getLocalISOTime()); // Send the log to the server
-                                //console log in green color
-                                 console.log(`\x1b[32m File uploaded successfully: ${acceptedFile}\x1b[0m`);
-                            });
-                    }
-
-
-                      // Check if response.duplicate_files is defined and is an array
-                    if (Array.isArray(response.duplicate_files)) {
-                            // Iterate over each file in the duplicate_files list
-                            response.duplicate_files.forEach(function(duplicateFile) {
-                                //console log in orange color
-                                console.log(`\x1b[33mFile uploaded was a duplicate: ${duplicateFile}\x1b[0m`);
-                                toastr.warning(`File uploaded was a duplicate: ${duplicateFile}`);
-                            });
-                    }*/
-
+//                lastSuccessResponse = response; // Store the last response
+                lastSuccessResponse = {file: file, response: response}; // Store the last response
+                //console.log(new Ansi().rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`File progress: ${file.upload.progress}`).getLine());
 
             });
             this.on('queuecomplete', function() {
 
 
                 if(lastSuccessResponse){
-                     if (Array.isArray(lastSuccessResponse.accepted_files)) {
+//                     if (Array.isArray(lastSuccessResponse.accepted_files)) {
+                    if(Array.isArray(lastSuccessResponse.response.accepted_files)){
                         // Iterate over each file in the accepted_files list
                          // Iterate over each file in the accepted_files list
-                            lastSuccessResponse.accepted_files.forEach(function(acceptedFile) {
-                                console.log(`CHECKING FILENAME: ${acceptedFile}`);
-                                console.log(`\x1b[32m File uploaded successfully! , filepath: ${acceptedFile} response: ${lastSuccessResponse.message}\x1b[0m`);
+                            lastSuccessResponse.response.accepted_files.forEach(function(acceptedFile) {
+                            //    console.log(`CHECKING FILENAME: ${acceptedFile}`);
+                        //        console.log(new Ansi().rgbBackground(255, 255, 0).rgbText(0, 0, 255).text(JSON.stringify(lastSuccessResponse.file)).getLine());
+                          //     console.log(new Ansi().rgbBackground(0, 255, 255).rgbText(255, 255, 255).text(`File size: ${lastSuccessResponse.file.size}, formatBytes value: ${formatBytes(lastSuccessResponse.file.size)}`).getLine());
+                           //     console.log(`\x1b[32m File uploaded successfully! , file: ${lastSuccessResponse.file.size}, filepath: ${acceptedFile} response: ${lastSuccessResponse.message}\x1b[0m`);
                                 socket.emit('fileAdded', acceptedFile);
                                 fileCount++; // Increment the counter for each successful upload
                                 // Log each individual file upload
 //                                postLog( `$${acceptedFile}`, `${1}`, getLocalISOTime()); // Send the log to the server
-                                postLog(acceptedFile, 1); // Send the log to the server
+                                 const filesize = lastSuccessResponse.file.size;
+                                 postLog(acceptedFile, 1); // Send the log to the server
+
+//                                const log_entry = {path: acceptedFile, filecount: 1};
+//                                log_list.push(log_entry);
                                 //console log in green color
                                  console.log(`\x1b[32m File uploaded successfully: ${acceptedFile}\x1b[0m`);
                             });
@@ -244,9 +242,10 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
 
 
                       // Check if response.duplicate_files is defined and is an array
-                    if (Array.isArray(lastSuccessResponse.duplicate_files)) {
+//                    if (Array.isArray(lastSuccessResponse.duplicate_files)) {
+                    if(Array.isArray(lastSuccessResponse.response.duplicate_files)){
                             // Iterate over each file in the duplicate_files list
-                            lastSuccessResponse.duplicate_files.forEach(function(duplicateFile) {
+                            lastSuccessResponse.response.duplicate_files.forEach(function(duplicateFile) {
                                 //console log in orange color
                                 console.log(`\x1b[33mFile uploaded was a duplicate: ${duplicateFile}\x1b[0m`);
                                 toastr.warning(`File uploaded was a duplicate: ${duplicateFile}`);
@@ -267,7 +266,18 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
 
                 if(fileCount > 1){
 //                    postLog(`${fileFolderPath}`, `${fileCount}`,getLocalISOTime()); // Send the log to the server
-                    postLog(fileFolderPath, fileCount); // Send the log to the server
+
+
+                     postLog(fileFolderPath, fileCount); // Send the log to the server
+       /*             const log_entry = {path: fileFolderPath, filecount: fileCount};
+                    log_list.push(log_entry);
+
+                    //log all log_list entries with postLog
+                    log_list.forEach(function(log_entry) {
+                        postLog(log_entry.path, log_entry.filecount);
+                    });
+                    log_list = []; // Clear the log list*/
+
                 }
                 if(fileCount !== 0 ){
                      update_log();
@@ -288,7 +298,7 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
 
                 lastSuccessResponse = null; // Reset the last response
 
-
+                 hasSentGetInitialSizeToServer =  false; // Reset the flag
                 this.removeAllFiles();
                 fileCount = 0; // Reset the counter after setting the message
             });
@@ -312,6 +322,7 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
                     // Construct the file prefix
                     const filePrefix = `${selectedGrade}_${selectedSemester}_${selectedWeek}_${selectedLesson}_`;
 
+
                     // Add the file prefix to the filename
                  //   file.upload.filename = `${filePrefix}_${file.name}`;
 
@@ -324,9 +335,45 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
                     xhr.setRequestHeader('X-Lesson', selectedLesson);
                     //pass the file prefix to the server
                     xhr.setRequestHeader('X-File-Prefix', filePrefix);
+
+
+          /*          if(!hasSentGetInitialSizeToServer){
+                        //total file size of all files
+                        const totalFileSizeToSend = this.files.reduce((total, file) => total + file.size, 0);
+
+                        console.log(new Ansi().rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Total file size: ${totalFileSizeToSend}, formatBytes value: ${formatBytes(totalFileSizeToSend)}`).getLine());
+                           // Emit an event to get the initial size of the upload directory
+                             const semesterFolder = semesterDict[selectedSemester];
+                                const gradeFolder = gradeDict[selectedGrade];
+                                const weekFolder = weekDict[selectedWeek];
+                                const lessonFolder = lessonDict[selectedLesson];
+                                const uploadDirToCheck = `LessonFolders/${semesterFolder}/${gradeFolder}/${weekFolder}/${lessonFolder}`;
+                              socket.emit('getInitialSize', { uploadDir: uploadDirToCheck  , totalFileSize:totalFileSizeToSend });
+                              hasSentGetInitialSizeToServer = true;
+                    }*/
+
                 });
             }
         };
+
+/*        socket.on('initialSize', function(data) {
+            // Store the initial size
+            initialSize = data.initialSize;
+            alert(`Initial size is: ${initialSize}`);
+
+
+            console.log(new Ansi().rgbBackground(0, 15, 255).rgbText(100, 100, 255).text(`data.initialSizer is: ${data.initialSize} `).getLine());
+                console.log(new Ansi().rgbBackground(0, 15, 255).rgbText(100, 100, 255).text(`data.initialSizer is: ${data.initialSize} `).getLine());
+                console.log(new Ansi().rgbBackground(0, 15, 255).rgbText(100, 100, 255).text(`data.initialSizer is: ${data.initialSize} `).getLine());
+                console.log(new Ansi().rgbBackground(0, 15, 255).rgbText(100, 100, 255).text(`data.initialSizer is: ${data.initialSize} `).getLine());
+                console.log(new Ansi().rgbBackground(0, 15, 255).rgbText(100, 100, 255).text(`data.initialSizer is: ${data.initialSize} `).getLine());
+                console.log(new Ansi().rgbBackground(0, 15, 255).rgbText(100, 100, 255).text(`data.initialSizer is: ${data.initialSize} `).getLine());
+                console.log(new Ansi().rgbBackground(0, 15, 255).rgbText(100, 100, 255).text(`data.initialSizer is: ${data.initialSize} `).getLine());
+
+
+            // Proceed with the file upload
+         //   dropzoneInstance.processQueue();
+        });*/
 
        const dropzoneElement = document.querySelector('#singleDropzone');
         if (dropzoneElement) {
@@ -372,11 +419,12 @@ console.log(`selectedGrade: ${selectedGrade}, selectedSemester: ${selectedSemest
 
 $(document).ready(function() {
 
+    const ansi = new Ansi();
     // Set the default month
     setDefaultSemester();
     // Initialize Dropzone instance
     initializeDropzone();
-
+    let intervalId;
     // Add event listener for the upload button
     $('#startUpload').click(function() {
          if(canUploadFiles()){
@@ -387,7 +435,69 @@ $(document).ready(function() {
 
                         // Start the upload
                         if (dropzoneInstance) {
-                            dropzoneInstance.processQueue();
+                          //  dropzoneInstance.processQueue();
+
+                             //if has started upload, return
+                       //     if(uploadStarted){
+                                console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Upload has already started, please wait for it to complete.`).getLine());
+                               // return;
+                         //   }
+                             // Assume dropzoneInstance is your Dropzone instance
+                                let totalFileSizeToSend = dropzoneInstance.files.reduce((total, file) => total + file.size, 0);
+
+
+
+                                    console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Total file size: ${totalFileSizeToSend}, formatBytes value: ${formatBytes(totalFileSizeToSend)}`).getLine());
+                                   // Emit an event to get the initial size of the upload directory
+                                     const semesterFolder = semesterDict[selectedSemester];
+                                    const gradeFolder = gradeDict[selectedGrade];
+                                    const weekFolder = weekDict[selectedWeek];
+                                    const lessonFolder = lessonDict[selectedLesson];
+                                    const uploadDirToCheck = `LessonFolders/${semesterFolder}/${gradeFolder}/${weekFolder}/${lessonFolder}`;
+
+                                $.ajax({
+                                    url:  'https://192.168.1.24:5000/getInitialSize', //nodejs server
+                                    //                                     url:  '/getInitialSize',  //flask server
+                                    type: 'POST',
+                                    data: JSON.stringify({ uploadDir: uploadDirToCheck, totalFileSize: totalFileSizeToSend }),
+                                    contentType: 'application/json',
+                                    success: function(response) {
+                                         // Check if the upload has already started
+                                        //    if (!response.uploadStarted && !uploadedCompleted) {
+                                                console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Initial size is: ${response.initialSize}, totalFileSize: ${totalFileSizeToSend} , expectedCompleteFolderSize: ${response.expectedCompletionSize}, uploadStarted: ${response.uploadStarted}`).getLine());
+//                                                return;
+//                                            }
+                                        //amount of data to send to the server
+                                        expectedCompleteFolderSize =  response.totalFileSize + response.initialSize;
+                                        alert(`Initial size is: ${response.initialSize}, totalFileSize: ${totalFileSizeToSend} , expectedCompleteFolderSize: ${expectedCompleteFolderSize}`);
+                                        // Check if the Dropzone instance has files
+                                            if (dropzoneInstance.files.length > 0) {
+                                                // The server responded successfully and there are files in the Dropzone, now you can start the upload process
+                                                dropzoneInstance.processQueue();
+                                                uploadedCompleted = false; // Set the flag to false when the upload starts
+
+                                                // Call getFolderSize every second
+                                                const interval = 500;
+                                                intervalId = setInterval(function() {
+                                                    getFolderSize({
+                                                        uploadDirToCheck: uploadDirToCheck,
+                                                        totalFileSize: totalFileSizeToSend,
+                                                        initialSize: response.initialSize,
+                                                        expectedCompleteFolderSize: expectedCompleteFolderSize,
+                                                        deltatime: interval
+                                                    });
+                                                }, interval);
+                                            } else {
+                                                // There are no files in the Dropzone, refuse to start the upload process
+                                                alert('No files to upload. Please add files to the Dropzone before starting the upload process.');
+                                            }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        // There was an error communicating with the server
+                                        console.error('Error sending data to server:', errorThrown);
+                                    }
+                                });
+
                         } else {
                             alert('Dropzone instance not found for the selected lesson.');
                         }
@@ -400,6 +510,106 @@ $(document).ready(function() {
     });
 
 
+/*    function getFolderSize() {
+        const uploadDirToCheck = `LessonFolders/${semesterFolder}/${gradeFolder}/${weekFolder}/${lessonFolder}`;
+        $.ajax({
+            url: `https://192.168.1.24:5000/getFolderSize?path=${encodeURIComponent(uploadDirToCheck)}`,
+            type: 'GET',
+            success: function(response) {
+                console.log(`Current folder size: ${response.folderSize}`);
+                // Update your progress bar here using response.folderSize
+                console.log(new Ansi().rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}`).getLine());
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error getting folder size:', errorThrown);
+            }
+        });
+    }*/
+/*
+            function getFolderSize(params) {
+                let timeCompleted = 0;
+                const ansi = new Ansi();
+                intervalId = setInterval(function() { // Removed 'let' keyword
+                    $.ajax({
+                        url: `https://192.168.1.24:5000/getFolderSize?path=${encodeURIComponent(params.uploadDirToCheck)}`,
+                        type: 'GET',
+                        success: function(response) {
+                            console.log(`Current folder size: ${response.folderSize}`);
+                            const percentage = (response.folderSize / params.totalFileSize) * 100;
+                            console.log(`Upload completion: ${percentage}% , time completed: ${timeCompleted}`);
+                            console.log(ansi.rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}`).getLine());
+
+                            if(response.folderSize >= params.expectedCompleteFolderSize || timeCompleted > 10000){
+                                console.log(`Upload completion: ${percentage}%`);
+                                clearInterval(intervalId); // Stop making AJAX requests
+                                alert(`Upload completion: ${percentage}% , folder size: ${response.folderSize}, expectedCompleteFolderSize: ${params.expectedCompleteFolderSize}`);
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Error getting folder size:', errorThrown);
+                        }
+                    });
+                    timeCompleted += params.deltatime;
+                    console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`Seconds: ${seconds}`).getLine());
+                }, params.deltatime);
+            }
+*/
+
+
+    function getFolderSize(params) {
+
+
+
+
+        function makeRequest() {
+
+            // Only make the AJAX request if the upload has not completed
+            if (!uploadCompleted) {
+                $.ajax({
+                    url: `https://192.168.1.24:5000/getFolderSize?path=${encodeURIComponent(params.uploadDirToCheck)}`,
+                    type: 'GET',
+                    success: function(response) {
+                        console.log(`Current folder size: ${response.folderSize}`);
+                        const percentage = (response.folderSize / params.totalFileSize) * 100;
+                        console.log(`Upload completion: ${percentage}% , time completed: ${timeCompleted}`);
+                        console.log(ansi.rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}`).getLine());
+
+                       /* if(response.folderSize >= params.expectedCompleteFolderSize || timeCompleted > 10000){
+                            console.log(`Upload completion: ${percentage}%`);
+                            uploadCompleted = true; // Set the flag to true when the upload is complete
+                        } else {
+                            // Only schedule the next call if the upload is not complete
+                            timeCompleted += params.deltatime;
+                            console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`Seconds: ${seconds}`).getLine());
+                            setTimeout(makeRequest, params.deltatime);
+                        }*/
+                         if(response.isComplete){
+                            console.log(`Upload completion: ${percentage}%`);
+//                            uploadCompleted = true; // Set the flag to true when the upload is complete
+//                             uploadStarted = false; // Set the flag to false when the upload is complete
+                             //break the interval
+                            clearInterval(intervalId);
+                                  timeCompleted = 0;
+                                  uploadCompleted = false;
+//                             //refresh the page
+//                            location.reload();
+                        } else {
+                            // Only schedule the next call if the upload is not complete
+                            timeCompleted += params.deltatime;
+                            console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`timeCompleted: ${timeCompleted}`).getLine());
+                            setTimeout(makeRequest, params.deltatime);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error getting folder size:', errorThrown);
+                    }
+                });
+            }
+        }
+
+        // Start the first request
+        makeRequest();
+    }
 
           // Function to check files can be uploaded by checking if exactly one of a semester, grade, week, and lesson has been selected
         function canUploadFiles() {
@@ -760,17 +970,20 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
 
 //logs related code:
 
+/*
      //history log:
 
         //method to send post request to append log
     function postLog(filepath, fileCount) {
- /*       console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
+ */
+/*       console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
         //after removing $ from the filepath
         filepath = filepath.substring(1);
           console.log(`\x1b[37m before..File uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
         console.log(`\x1b[33;1m after..xxxxxFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
         console.log(`\x1b[1;4;41m after..yyyyyFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
-        console.log(`\x1b[5m after..zzzzzile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);*/
+        console.log(`\x1b[5m after..zzzzzile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);*//*
+
           const ansi = new Ansi();
         console.log(ansi.rgbBackground(122, 122, 0).rgbText(0, 0, 255).text(`filepath: ${filepath} fileCount: ${fileCount}`).getLine());
 
@@ -801,13 +1014,15 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
         });
     }
 
-   /*  function appendLog(path, timestamp, fileCount) {
+   */
+/*  function appendLog(path, timestamp, fileCount) {
         const historyLog = document.getElementById('historyLog');
         const newLogEntry = `Path: ${path}, Timestamp: ${timestamp} File Count: ${fileCount}\n`;
        //place the new log entry at the top of the history log
            historyLog.value = newLogEntry + historyLog.value;
 
-    }*/
+    }*//*
+
 
 
 
@@ -903,4 +1118,4 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
        });
 
    //update the log when the page loads
-    update_log();
+    update_log();*/

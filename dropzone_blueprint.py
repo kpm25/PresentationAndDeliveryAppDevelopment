@@ -5,8 +5,9 @@ import datetime
 import json
 import os
 from datetime import datetime
+import uuid
 
-print(f'...current working time: { datetime.now().strftime('%B %d, %Y at %I:%M:%S %p')}')
+print(f'...current working time: {datetime.now().strftime('%B %d, %Y at %I:%M:%S %p')}')
 
 # Create a Blueprint object
 dropzone = Blueprint('dropzone', __name__)
@@ -18,6 +19,10 @@ valid_file_types = ['zip', 'mp4', 'pptx', 'jpg']
 
 # Initialize an empty list to store the history logs
 history_logs = []
+
+upload_progress = {}
+upload_id = str(uuid.uuid4())
+upload_progress[upload_id] = 0
 
 
 @dropzone.route('/')
@@ -283,6 +288,25 @@ def dropzone_lessons_path(file_path):
                         'accepted_files': accepted_files, 'duplicate_files': duplicate_files}), 200
 
 
+# @dropzone.route('/getInitialSize', methods=['POST'])
+# def get_initial_size():
+#     data = request.get_json()
+#     print(f"\n\n\n\nData received from client: {data['uploadDir']}, {data['totalFileSize']}\n\n\n\n")
+#     initial_size = calculate_folder_size(data['uploadDir'])
+#     print(
+#         f"Initial size is: {initial_size}, data.uploadDir is: {data['uploadDir']} , totalSize to reach  is: {data['totalFileSize']}")
+#     return jsonify(initialSize=initial_size, totalFileSize=data['totalFileSize'])
+#
+#
+# def calculate_folder_size(dir_path):
+#     total_size = 0
+#     for path, dirs, files in os.walk(dir_path):
+#         for f in files:
+#             fp = os.path.join(path, f)
+#             total_size += os.path.getsize(fp)
+#     return total_size
+
+
 @dropzone.route('/dropzone_lessons_result')
 def dropzone_lessons_result():
     # Retrieve the file name and extension from where you stored it
@@ -386,15 +410,16 @@ def delete_file():
         return jsonify({'message': 'File not found'}), 404
 
 
-#route /page1 display image1.html
+# route /page1 display image1.html
 @dropzone.route('/image1')
 def image1():
     return render_template('image1.html')
 
+
 # route /page2 display image2.html
 @dropzone.route('/image2')
 def image2():
-     return render_template('image2.html')
+    return render_template('image2.html')
 
 
 @dropzone.route('/get_file')

@@ -3,6 +3,9 @@
 # Node related files
 /my_nodejs_app/node_modules/
 
+# a flag file indicating that the server is running
+node_server_flag.txt
+
 # certificates
 new_cert.csr
 new_cert.pem

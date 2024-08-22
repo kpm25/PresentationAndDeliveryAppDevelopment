@@ -13,6 +13,7 @@
 <!--    toastr-->
     <script src="/static/dependencies/toastr.min.js"></script>
     <link rel="stylesheet" href="static/dependencies/toastr.min.css">
+     <script src="static/dependencies/ansi_text.js"></script>
 
 
     <script src="static/js/javascript_tool_functions.js"></script>
@@ -50,11 +51,11 @@
             background-color: #ddd; /* Change the background color */
             color: #333; /* Change the text color */
         }
-        #historyLog {
+/*        #historyLog {
             width: 100%;
-            height: 200px; /* Adjust as needed */
+            height: 200px; *//* Adjust as needed *//*
             overflow: auto;
-        }
+        }*/
         .tiny-select-button {
             padding: 1px 4px; /* Reduce padding */
             margin: 2px;
@@ -66,6 +67,7 @@
             margin-bottom: 3px;
         }
     </style>
+    <link rel="stylesheet" href="static/css/editable_table_styles.css" type="text/css">
 </head>
 <body>
     <div class="container">
@@ -155,9 +157,13 @@
                         <input type="checkbox" id="muteSound" name="muteSound">
                         <label for="muteSound" style="font-size: 0.6em; text-align: center; font-family: Arial, sans-serif;">Mute Sound</label>
                     </div>
+                   <button class="tiny-select-button" onclick="increaseHistoryLogFontSize()">+</button>
+                     <button class="tiny-select-button" onclick="decreaseHistoryLogFontSize()">-</button>
                     <button class="tiny-select-button" onclick="clearHistoryLog()">Clear History Log</button>
+
                 </h2>
-                <textarea id="historyLog" readonly></textarea>
+<!--                <textarea id="historyLog" readonly></textarea>-->
+                <table id="history_log_editableTable" class="editable-table"> </table>
             </div>
 
 
@@ -194,10 +200,11 @@
 
 <!--    javascript references-->
 <script src="static/js/dropzone_html.js"></script>
+<script src="static/js/history_log.js"></script>
 
 <script src="static/js/dropzone_setup_script.js"></script>
 
- <script src="static/dependencies/ansi_text.js"></script>
+
 
 
 
