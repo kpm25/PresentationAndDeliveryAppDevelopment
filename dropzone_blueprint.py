@@ -426,3 +426,5 @@ def image2():
 def get_file():
     path = request.args.get('path')
     return send_file(os.path.abspath(path), as_attachment=True)
+
+

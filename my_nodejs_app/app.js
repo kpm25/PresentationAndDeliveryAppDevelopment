@@ -131,9 +131,9 @@ io.on('connection', (socket) => {
         // console.clear();
 
             //wait 0.5 seconds and then clear the console
-          setTimeout(() => {
+       /*   setTimeout(() => {
             console.clear();
-           }, 3000);
+           }, 3000);*/
     });
 
     //test "test_event" event in green debug color
@@ -249,6 +249,8 @@ app.post('/getInitialSize', (req, res) => {
     }*/
 });
 
+
+
 // Function to calculate the size of a folder
 app.get('/getFolderSize', (req, res) => {
     //is folder size greater to or equal to expectedCompletionSize, if so then upload is complete and return the folder size
@@ -283,6 +285,23 @@ app.get('/getFolderSize', (req, res) => {
 
 });
 
+//post request to upload_Completed
+app.post('/uploadCompleted', (req, res) => {
+    uploadComplete = true;
+     initialSize = 0;
+    expectedCompletionSize = 0;
+    ansi.red().bgWhite().bold().text(`\n\n\nIN ROUTE: /uploadCompleted ===> Upload is complete...\nupload.Dir is: ${req.body.uploadDir}\n\n\n totalFileCount is: ${req.body.totalFiles}\n\n\n`).print();
+
+    //gold bold text on cyan background display status of:
+//    uploadComplete = true;
+//     initialSize = 0;
+//    expectedCompletionSize = 0;
+    ansi.gold().bgCyan().bold().text(`\n\n\nIN ROUTE: /uploadCompleted ===> Upload is complete...\nupload.Dir is: ${req.body.uploadDir}\n\n\n totalFileCount is: ${req.body.totalFiles}\n\n\n`).print();
+
+    res.json({ message: 'Upload is complete' });
+});
+
+
 function calculateFolderSize(dirPath) {
     let totalSize = 0;
 
@@ -312,6 +331,7 @@ function calculateFolderSize(dirPath) {
     return totalSize;
 }
 
+
 //a test route to check if the server is running
 app.get('/test_nodejs', (req, res) => {
     res.send('Server is running');
@@ -326,3 +346,8 @@ server.listen(NODEJS_PORT, NODEJS_HOST, () => {
     console.log(`\x1b[31m  Node.js app listening at https://${NODEJS_HOST}:${NODEJS_PORT} \x1b[0m`);
 });
 
+
+// Node.js server
+app.get('/config', (req, res) => {
+    res.json({ nodeServerUrl: process.env.NODE_SERVER_URL });
+});

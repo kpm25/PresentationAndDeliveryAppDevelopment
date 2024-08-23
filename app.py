@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, jsonify
 from dropzone_blueprint import dropzone
+from dotenv import load_dotenv
 import subprocess
 import os
 import sys
@@ -11,12 +12,22 @@ from logging import Filter
 
 app = Flask(__name__, static_url_path='/static')
 
+# Load the environment variables
+load_dotenv()
+
 # Register the blueprint with the main app
 app.register_blueprint(dropzone, url_prefix='/')
 
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024 * 1024  # 4GB
 
 node_process: Optional[subprocess.Popen] = None
+
+
+#route to give the server url
+@app.route('/config')
+def get_config():
+    print(f"Node server url: {os.getenv('NODE_SERVER_URL')} Flask server url: {os.getenv('FLASK_SERVER_URL')}")
+    return jsonify(nodeServerUrl=os.getenv('NODE_SERVER_URL'), flaskServerUrl=os.getenv('FLASK_SERVER_URL'))
 
 
 def start_node_app():

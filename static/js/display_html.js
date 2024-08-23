@@ -1,10 +1,6 @@
 let socket; // Declare socket in an outer scope
 
-try {
-    socket = io.connect('https://192.168.1.24:5000');
-} catch (error) {
-    console.error('Error connecting to Socket.IO server:', error);
-}
+
    //toastr configuration will make in a base template later on and any other common code
    toastr.options = {
     "closeButton": true,
@@ -55,101 +51,115 @@ function labelClickEvent() {
 }
 
 function RefreshFileList(selectedLabel) {
-     // Set the selected lesson
-    selectedLesson = selectedLabel.dataset.value;
-    console.log("selected lesson is: ", selectedLesson);
-
-    // Fetch the files for the selected semester, grade, week, and lesson
-    const fetchUrl = `/list_files/${selectedSemester}/${selectedGrade}/${selectedWeek}/${selectedLesson}`;
-    console.log("fetchUrl: ", fetchUrl);
-    fetch(fetchUrl, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            // Extract the JSON body of the response
-            return response.json().then(err => { throw err; });
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Received data: ", data);
-
-            //if file_count is 0, display an error message and throw an error
-            if (data.file_count === 0 ) {
-                console.error('No files found for the selected lesson, data:', data);
-                throw data;
-            }if(!canLessonBeDisplayed()){
-                console.error('No Lesson selected, data:', data);
-                throw data;
+            // Check if selectedLabel is not null before accessing its dataset property
+            if (selectedLabel) {
+                // Set the selected lesson
+                selectedLesson = selectedLabel.dataset.value;
+                console.log("selected lesson is: ", selectedLesson);
+            } else {
+                new Ansi().green().bgRed().bold().text('In RefreshFileList(selectedLabel) ==> selectedLabel is null').print();
+                return;
             }
-            else {
-                    const fileDisplayDiv = document.getElementById('fileDisplay');
-                    fileDisplayDiv.innerHTML = `<h1>${data.message}</h1>
-                      <p>Directory: ${data.directory}</p>
-                      <p>FileCount: ${data.file_count}</p>`;
 
-                    let tableHtml = `<table><thead><tr><th style="text-align: center; color: red; text-decoration: underline;">Files ${data.directory}:</th></tr></thead><tbody>`;
-                    tableHtml += '<tr><td> </td></tr>'; // empty row
+            // Fetch the files for the selected semester, grade, week, and lesson
+             // Set the selected lesson
+            selectedLesson = selectedLabel.dataset.value;
+            console.log("selected lesson is: ", selectedLesson);
 
-                    // Add a new row with the checkbox and delete button
-                    tableHtml += `<tr><td style="text-align: center;"><input type="checkbox" id="deleteAllCheckbox">
-                      <button style="color:green;" id="deleteAllButton">Delete All</button></td></tr>`;
+            // Fetch the files for the selected semester, grade, week, and lesson
+            const fetchUrl = `/list_files/${selectedSemester}/${selectedGrade}/${selectedWeek}/${selectedLesson}`;
+            console.log("fetchUrl: ", fetchUrl);
+            fetch(fetchUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Extract the JSON body of the response
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Received data: ", data);
 
-                    for (let i = 0; i < 10; i++) {
-                        tableHtml += '<tr><td> </td></tr>'; // empty rows
+                    //if file_count is 0, display an error message and throw an error
+                    if (data.file_count === 0 ) {
+//                        console.error('No files found for the selected lesson, data:', data);
+                        new Ansi().white().bgRed().bold().text(`No Files found for selected path!!!, data: ${data} `).print();
+                        throw data;
+                    }if(!canLessonBeDisplayed()){
+                        console.error('No Lesson selected, data:', data);
+                        throw data;
                     }
+                    else {
+                            const fileDisplayDiv = document.getElementById('fileDisplay');
+                            fileDisplayDiv.innerHTML = `<h1>${data.message}</h1>
+                              <p>Directory: ${data.directory}</p>
+                              <p>FileCount: ${data.file_count}</p>`;
+
+                            let tableHtml = `<table><thead><tr><th style="text-align: center; color: red; text-decoration: underline;">Files ${data.directory}:</th></tr></thead><tbody>`;
+                            tableHtml += '<tr><td> </td></tr>'; // empty row
+
+                            // Add a new row with the checkbox and delete button
+                            tableHtml += `<tr><td style="text-align: center;"><input type="checkbox" id="deleteAllCheckbox">
+                              <button style="color:green;" id="deleteAllButton">Delete All</button></td></tr>`;
+
+                            for (let i = 0; i < 10; i++) {
+                                tableHtml += '<tr><td> </td></tr>'; // empty rows
+                            }
 
 
-  /*              data.files.forEach(file => {
-                  //  const filePath = file.path;
-                    console.log("Adding file to table: ", file.path);
-                    tableHtml += `<tr><td>&emsp;&emsp;📄 <a href="${file.path}" download>${file.name}  </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><button style="color:red;" class="delete-button" data-filepath='${file.path}'>Delete</button></td></tr>`;
-                    console.log(`file:  ${file.name}, filePath: ${file.path}, data.directory: ${data.directory}`);
-                    console.log(`filePath: ${file.path}`);
-                });*/
-                 data.files.forEach(file => {
-                    //const filePath = file.path;
-                    console.log("Adding file to table: ", file.path);
-                    tableHtml += `<tr><td>&emsp;&emsp;📄 <a href="/get_file?path=${encodeURIComponent(file.path)}">${file.name}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><button style="color:red;" class="delete-button" data-filepath='${file.path}'>Delete</button></td></tr>`;
-                    console.log(`file:  ${file.name}, filePath: ${file.path}, data.directory: ${data.directory}`);
-                    console.log(`filePath: ${file.path}`);
+          /*              data.files.forEach(file => {
+                          //  const filePath = file.path;
+                            console.log("Adding file to table: ", file.path);
+                            tableHtml += `<tr><td>&emsp;&emsp;📄 <a href="${file.path}" download>${file.name}  </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><button style="color:red;" class="delete-button" data-filepath='${file.path}'>Delete</button></td></tr>`;
+                            console.log(`file:  ${file.name}, filePath: ${file.path}, data.directory: ${data.directory}`);
+                            console.log(`filePath: ${file.path}`);
+                        });*/
+                         data.files.forEach(file => {
+                            //const filePath = file.path;
+                            console.log("Adding file to table: ", file.path);
+                            tableHtml += `<tr><td>&emsp;&emsp;📄 <a href="/get_file?path=${encodeURIComponent(file.path)}">${file.name}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><button style="color:red;" class="delete-button" data-filepath='${file.path}'>Delete</button></td></tr>`;
+                            console.log(`file:  ${file.name}, filePath: ${file.path}, data.directory: ${data.directory}`);
+                            console.log(`filePath: ${file.path}`);
 
-                });
+                        });
 
-                fileDisplayDiv.innerHTML += tableHtml;
+                        fileDisplayDiv.innerHTML += tableHtml;
 
-                document.querySelectorAll('.delete-button').forEach(button => {
-                    button.addEventListener('click', function() {
-                        deleteFile(this.dataset.filepath);
-                        console.log("delete button clicked, this.dataset.filepath: ", this.dataset.filepath);
-                        socket.emit('fileDeleted', this.dataset.filepath);
-                    });
-                });
-                //console.log("fileDisplayDiv.innerHTML: ", fileDisplayDiv.innerHTML);
-
-                document.getElementById('deleteAllButton').addEventListener('click', function() {
-                    if (document.getElementById('deleteAllCheckbox').checked) {
-                        if (confirm('Are you sure you want to delete all files?')) {
-                            data.files.forEach(file => {
-                                deleteFile(file.path);
+                        document.querySelectorAll('.delete-button').forEach(button => {
+                            button.addEventListener('click', function() {
+                                deleteFile(this.dataset.filepath);
+                                console.log("delete button clicked, this.dataset.filepath: ", this.dataset.filepath);
+                                socket.emit('fileDeleted', this.dataset.filepath);
                             });
-                        }
-                         socket.emit('deleteAllFiles');
-                    } else {
-                        alert('Please check the "Delete All Checkbox" in order to delete all files.');
+                        });
+                        //console.log("fileDisplayDiv.innerHTML: ", fileDisplayDiv.innerHTML);
+
+                        document.getElementById('deleteAllButton').addEventListener('click', function() {
+                            if (document.getElementById('deleteAllCheckbox').checked) {
+                                if (confirm('Are you sure you want to delete all files?')) {
+                                    data.files.forEach(file => {
+                                        deleteFile(file.path);
+                                    });
+                                }
+                                 socket.emit('deleteAllFiles');
+                            } else {
+                                alert('Please check the "Delete All Checkbox" in order to delete all files.');
+                            }
+                        });
+
+
                     }
-                });
 
-
-            }
 
     })
     .catch(error => {
-        console.error('Error:', error);
+//        console.error('Error:', error);
+                new Ansi().white().bgRed().bold().text('No Files found for selected path!!!').print();
         // Display the message and directory path from the server
         const fileDisplayDiv = document.getElementById('fileDisplay');
         fileDisplayDiv.innerHTML = `<h1>${error.message}</h1>
@@ -505,8 +515,8 @@ $(document).ready(function() {
 
 
 
-    }); //end of document ready function
 
+    }); //end of document ready function
 
 
 
@@ -559,13 +569,6 @@ $(document).ready(function() {
 
     }
 
-  //SOCKET IO RELATED CODE:
-
-   // Listen for 'playsound' events from the server
-    socket.on('playsound', () => {
-        console.log('Playing sound');
-        playSuccessSound();
-    });
 
    //socket test
     function socketTest() {
@@ -580,10 +583,6 @@ $(document).ready(function() {
     }
 
 
-        socket.on('test_event', (data) => {
-           toastr.warning(data);
-        });
-
 
 
 
@@ -594,6 +593,52 @@ $(document).ready(function() {
             const selectedLabel = document.querySelector(`.${labelClass}.selected`);
             return selectedLabel;
         }
+
+
+/*// gets the urls from the server
+$(document).ready(function() {S
+    fetchServerUrls();
+
+    try {
+        socket = io.connect(`${nodeServerUrl}`); // Connect to the Socket.IO server
+    } catch (error) {
+        console.error('Error connecting to Socket.IO server:', error);
+    }
+
+});*/
+
+
+
+//this funcvtion returns a promise that fetches the server urls
+$(document).ready(async function() {
+    await fetchServerUrls();
+
+    try {
+        socket = io.connect(`${nodeServerUrl}`); // Connect to the Socket.IO server
+        //debug print socket version to console
+        console.log("socket version: ", socket.io.engine.transport.query.EIO);
+        console.log("socket protocol....: ", socket.io.engine.transport.query.transport);
+
+
+        //SOCKET IO EVENTS
+
+       // Listen for 'playsound' events from the server
+        socket.on('playsound', () => {
+            console.log('Playing sound');
+            playSuccessSound();
+        });
+
+        socket.on('test_event', (data) => {
+           toastr.warning(data);
+        });
+
+              //clearHistoryResponse
+        socket.on('clearHistoryResponse', () => {
+           // Message to show history log cleared successfully
+           toastr.info('History log cleared!');
+           // Update the log
+            update_log();
+       });
 
 
 
@@ -635,6 +680,19 @@ $(document).ready(function() {
             playSuccessSound();
              update_log(); // Update the log
         });
+
+
+
+    } catch (error) {
+        console.error('Error connecting to Socket.IO server:', error);
+    }
+});
+
+
+
+
+
+
 
 
 

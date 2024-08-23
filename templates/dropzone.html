@@ -269,6 +269,7 @@
 
 
 <!--    javascript references-->
+<script src="/static/js/config.js"></script>
 <script src="static/js/dropzone_html.js"></script>
 <script src="static/js/history_log.js"></script>
 
@@ -276,60 +277,11 @@
 
 
 
+
 <script>
 
 
     let isProgressBarRunning = false;
-
-    //create progress bar popup
-/*    function createProgressBarPopup() {
-        let progressBarPopup = document.getElementById('progressBarPopup');
-        if (progressBarPopup) {
-            return;
-        }
-        progressBarPopup = document.createElement('div');
-        progressBarPopup.id = 'progressBarPopup';
-        progressBarPopup.style.display = 'none';
-        progressBarPopup.innerHTML = `
-            <div class="progress-bar">
-            </div>
-        `;
-        document.body.appendChild(progressBarPopup);
-    }*/
-
-//      function createProgressBarPopup() {
-//            let progressBarPopup = document.getElementById('progressBarPopup');
-//            if (progressBarPopup) {
-//                return;
-//            }
-//            progressBarPopup = document.createElement('div');
-//            progressBarPopup.id = 'progressBarPopup';
-//            progressBarPopup.style.display = 'none';
-//            progressBarPopup.innerHTML = `
-//                <div class="progress-bar">
-//                   <p class="uploading-text">Files Uploading.....</p>
-//                </div>
-//            `;
-//            document.body.appendChild(progressBarPopup);
-//        }
-
-            // Show progress bar popup
- /*       function showProgressBarPopup() {
-            let progressBarPopup = document.getElementById('progressBarPopup');
-            if (!progressBarPopup) {
-                createProgressBarPopup();
-                progressBarPopup = document.getElementById('progressBarPopup');
-            }
-            if (progressBarPopup) {
-                progressBarPopup.style.display = 'block';
-
-                // Add the text to the progress bar
-                let textElement = document.createElement('p');
-                textElement.className = 'uploading-text';
-                textElement.textContent = 'Files Uploading.....';
-                progressBarPopup.children[0].appendChild(textElement);
-            }
-}*/
 
 
 
@@ -356,6 +308,8 @@
             }
 
         }
+
+        isProgressBarRunning = true;
     }
 
 
@@ -371,6 +325,7 @@
         // Remove all squares from the progress bar
         removeAllSquaresFromProgressBarPopup();
         progressBarPopup.style.display = 'none';
+        isProgressBarRunning = false;
     }
 
 
@@ -430,7 +385,7 @@
                     }
 
                     // Set the flag to true
-                    isProgressBarRunning = true;
+//                    isProgressBarRunning = true;
 
                     // Show the progress bar popup
                     showProgressBarPopup();
@@ -467,7 +422,7 @@
                             console.log(new Ansi().yellowText().greenBackground().bold().text('Progress bar completed').getLine());
 
                             // Reset the flag to false
-                            isProgressBarRunning = false;
+//                            isProgressBarRunning = false;
                         }
                     }, 20);
                 }

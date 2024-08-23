@@ -300,13 +300,9 @@
             });
         }
 
-       //clearHistoryResponse
-        socket.on('clearHistoryResponse', () => {
-           // Message to show history log cleared successfully
-           toastr.info('History log cleared!');
-           // Update the log
-            update_log();
-       });
+
+
+
        //update the log when the page loads
 
 

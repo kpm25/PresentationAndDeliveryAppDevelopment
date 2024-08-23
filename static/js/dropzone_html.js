@@ -1,10 +1,6 @@
 let socket; // Declare socket in an outer scope
 
-try {
-    socket = io.connect('https://192.168.1.24:5000');
-} catch (error) {
-    console.error('Error connecting to Socket.IO server:', error);
-}
+
 
     /*
     Dropzone.js is a popular JavaScript library that provides drag and drop file uploads with image previews.
@@ -561,8 +557,9 @@ function initializeDropzone() {
 
                          //send a post request to the server utl /upload_Completed
                         //with ajax so that the server can update its stauts....
-     /*                   $.ajax({
-                            url:  'https://192.168.1.24:5000/upload_Completed', //nodejs server
+                      $.ajax({
+//                            url:  'https://192.168.1.24:5000/uploadCompleted', //nodejs server
+                            url:  `${nodeServerUrl}/uploadCompleted`,  //flask server
                             type: 'POST',
                             data: JSON.stringify({ uploadDir: fileFolderPath, totalFiles: fileCount }),
                             contentType: 'application/json',
@@ -574,7 +571,7 @@ function initializeDropzone() {
                             error: function(jqXHR, textStatus, errorThrown) {
                                 console.error('Error sending data to server:', errorThrown);
                             }
-                        });*/
+                        });
 
 
                            fileCount = 0; // Reset the counter after setting the message
@@ -752,7 +749,7 @@ $(document).ready(function() {
                                             const uploadDirToCheck = `LessonFolders/${semesterFolder}/${gradeFolder}/${weekFolder}/${lessonFolder}`;
 
                                         $.ajax({
-                                            url:  'https://192.168.1.24:5000/getInitialSize', //nodejs server
+                                            url:  `${nodeServerUrl}/getInitialSize`, //nodejs server
                                             //                                     url:  '/getInitialSize',  //flask server
                                             type: 'POST',
                                             data: JSON.stringify({ uploadDir: uploadDirToCheck, totalFileSize: totalFileSizeToSend }),
@@ -763,11 +760,15 @@ $(document).ready(function() {
                                                         console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Initial size is: ${response.initialSize}, totalFileSize: ${totalFileSizeToSend} , expectedCompleteFolderSize: ${response.expectedCompletionSize}, uploadStarted: ${response.uploadStarted}`).getLine());
         //                                                return;
         //                                            }
+
                                                 //amount of data to send to the server
                                                 expectedCompleteFolderSize =  response.totalFileSize + response.initialSize;
                                               //  alert(`Initial size is: ${response.initialSize}, totalFileSize: ${totalFileSizeToSend} , expectedCompleteFolderSize: ${expectedCompleteFolderSize}`);
                                                 // Check if the Dropzone instance has files
                                                     if (dropzoneInstance.files.length > 0) {
+                                                        if (!isProgressBarRunning) {
+                                                                showProgressBarPopup();
+                                                        }
                                                         // The server responded successfully and there are files in the Dropzone, now you can start the upload process
                                                         dropzoneInstance.processQueue();
                                                         uploadedCompleted = false; // Set the flag to false when the upload starts
@@ -956,7 +957,7 @@ $(document).ready(function() {
                         function makeRequest() {
                             if (!uploadCompleted) {
                                 $.ajax({
-                                    url: `https://192.168.1.24:5000/getFolderSize?path=${encodeURIComponent(params.uploadDirToCheck)}`,
+                                    url: `${nodeServerUrl}/getFolderSize?path=${encodeURIComponent(params.uploadDirToCheck)}`,
                                     type: 'GET',
                                     success: function(response) {
                                         try {
@@ -966,9 +967,9 @@ $(document).ready(function() {
                                                 console.log(ansi.rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}, percentage: ${percentage}%, expectedCompleteFolderSize: ${params.expectedCompleteFolderSize} , timeCompleted: ${timeCompleted}`).getLine());
                                                 console.log(ansi.randomColorText(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}, percentage: ${percentage}%, expectedCompleteFolderSize: ${params.expectedCompleteFolderSize} , timeCompleted: ${timeCompleted}`, 190, 185, 170).getLine());
 
-                                                    if (!isProgressBarRunning) {
-                                                        showProgressBarPopup();
-                                                    }
+//                                                    if (!isProgressBarRunning) {
+//                                                        showProgressBarPopup();
+//                                                    }
 
                                                     const numberOfSquaresToShow = Math.floor(percentage);
                                                     let progressBarPopup = document.getElementById('progressBarPopup');
@@ -1299,18 +1300,6 @@ $(document).ready(function() {
 
 
 
-//SOCKET.IO CODE:
-//debug print socket version to console
-console.log("socket version: ", socket.io.engine.transport.query.EIO);
-console.log("socket protocol....: ", socket.io.engine.transport.query.transport);
-
-   //code to play sound
-   // Listen for 'playsound' events from the server
-    socket.on('playsound', () => {
-        console.log('Playing sound');
-        playSuccessSound();
-         socket.emit('test_event');
-    });
 
 
    //function to get the url for the current dropzone redirect
@@ -1353,86 +1342,7 @@ console.log("socket protocol....: ", socket.io.engine.transport.query.transport)
 
     }
 
-    socket.on('test_event', (data) => {
-       toastr.warning(data);
-    });
 
-
-       // Listen for 'filesUploadedResponse' events from the server
-    socket.on('filesUploadedResponse', function(fileData) {
-      toastr.success(`socket.on('filesUploadedResponse', function(fileData)====> Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`);
-          const ansi = new Ansi();
-           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text(`socket.on('filesUploadedResponse', function(fileData)====>  Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`).getLine());
-            playSuccessSound();
-        /////////////////////////////////////
-          //  https://192.168.1.24:4000/?currentSemester=1&currentGrade=1&currentWeek=1&currentLesson=8
-            // Set your parameters
-               const url_to_redirect = getURLForCurrentDropzoneRedirect();
-
-                //debug in yellow text, cyan background AND bold the url
-              //  console.log(ansi.yellowText(0, 255, 255).cyanBackground(255, 255, 255).bold().text(window.location.href).getLine());
-
-
-                  timeCompleted = 0;
-                  clearInterval(intervalId);
-                  hideProgressBarPopup();
-                  lastSuccessResponse = null; // Reset the last response
-
-                //debug in green text, yellow background AND bold
-                 console.log(ansi.greenText(0, 255, 255).yellowBackground().bold().text(`url_to_redirect: ${url_to_redirect}, uploadCompleted: ${uploadCompleted}, timeCompleted: ${timeCompleted}`).getLine());
-
-                 playSuccessSound();
-                 toastr.success(`Upload completed: ${fileData.path}, count: ${fileData.count}, uploadCompleted: ${uploadCompleted}`);
-
-                  update_log(); // Update the log
-                //clear the dropzone
-                 if(dropzoneInstance){
-                    fileCount = 0; // Reset the counter after setting the message
-                    dropzoneInstance.removeAllFiles();
-                    console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`dropzoneInstance.removeAllFiles() called`).getLine());
-                }
-
-
-
-                //wait 0.5 seconds and then clear the console
-                setTimeout(() => {
-                    // Set the new URL
-                      window.location.href = `https://192.168.1.24:4000/?${url_to_redirect}`;
-                      window.location.reload();
-                }, 2000);
-
-
-
-        /////////////////////////////////s
-
-    } );
-
-//reload the page
-   socket.on('reload', function() {
-       toastr.warning('Reloading page...');
-       console.log(new Ansi().rgbBackground(255, 0, 255).rgbText(255, 0, 0).bold().text('Reloading page...').getLine());
-       playSuccessSound();
-//        location.reload();
-
-   } );
-
-
-
-
-        // Listen for 'fileDeletedResponse' events from the server
-        socket.on('fileDeletedResponse', function(filepath) {
-            // Message to show file deleted successfully
-            toastr.success('File deleted successfully: ' + filepath);
-           const ansi = new Ansi();
-           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('File deleted successfully: ' + filepath).getLine());
-
-            // Refresh the file list
-            RefreshFileList(getSelectedLabel('lesson-label'));
-
-            // Play success sound
-            playSuccessSound();
-             update_log(); // Update the log
-        })
 
 
 
@@ -1686,6 +1596,145 @@ The JSON object returned by the getSelectedLabels function will look like this w
 
 
 
+/*
+$(document).ready(function() {
+    fetchServerUrls();
+
+    try {
+         socket = io.connect(`${nodeServerUrl}`); // Connect to the Socket.IO server
+        //debug print socket version to console
+            console.log("socket version: ", socket.io.engine.transport.query.EIO);
+            console.log("socket protocol....: ", socket.io.engine.transport.query.transport);
+
+    } catch (error) {
+        console.error('Error connecting to Socket.IO server:', error);
+    }
+
+
+});
+*/
+
+$(document).ready(async function() {
+    await fetchServerUrls();
+
+    try {
+
+        //SOCKET.IO CODE:
+
+        socket = io.connect(`${nodeServerUrl}`); // Connect to the Socket.IO server
+        //debug print socket version to console
+        console.log("socket version: ", socket.io.engine.transport.query.EIO);
+        console.log("socket protocol....: ", socket.io.engine.transport.query.transport);
+
+
+
+
+
+
+
+
+       //code to play sound
+       // Listen for 'playsound' events from the server
+        socket.on('playsound', () => {
+            console.log('Playing sound');
+            playSuccessSound();
+             socket.emit('test_event');
+        });
+
+        socket.on('test_event', (data) => {
+           toastr.warning(data);
+        });
+
+        //clearHistoryResponse
+        socket.on('clearHistoryResponse', () => {
+           // Message to show history log cleared successfully
+           toastr.info('History log cleared!');
+           // Update the log
+            update_log();
+       });
+
+
+           // Listen for 'filesUploadedResponse' events from the server
+        socket.on('filesUploadedResponse', function(fileData) {
+          toastr.success(`socket.on('filesUploadedResponse', function(fileData)====> Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`);
+              const ansi = new Ansi();
+               console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text(`socket.on('filesUploadedResponse', function(fileData)====>  Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`).getLine());
+                playSuccessSound();
+            /////////////////////////////////////
+              //  https://192.168.1.24:4000/?currentSemester=1&currentGrade=1&currentWeek=1&currentLesson=8
+                // Set your parameters
+                   const url_to_redirect = getURLForCurrentDropzoneRedirect();
+
+                    //debug in yellow text, cyan background AND bold the url
+                  //  console.log(ansi.yellowText(0, 255, 255).cyanBackground(255, 255, 255).bold().text(window.location.href).getLine());
+
+
+                      timeCompleted = 0;
+                      clearInterval(intervalId);
+                      hideProgressBarPopup();
+                      lastSuccessResponse = null; // Reset the last response
+
+                    //debug in green text, yellow background AND bold
+                     console.log(ansi.greenText(0, 255, 255).yellowBackground().bold().text(`url_to_redirect: ${url_to_redirect}, uploadCompleted: ${uploadCompleted}, timeCompleted: ${timeCompleted}`).getLine());
+
+                     playSuccessSound();
+                     toastr.success(`Upload completed: ${fileData.path}, count: ${fileData.count}, uploadCompleted: ${uploadCompleted}`);
+
+                      update_log(); // Update the log
+                    //clear the dropzone
+                     if(dropzoneInstance){
+                        fileCount = 0; // Reset the counter after setting the message
+                        dropzoneInstance.removeAllFiles();
+                        console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`dropzoneInstance.removeAllFiles() called`).getLine());
+                    }
+
+
+
+                    //wait 0.5 seconds and then clear the console
+                    setTimeout(() => {
+                        // Set the new URL
+                          window.location.href = `https://192.168.1.24:4000/?${url_to_redirect}`;
+                          window.location.reload();
+                    }, 2000);
+
+
+
+            /////////////////////////////////s
+
+        } );
+
+        //reload the page
+           socket.on('reload', function() {
+               toastr.warning('Reloading page...');
+               console.log(new Ansi().rgbBackground(255, 0, 255).rgbText(255, 0, 0).bold().text('Reloading page...').getLine());
+               playSuccessSound();
+        //        location.reload();
+
+           } );
+
+
+
+
+        // Listen for 'fileDeletedResponse' events from the server
+        socket.on('fileDeletedResponse', function(filepath) {
+            // Message to show file deleted successfully
+            toastr.success('File deleted successfully: ' + filepath);
+           const ansi = new Ansi();
+           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('File deleted successfully: ' + filepath).getLine());
+
+            // Refresh the file list
+            RefreshFileList(getSelectedLabel('lesson-label'));
+
+            // Play success sound
+            playSuccessSound();
+             update_log(); // Update the log
+        })
+
+
+    } catch (error) {
+        console.error('Error connecting to Socket.IO server:', error);
+    }
+});
 
 
 
