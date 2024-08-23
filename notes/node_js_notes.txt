@@ -1,0 +1,23 @@
+process is a global object provided by Node.js that provides information about, and control over,
+the current Node.js process. It can be accessed from anywhere without needing to be imported.
+It includes methods and properties for things like the process id, the current working directory,
+the command line arguments, environment variables, and more. It also provides methods to exit the current
+process and to handle signals, like the SIGINT signal which is sent when the user presses Ctrl+C.
+
+you can set up a listener for the SIGINT event, which is emitted when the user presses Ctrl+C
+
+example:
+
+process.on('SIGINT', function() {
+    //Do something when the app is interrupted by a user pressing Ctrl+C, example:
+    console.log('Received SIGINT. Press Control-D to exit.');
+
+    process.exit();
+});
+
+you can think of it as a hook. In Node.js, process.on('SIGINT', function() {...}); is setting up an
+event listener for the SIGINT event. This event is triggered when the user interrupts the process
+by pressing Ctrl+C. The function provided as the second argument to process.on is the callback
+function that will be executed when the SIGINT event occurs. This is similar to how hooks work
+in other programming contexts, where a hook is a piece of code that is inserted or passed into
+another piece of code at specific points to alter or augment its behavior.

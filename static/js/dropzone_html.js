@@ -195,7 +195,17 @@ function reverseFormatBytes(sizeStr) {
         });
     });
 
-   //a funtion to set the dropzone dropzoneTargetLabel   to be the clicked label
+
+
+
+
+
+
+/*
+TODO: This is the start of the code to be implemented block....
+TODO: So all code up until the end of this block is to be implemented, and not deleted
+*/
+//a funtion to set the dropzone dropzoneTargetLabel   to be the clicked label
 //when it is clicked it checks if the chain is not broken from the semester to the end of the chain,
 //and is valid and if so can set the dropzone class as dropcontent, and set the dropzoneTargetLabel to the clicked label
 //then on subsequent clicks of the label, the dropzone class toggles between dropcontent and showcontent with to match the label
@@ -269,6 +279,7 @@ The JSON object returned by the getSelectedLabels function will look like this w
             */
 
 
+
            // Function to check files can be uploaded by checking if exactly one of a semester, grade, week, and lesson has been selected
             function canUploadFiles() {
               /*  // Call the function to check if the selected label chain is valid
@@ -336,8 +347,6 @@ The JSON object returned by the getSelectedLabels function will look like this w
         }
 
 
-
-
 /*     function setDropZoneDropContent() {
          const dropzoneElement = document.querySelector('#singleDropzone');
         if (!dropzoneElement.classList.contains('dropcontent')) {
@@ -379,9 +388,6 @@ The JSON object returned by the getSelectedLabels function will look like this w
         });
 */
 
-
-
-
 /*        // Add event listener to the semester, grade, week, and lesson labels
         document.querySelectorAll('.semester, .grade, .week, .lesson-label').forEach(function(label) {
             label.addEventListener('click', function() {
@@ -397,7 +403,10 @@ The JSON object returned by the getSelectedLabels function will look like this w
                 // You can reference lastClickedLabel here to change the behavior based on which label was clicked
             });
         });*/
-
+/*
+TODO: This is the end of the code to be implemented block....
+TODO: So all code up until the end of this block is to be implemented, and not deleted
+*/
 
 
 
@@ -429,6 +438,7 @@ function initializeDropzone() {
         // Construct the file path outside of the url function
         const filePath = `${selectedSemester}/${selectedGrade}/${selectedWeek}/${selectedLesson}`;
         //  let log_list = [];
+
 
 
         const dropzoneConfig = {
@@ -546,6 +556,25 @@ function initializeDropzone() {
                         //  console.log(new Ansi().rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text(`Upload completed: ${fileFolderPath}, count: ${fileCount}, uploadCompleted: ${uploadCompleted}`).getLine());
 
                         hasSentGetInitialSizeToServer =  false; // Reset the flag
+
+
+
+                         //send a post request to the server utl /upload_Completed
+                        //with ajax so that the server can update its stauts....
+     /*                   $.ajax({
+                            url:  'https://192.168.1.24:5000/upload_Completed', //nodejs server
+                            type: 'POST',
+                            data: JSON.stringify({ uploadDir: fileFolderPath, totalFiles: fileCount }),
+                            contentType: 'application/json',
+                            success: function(response) {
+                                console.log('Success:', response);
+                                //bold black text on pink background
+                                console.log(new Ansi().pinkBackground().blackText(0, 0, 0).bold().text(`In BLock:  this.on('queuecomplete', function(), ===> Upload completed: ${fileFolderPath}, count: ${fileCount}, uploadCompleted: ${uploadCompleted}`).getLine());
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.error('Error sending data to server:', errorThrown);
+                            }
+                        });*/
 
 
                            fileCount = 0; // Reset the counter after setting the message

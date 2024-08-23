@@ -158,4 +158,50 @@ The ANSI color codes you listed are the standard ones for basic colors. However,
 
 
 
+  ///other color libraries:
+  There are several popular libraries in JavaScript for styling console output. Here are a few:
+
+https://github.com/chalk/chalk
+Chalk: This is a very popular library for styling terminal string output. It supports chaining of styles
+and can be used to change the color and style of text and background.
+Example usage:
+
+const chalk = require('chalk');
+console.log(chalk.blue('Hello world!'));
+
+
+https://colorjs.io/
+https://github.com/color-js/color.js
+Colors.js: Another popular library for styling terminal output. It can be used to change the
+ text color, background color, and style (bold, underline, etc.).
+Example usage:
+
+const colors = require('colors');
+console.log('Hello world!'.green);
+
+https://github.com/lukeed/kleur
+Kleur: It's a lightweight option for terminal string styling. It's fast, reliable, and easy to use.
+Example usage:
+
+
+
+const kleur = require('kleur');
+console.log(kleur.red('Hello world!'));
+
+
+https://www.npmjs.com/package/figlet
+https://github.com/scottgonzalez/figlet-js
+Figlet.js: This library allows you to create ASCII Art from text. It's not exactly for styling
+ but can be used to create interesting text-based designs in the console.
+Example usage:
+
+const figlet = require('figlet');
+figlet.text('Hello world!', function(err, data) {
+    if (err) {
+        console.log('Something went wrong...');
+        console.dir(err);
+        return;
+    }
+    console.log(data)
+});
 

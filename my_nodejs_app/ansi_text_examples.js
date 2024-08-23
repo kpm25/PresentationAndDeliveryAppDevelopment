@@ -1,6 +1,7 @@
  const Ansi = require('./ansi_text.js');
 
 
+
 //a function to display the text style in color steps etc..
 function testVariousANSI(){
                 //#For 256 colors, the code is \033[38;5;#m for foreground and \033[48;5;#m for background, where # is a number from 0 to 255.
@@ -268,12 +269,9 @@ function testVariousANSI(){
 //console.log(ansi.text("hello world").redText().orangeBackground().underline().toString());
 
 
- function testAnsiLibrary(){
-
-
-      let ansi = new Ansi();
-
-        // Example 1: Red text with green background
+  //function of ansi test commnads that takes an ansi object and returns executes the ansi commands
+ function testAnsiCommands(ansi){
+             // Example 1: Red text with green background
 //        console.log(ansi.text("Hello World").rgbText(255, 0, 0).rgbBackground(0, 255, 0).getLine());
         console.log(ansi.rgbText(255, 0, 0).rgbBackground(0, 255, 0).text("Red Text on a Green background").getLine());
           console.log(ansi.rgbText(255, 0, 0).rgbBackground(0, 255, 0).text("*****Hello World").getLine());
@@ -330,29 +328,267 @@ function testVariousANSI(){
         console.log(ansi.rapidBlink().text("This is rapidly blinking text").getLine());
         //slow blinking text
         console.log(ansi.slowBlink().text("This is slowly blinking text").getLine());
-           ansi.resetAnsi() ;
 
-      //random color text
- console.log(ansi.randomColorText("This is random color text").getLine());
+ }
 
-      //random color text on white background
-    //    console.log(ansi.rgbBackground(255, 0, 0).randomColorText("This is MORE random color text").getText());
-//      console.log(ansi.randomColorText("This is MORE random color text").rgbBackground(255, 0, 0).getLine());
-//
-//       console.log(ansi.randomColorText("This is MORE random color text", 255, 255, 255).rgbBackground(255, 0, 0).getText());
+ //a function that tests random color text
+    function testRandomColorText(ansi){
+            //random color text
+         console.log(ansi.randomColorText("This is random color text").getLine());
+
+
       console.log(ansi.randomColorText("This is MORE random color text").getLine());
 
        console.log(ansi.randomColorText("This is MORE random color text", 255, 0, 255).getLine());
 
-      //blinking random color text
-        console.log(ansi.randomColorText("This is blinking random color text").getLine());
+    }
 
 
-             ansi.resetAnsi() ;
+ //functions testing new code:
+ function testNewCode(ansi){
+                 // Example 1: Red text with green background
+
+            // Red text on blue background, bold
+            ansi.red().bgBlue().bold().text("Hello World").print();
+
+            // Underline and bold
+            ansi.bold().underline().text("bold and underlined").print();
+
+            // Blue text with yellow background, bold and underlined
+            ansi.blue().bgYellow().bold().underline().text("Hello World").print();
+
+            // Magenta text with cyan background, dim and italic
+            ansi.magenta().bgCyan().dim().italic().text("Hello World").print();
+
+            // Chaining multiple text color functions
+            ansi.red().text("and this is red text").green().text("This is green text ").print();
+
+            // Chaining text color and background color functions
+            ansi.red().bgGreen().text("This is red text on a green background").print();
+
+            // Chaining text color, background color, and style functions
+            ansi.red().bgGreen().bold().text("This is bold red text on a green background").print();
+
+            // Using disableAutoReset to keep the style for subsequent text
+            ansi.disableAutoReset().red().text("This is red ").text("and this is also red").print();
+
+            // Using reset to clear the style
+            ansi.yellow().text("This is yellow ").resetText().text("and this is default").print();
+
+            // Chaining multiple style functions
+            ansi.bold().underline().text("This is bold and underlined").print();
+
+            // Using rgb and bgRGB for custom colors
+            ansi.rgb(128, 128, 128).bgRGB(255, 255, 255).text("This is gray text on a white background").print();
+
+            // White text on black background
+            ansi.white().bgBlack().text("This is white text on a black background").print();
+
+            // Black text on white background
+            ansi.black().bgWhite().text("This is black text on a white background").print();
+
+            // Red text on white background
+            ansi.red().bgWhite().text("This is red text on a white background").print();
+
+            // White text on red background
+            ansi.white().bgRed().text("This is white text on a red background").print();
+
+            // Underlined
+            ansi.underline().text("This is underlined text").print();
+
+            // Bold orange text on cyan background with strikethrough and italic
+            ansi.rgb(255, 165, 0).bgCyan().strikethroughOn().italic().bold().underline().text("This is bold orange text on a cyan background with strikethrough ,italic and underlined").print();
+
+            // Plain strike through text
+            ansi.strikethroughOn().text("This is strikethrough text").print();
+
+            // Rapid blinking text
+            ansi.rapidBlink().text("This is rapidly blinking text").print();
+
+            // Slow blinking text
+            ansi.slowBlink().text("This is slowly blinking text").print();
+                 ansi.pink().bgWhite().bold().underline().text("This is pink text on a white background").yellow().bgRed().bold().underline().text("This is yellow text on a red background").print();
+                //    ansi.randomColorText("This is random color text");
+
+                 // Overlined text
+            ansi.overline().text("This is overlined text").print();
+
+            // Double underlined text
+            ansi.doubleUnderline().text("This is double underlined text").print();
+
+            // Fraktur (gothic) text
+            ansi.fraktur().text("This is fraktur text").print();
+
+            // Encircled text
+            ansi.encircled().text("This is encircled text").print();
+
+            // Framed text
+            ansi.framed().text("This is framed text").print();
+
+            // Test new colors
+            ansi.navy().text("This is navy text").print();
+            ansi.darkBlue().text("This is dark blue text").print();
+            ansi.mediumBlue().text("This is medium blue text").print();
+            ansi.royalBlue().text("This is royal blue text").print();
+            ansi.steelBlue().text("This is steel blue text").print();
+            ansi.lightSteelBlue().text("This is light steel blue text").print();
+            ansi.lightBlue().text("This is light blue text").print();
+            ansi.powderBlue().text("This is powder blue text").print();
+            ansi.paleTurquoise().text("This is pale turquoise text").print();
+            ansi.darkTurquoise().text("This is dark turquoise text").print();
+            ansi.mediumTurquoise().text("This is medium turquoise text").print();
+            ansi.turquoise().text("This is turquoise text").print();
+            ansi.aqua().text("This is aqua text").print();
+            ansi.darkGreen().text("This is dark green text").print();
+            ansi.green().text("This is green text").print();
+            ansi.darkOliveGreen().text("This is dark olive green text").print();
+            ansi.oliveDrab().text("This is olive drab text").print();
+            ansi.yellowGreen().text("This is yellow green text").print();
+            ansi.limeGreen().text("This is lime green text").print();
+            ansi.lawnGreen().text("This is lawn green text").print();
+            ansi.chartreuse().text("This is chartreuse text").print();
+            ansi.gold().text("This is gold text").print();
+            ansi.khaki().text("This is khaki text").print();
+            ansi.peachPuff().text("This is peach puff text").print();
+            ansi.moccasin().text("This is moccasin text").print();
+            ansi.bisque().text("This is bisque text").print();
+            ansi.mistyRose().text("This is misty rose text").print();
+            ansi.blanchedAlmond().text("This is blanched almond text").print();
+            ansi.papayaWhip().text("This is papaya whip text").print();
+            ansi.lavenderBlush().text("This is lavender blush text").print();
+            ansi.seashell().text("This is seashell text").print();
+            ansi.cornsilk().text("This is cornsilk text").print();
+            ansi.lemonChiffon().text("This is lemon chiffon text").print();
+            ansi.floralWhite().text("This is floral white text").print();
+            ansi.snow().text("This is snow text").print();
+            ansi.lightYellow().text("This is light yellow text").print();
+            ansi.ivory().text("This is ivory text").print();
+            ansi.white().text("This is white text").print();
+
+                 //test new background colors
+            ansi.bgNavy().text("This is navy background").print();
+            ansi.bgDarkBlue().text("This is dark blue background").print();
+            ansi.bgMediumBlue().text("This is medium blue background").print();
+            ansi.bgRoyalBlue().text("This is royal blue background").print();
+            ansi.bgSteelBlue().text("This is steel blue background").print();
+            ansi.bgLightSteelBlue().text("This is light steel blue background").print();
+            ansi.bgLightBlue().text("This is light blue background").print();
+            ansi.bgPowderBlue().text("This is powder blue background").print();
+            ansi.bgPaleTurquoise().text("This is pale turquoise background").print();
+            ansi.bgDarkTurquoise().text("This is dark turquoise background").print();
+            ansi.bgMediumTurquoise().text("This is medium turquoise background").print();
+            ansi.bgTurquoise().text("This is turquoise background").print();
+            ansi.bgAqua().text("This is aqua background").print();
+            ansi.bgDarkGreen().text("This is dark green background").print();
+            ansi.bgGreen().text("This is green background").print();
+            ansi.bgDarkOliveGreen().text("This is dark olive green background").print();
+            ansi.bgOliveDrab().text("This is olive drab background").print();
+            ansi.bgYellowGreen().text("This is yellow green background").print();
+            ansi.bgLimeGreen().text("This is lime green background").print();
+            ansi.bgLawnGreen().text("This is lawn green background").print();
+            ansi.bgChartreuse().text("This is chartreuse background").print();
+            ansi.bgGold().text("This is gold background").print();
+            ansi.bgKhaki().text("This is khaki background").print();
+            ansi.bgPeachPuff().text("This is peach puff background").print();
+            ansi.bgMoccasin().text("This is moccasin background").print();
+            ansi.bgBisque().text("This is bisque background").print();
+            ansi.bgMistyRose().text("This is misty rose background").print();
+            ansi.bgBlanchedAlmond().text("This is blanched almond background").print();
+            ansi.bgPapayaWhip().text("This is papaya whip background").print();
+            ansi.bgLavenderBlush().text("This is lavender blush background").print();
+            ansi.bgSeashell().text("This is seashell background").print();
+            ansi.bgCornsilk().text("This is cornsilk background").print();
+            ansi.bgLemonChiffon().text("This is lemon chiffon background").print();
+            ansi.bgFloralWhite().text("This is floral white background").print();
+            ansi.bgSnow().text("This is snow background").print();
+            ansi.bgLightYellow().text("This is light yellow background").print();
+            let str = ansi.bgIvory().text("This is ivory background").getLine();
+            str+= ansi.bgWhite().text("This is white background").getLine();
+            str+= ansi.bgBlack().text("This is black background").getLine();
+            str+= ansi.bgGray().text("This is gray background").getLine();
+            str+= ansi.bgSilver().text("This is silver background").getLine();
+            str+= ansi.bgDarkGray().text("This is dark gray background").getLine();
+            str+= ansi.bgDimGray().text("This is dim gray background").getLine();
+             console.log(str);
+
+
+            str = ansi.bronze().text("This is bronze text").getText();
+            str+= ansi.tan().text("This is tan text").getText();
+            str+= ansi.ruby().text("This is ruby text").getText();
+
+            console.log(str);
+
+
+ }
+
+
+
+/*    //a function that tests animated random color text
+    function testAnimatedRandomColorText(ansi, text , red = null,  green = null, blue = null){
+        //animated random color text
+        ansi.animateRandomColorText(text, red, green  , blue);
+    }*/
+
+ // a function that tests animated random color text
+/*function testAnimatedRandomColorText(ansi, text, rgb = {r: null, g: null, b: null}, duration = 500){
+    // animated random color text
+    ansi.animateRandomColorText(text, rgb, duration);
+}*/
+
+ function testAnimatedRandomColorText(ansi, text, rgb = [null, null, null], duration = 500){
+    // animated random color text
+    ansi.animateRandomColorText(text, rgb, duration);
+}
+
+ function testAnsiLibrary(){
+
+
+      let ansi = new Ansi();
+     //   testAnsiCommands(ansi);
+    //    testRandomColorText(ansi);
+    /*        testAnimatedRandomColorText(ansi, "This is animated random color text");
+             ansi.animateRandomColorText("This is animated random color text", {r: 255, g: 255, b: 255}, 1000);
+        let ansi = new Ansi();*/
+      //testAnimatedRandomColorText(ansi, "This is animated random color text", {r: 122, g: 122, b: 122}, 1000);
+      //ansi.animateRandomColorText("hello", [255, 122, 234], 200);
+    //ansi.animateRandomColorText("world");
+    //ansi.animateRandomColorText("world", 200);
+       //ansi.animateRandomColorText("world" , 2000);
+
+
+        //testNewCode(ansi);
+
+
+     //BUILT IN ANSI TESTS
+   //    ansi.test();
+      ansi.testAnimation();
+
+  //  testNewCode(ansi);
+
+
+/*     let ansi = new Ansi();
+
+// Call with parameters
+ansi.animateRandomColorText("This is animated random color text", {r: 255, g: 255, b: 255}, 1000);
+
+// Call without parameters, defaults will be used
+ansi.animateRandomColorText("This is animated random color text");*/
+              // Set up the SIGINT event listener
+/*
+        process.on('SIGINT', function() {
+            process.stdin.setRawMode(false);
+            ansi.resetAnsi();
+            console.log('Text reset to default');
+            process.exit();
+        });
+*/
+
         console.log('\n\n\n\nnormal text');
 
-
   }
+
+
+
 
   testAnsiLibrary();
 
