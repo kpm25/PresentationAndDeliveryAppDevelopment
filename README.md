@@ -1,4 +1,4 @@
-# Project Name
+# Presentation And Delivery App Development
 
 ## Setup Instructions
 
@@ -28,22 +28,54 @@ To run the project, you need to start both the Python application and the Node.j
 
 ### Starting the Python Application
 
-Provide instructions on how to start your Python application here.
-
-### Starting the Node.js Server
-
-Navigate to the `my_nodejs_app` directory in your terminal and run the following command:
+Navigate to the project directory in your terminal and run the following command:
 
 ```bash
-node app.js
+python app.py
 ```
 
-You should see a message indicating that the server is running. You can verify this by checking the node_server_flag.txt file
-exists on the tree or by going to url:.  
-```bash
+This command will start both the Python application and the Node.js server.  
+Environment Variables.
+
+You can create a .env file in the root directory of the project and set the following 
+environment variables to your liking , example below:
+
+
+ ```bash
+# Node.js port and host
+NODEJS_PORT=5000
+NODEJS_HOST=0.0.0.0
+
+# Python Flask port and host
+FLASK_PORT=4000
+FLASK_HOST=0.0.0.0
+
+# Client origin
+CLIENT_ORIGIN=https://192.168.1.24:4000
+
+# Server URLs
+NODE_SERVER_URL=https://192.168.1.24:5000
+FLASK_SERVER_URL=https://192.168.1.24:4000
+```
+
+If these environment variables are not set, the application will use default values.  
+Verifying the Application
+You should see a message indicating that the server is running.
+You can verify this by checking the node_server_flag.txt file exists on the tree or 
+by going to the following URL:
+
 http://localhost:4000/test_nodejs
+
+The project will be running on your local machine on any local address, 
+localhost or 127.0.0.1 or the IP address of your machine.
+
+****Ansi Color Class:
+
+This project includes the use of the Ansi class for convenient console logging during development. The Ansi class allows you to easily format console output with different colors, backgrounds, and styles. Here's an example of how to use it:
+
+```javascript
+new Ansi().yellow().bgGreen().bold().text(`Your text here`).print();
 ```
-the project will be running on your local machine on any local address, localhost or 127.0.0.1 or the ip address of your machine.
- 
 
-
+This will print the text in bold, with a yellow font color and a green background.  
+Please refer to the project's source code for more details on how to use the Ansi class.

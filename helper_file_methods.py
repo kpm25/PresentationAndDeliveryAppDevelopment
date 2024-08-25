@@ -130,17 +130,17 @@ def is_video(filename):
     return result
 
 
-def save_file(file, dest_folder, file_type, file_prefix):
+def save_file(file, dest_folder, file_type, filename_with_prefix):
     # Construct the full path to the destination folder
     full_dest_folder = os.path.join(dest_folder, file_type)
 
     # Create the destination folder if it doesn't exist
     os.makedirs(full_dest_folder, exist_ok=True)
 
-    print(f'Original filename: {file.filename}')  # Debugging line
-    print(f'File prefix: {file_prefix}')  # Debugging line
+    # print(f'Original filename: {file.filename}')  # Debugging line
+    # print(f'File prefix: {file_prefix}')  # Debugging line
 
-    filename_with_prefix = file_prefix + file.filename
+    # filename_with_prefix = file_prefix + file.filename
 
     print(f'Filename with prefix: {filename_with_prefix}')  # Debugging line
 

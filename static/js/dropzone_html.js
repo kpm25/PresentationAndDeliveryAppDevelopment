@@ -435,6 +435,24 @@ function initializeDropzone() {
         const filePath = `${selectedSemester}/${selectedGrade}/${selectedWeek}/${selectedLesson}`;
         //  let log_list = [];
 
+    // Initialize an empty array to store the paths of all added files
+    let addedFullPaths = [];
+
+        // Fetch the history log
+        let historyLog = [];
+        fetch('/get_logs', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            historyLog = data;
+        })
+        .catch(error => {
+            console.error('Error retrieving logs:', error);
+        });
 
 
         const dropzoneConfig = {
@@ -455,13 +473,69 @@ function initializeDropzone() {
             uploadMultiple: true,
             parallelUploads: 50, // Increase this number
             clickable: "#uploadButton",
-            maxFiles: null, // Allow unlimited files
+            maxFiles: 50, // Allow unlimited files
             maxFilesize: 4048, // Set the maximum file size to 4GB.
             /*       renameFile: function(file) {
                 var newName = `${selectedGrade}_${selectedSemester}_${selectedWeek}_${selectedLesson}_${file.name}`;
                 return newName;
             },*/
             init: function() {
+                this.on("maxfilesexceeded", function(file) {
+                        new Ansi().pink().bgGreen().bold().text(`Max files exceeded: ${file.name}, file count: ${this.files.length}`).print();
+                        this.removeFile(file); // If more than 200 files are dropped, remove the excess files
+
+                });
+  /*              this.on('addedfile', function(file) {
+
+                    // Check if the file already exists in the history log
+                    const fileExistsInHistoryLog = historyLog.some(log => log.path.includes(file.name));
+                    if (fileExistsInHistoryLog) {
+                        // If the file already exists in the history log, remove it from the Dropzone instance
+                        this.removeFile(file);
+                        new Ansi().red().bgCyan().bold().text(`File already exists: ${file.name},so not adding to dropzone,  file count: ${this.files.length}, file type: ${file.type}`).print();
+                        //printt file object as pretty json
+                        new Ansi().pink().bgCyan().bold().text(JSON.stringify(file, null, 4)).print();
+                    }else{
+
+                         new Ansi().yellow().bgGreen().bold().text(`File added to dropzone: ${file.name}, file count: ${this.files.length}`).print();
+                    }
+
+                });*/
+                /*
+                file example:
+                {
+                    "fullPath": "body-parser/node_modules/debug/src/browser.js",
+                            "upload": {
+                                         "uuid": "c5161ef2-b062-41c0-8837-75d01b10fbda",
+                                         "progress": 0,
+                                         "total": 4734,
+                                         "bytesSent": 0,
+                                         "filename": "browser.js"
+                                     },
+                                  "status": "added",
+                                  "previewElement": {},
+                                  "previewTemplate": {}
+                            }
+
+                */
+                 this.on('addedfile', function(file) {
+                    // Construct the full path of the file
+                      const fullPath =  file.fullPath;
+
+                    // Check if the file already exists in the added files list
+             /*       if (addedFullPaths.includes(fullPath)) {
+                        // If the file already exists in the added files list, remove it from the Dropzone instance
+                        new Ansi().red().bgCyan().bold().text(`File already exists: ${file.upload.filename},so not adding to dropzone,  file count: ${this.files.length}, fullPath: ${file.fullPath}`).print();
+                        this.removeFile(file);
+                    } else {*/
+                        // If the file does not exist in the added files list, add it to the list
+                        addedFullPaths.push(fullPath);
+                        new Ansi().yellow().bgGreen().bold().text(`File added to dropzone: ${file.upload.filename}, file count: ${this.files.length}, fullPath: ${file.fullPath}`).print();
+                  //  }
+
+                     //print the addedFilePaths array as pretty json
+                    new Ansi().cyan().bgGold().bold().text(JSON.stringify(addedFullPaths, null, 4)).print();
+                });
 
                 this.on('success', function(file, response) {
 
@@ -577,6 +651,9 @@ function initializeDropzone() {
                            fileCount = 0; // Reset the counter after setting the message
                           dropzoneInstance.removeAllFiles();
 
+                        //clear addedFullPaths array
+                        addedFullPaths = [];
+
                    /*          const url_to_redirect = getURLForCurrentDropzoneRedirect();
                             //wait 0.5 seconds and then clear the console
                             setTimeout(() => {
@@ -636,35 +713,72 @@ function initializeDropzone() {
                     // Construct the file prefix
                     const filePrefix = `${selectedGrade}_${selectedSemester}_${selectedWeek}_${selectedLesson}_`;
 
+  /*                 let fullPath = file.fullPath;
+                        // Check if the file already exists in the history log
+                    const fileExistsInHistoryLog = historyLog.some(log => log.path.includes(`${filePrefix}${file.name}`));
+                    if (fileExistsInHistoryLog) {
+                        // If the file already exists in the history log, use an adjusted name based on fullPath
+                        //find fullpath of file in addedFullPaths array
 
-                    // Add the file prefix to the filename
-                    //   file.upload.filename = `${filePrefix}_${file.name}`;
+                        if (file && file.name&& file.upload.filename) {
+                                // Check if addedFullPaths is an array
+                                if (Array.isArray(addedFullPaths)) {
+                                    // Find full path of file in addedFullPaths array
+                                //check if the filename is in the addedFullPaths array
 
-                    console.log("file name is: ", file.upload.filename);
+                                  //  const filePathIsInAddedFullPaths = addedFullPaths.includes(fullPath);
+                                    //is filename in the addedFullPaths array
+                                    const filenameIsInAddedFullPaths = addedFullPaths.includes(file.upload.filename);
+                                    // Check if fullPath is found
+                                    if (filenameIsInAddedFullPaths) {
+                                        // Replace all / with _ in the fullPath
+                                           if (typeof fullPath === 'string') {
+                                                // Replace all / with _ in the fullPath
+                                                fullPath = fullPath.replace(/\//g, '_');
+                                            } else {
+                                                console.error('fullPath is not a string');
+                                            }
+                                    } else {
+                                        console.error('fullPath not found in addedFullPaths array');
+                                    }
+                                } else {
+                                    console.error('addedFullPaths is not an array');
+                                }
+                            } else {
+                                console.error('file.name is undefined');
+                            }
+//                        let fullPath = addedFullPaths.find(path => path.includes(file.upload.filename));
+//                        //replace all / with _ in the fullPath
+//                        fullPath = fullPath.replace(/\//g, '_');
+
+                        file.upload.filename = `${fullPath}`;
+
+                        formData.append('filename', file.upload.filename);
+                        formData.append('filename', file.upload.filename);
+                        //read  formData.append('filename', file.upload.filename);
+                        const formDataFilename = formData.get('filename');
+                       // alert(`File already exists, so,  sending file with adjusted filename: ${ file.upload.filename},formDataFilename: ${formDataFilename},   so changing the file name...  file count: ${this.files.length}, fullPath: ${file.fullPath}, fileExistsInHistoryLog: ${fileExistsInHistoryLog}`);
+                    }else{
+                      //   alert(`Sending file with original filename..... file name is:   ${file.upload.filename}`)
+                        new Ansi().cyan().bgRed().bold().text(`Sending file..... file name is:   ${file.upload.filename}, file size: ${file.size}, file type: ${file.type}`).print();
+                    }
+*/
+
+                      new Ansi().cyan().bgRed().bold().text(`Sending file..... file name is:   ${file.upload.filename}, file size: ${file.size}, file type: ${file.type}, fullPath: ${file.fullPath}`).print();
+
+
+
+
 
                     // Use the global variables
                     xhr.setRequestHeader('X-Grade', selectedGrade);
                     xhr.setRequestHeader('X-Semester', selectedSemester);
                     xhr.setRequestHeader('X-Week', selectedWeek);
                     xhr.setRequestHeader('X-Lesson', selectedLesson);
-                    //pass the file prefix to the server
                     xhr.setRequestHeader('X-File-Prefix', filePrefix);
 
 
-                    /*          if(!hasSentGetInitialSizeToServer){
-                        //total file size of all files
-                        const totalFileSizeToSend = this.files.reduce((total, file) => total + file.size, 0);
 
-                        console.log(new Ansi().rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Total file size: ${totalFileSizeToSend}, formatBytes value: ${formatBytes(totalFileSizeToSend)}`).getLine());
-                           // Emit an event to get the initial size of the upload directory
-                             const semesterFolder = semesterDict[selectedSemester];
-                                const gradeFolder = gradeDict[selectedGrade];
-                                const weekFolder = weekDict[selectedWeek];
-                                const lessonFolder = lessonDict[selectedLesson];
-                                const uploadDirToCheck = `LessonFolders/${semesterFolder}/${gradeFolder}/${weekFolder}/${lessonFolder}`;
-                              socket.emit('getInitialSize', { uploadDir: uploadDirToCheck  , totalFileSize:totalFileSizeToSend });
-                              hasSentGetInitialSizeToServer = true;
-                    }*/
 
                 });
             }
@@ -1694,7 +1808,7 @@ $(document).ready(async function() {
                     setTimeout(() => {
                         // Set the new URL
                           window.location.href = `https://192.168.1.24:4000/?${url_to_redirect}`;
-                          window.location.reload();
+                         window.location.reload();
                     }, 2000);
 
 

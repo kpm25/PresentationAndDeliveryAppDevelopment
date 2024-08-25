@@ -1,5 +1,6 @@
 from flask import Flask, Blueprint, request, jsonify, render_template, redirect, url_for, g, current_app, send_file
-from helper_file_methods import is_audio, is_image, is_compressed, is_video, save_file, setup_lesson_folders, format_bytes, reverse_format_bytes
+from helper_file_methods import is_audio, is_image, is_compressed, is_video, save_file, setup_lesson_folders, \
+    format_bytes, reverse_format_bytes
 from werkzeug.utils import secure_filename
 import datetime
 import json
@@ -223,15 +224,27 @@ def dropzone_lessons_path(file_path):
     duplicate_files = []
     accepted_files = []  # Initialize the list of accepted files
 
+    # Initialize file_name before the if-else block
+    new_file_name = None
+
     # Iterate over each file in the request
     for file_key in request.files:
         file = request.files[file_key]
         if file:
             # Secure the filename
             secure_file_name = secure_filename(file.filename)
+            print(f"\n\n\nsecure_file_name: {secure_file_name}\n\n\n")
 
-            # Update the file name for each file in the request
-            file_name = secure_file_name
+            # Check if an adjusted filename was sent
+            adjusted_filename = request.form.get('filename')
+            if adjusted_filename:
+                # Use the adjusted filename
+                new_file_name = adjusted_filename
+                print(f'\n\n\nAdjusted filename: {new_file_name}\n\n\n')
+            else:
+                # Use the original filename
+                new_file_name = secure_file_name
+                print(f'\n\n\nOriginal filename: {new_file_name}\n\n\n')
 
             # Determine the type of the file
             if is_audio(file_name):
@@ -255,11 +268,12 @@ def dropzone_lessons_path(file_path):
 
             # Construct the new filename
             # Construct the new filename
-            new_file_name = f'{grade}_{semester}_{week}_{lesson}_{secure_file_name}'
-            print(f'New file name: {new_file_name}')
+            # new_file_name = f'{grade}_{semester}_{week}_{lesson}_{secure_file_name}'
+            new_file_name_with_prefix = f'{grade}_{semester}_{week}_{lesson}_{new_file_name}'
+            print(f'New file name with prefix: {new_file_name_with_prefix}')
 
             # Save the file to the destination folder if not a duplicate
-            file_path_to_check = os.path.join(dest_folder, file_type, new_file_name)
+            file_path_to_check = os.path.join(dest_folder, file_type, new_file_name_with_prefix)
             all_files.append(file_path_to_check)
             print(f'\033[92mFile path to check: {file_path_to_check}')
             if os.path.exists(file_path_to_check):
@@ -268,7 +282,7 @@ def dropzone_lessons_path(file_path):
             else:
                 print(f'Saving file to: {file_path}')
                 # Save the file to the appropriate subfolder
-                filename_with_prefix = save_file(file, dest_folder, file_type, file_prefix)
+                filename_with_prefix = save_file(file, dest_folder, file_type, new_file_name_with_prefix)
                 accepted_files.append(new_file_name)  # Add the file to the list of accepted files
 
     # print in pink all files
@@ -426,5 +440,3 @@ def image2():
 def get_file():
     path = request.args.get('path')
     return send_file(os.path.abspath(path), as_attachment=True)
-
-
