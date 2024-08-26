@@ -97,50 +97,6 @@ def stop_node_app():
 #         return '/socket.io/' not in record.getMessage()
 
 
-# if __name__ == '__main__':
-#     print(f"Debug mode: {app.debug}")
-#     print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")
-#     print(f"Flag file exists: {os.path.exists('node_server_flag.txt')}")
-#
-#     # Only start the Node.js app if the Flask app is not in debug mode
-#     # or if the current run is from the reloader
-#     # and if the flag file does not exist
-#     # if (os.environ.get('WERKZEUG_RUN_MAIN') == 'true') and not os.path.exists('node_server_flag.txt'):
-#     if (not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true') and not os.path.exists('node_server_flag.txt'):
-#         print('******Starting Node.js app...')
-#         start_node_app()
-#         atexit.register(stop_node_app)
-#     # app.logger.addFilter(IgnoreSocketIOFilter())
-#     # app.run(port=3000, host='0.0.0.0', debug=True)
-#     app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
-
-
-# if __name__ == '__main__':
-#     print(f"Debug mode: {app.debug}")
-#     print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")
-#
-#     # Only start the Node.js app if the Flask app is not in debug mode
-#     # or if the current run is from the reloader
-#     if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
-#         print('******Starting Node.js app...')
-#         start_node_app()
-#         atexit.register(stop_node_app)
-#     app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
-
-
-# if __name__ == '__main__':
-#     print(f"Debug mode: {app.debug}")
-#     print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")
-#
-#     # Only start the Node.js app if the Flask app is not in debug mode
-#     # or if the current run is from the reloader
-#     if not app.debug or (os.environ.get('WERKZEUG_RUN_MAIN') == 'true' and not os.path.exists('node_server_flag.txt')):
-#         print('******Starting Node.js app...')
-#         start_node_app()
-#         atexit.register(stop_node_app)
-#     app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
-
-
 if __name__ == '__main__':
     print(f"Debug mode: {app.debug}")
     print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")

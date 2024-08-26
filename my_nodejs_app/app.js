@@ -34,12 +34,14 @@ const NODEJS_HOST = process.env.NODEJS_HOST || 'localhost';
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `https://localhost:4000`;
 let uploadComplete = true;
 let initialSize = 0;
-let expectedCompletionSize = 0;
+
 
 console.log(ansi.yellowBackground().blackText().italic().bold().underline().text(`   client origin is  ${CLIENT_ORIGIN}   `).getLine());
 
 // Set up CORS
-app.use(cors({ origin: CLIENT_ORIGIN }));
+//app.use(cors({ origin: CLIENT_ORIGIN }));
+//use all origins during development:
+app.use(cors());
 
 
 app.use(express.json());
@@ -101,9 +103,18 @@ const io = socketIO(server, {
 */
 
 // Set up Socket.IO with CORS
+//const io = socketIO(server, {
+//    cors: {
+//        origin: CLIENT_ORIGIN,
+//        methods: ['GET', 'POST']
+//    }
+//});
+
+//for development use all origins
+// Set up Socket.IO with CORS
 const io = socketIO(server, {
     cors: {
-        origin: CLIENT_ORIGIN,
+        origin: '*',
         methods: ['GET', 'POST']
     }
 });
