@@ -5,8 +5,18 @@
 
 require('dotenv').config();
 const express = require('express');
-//const http = require('http');
+
+// Get the USE_HTTPS value from .env file
+const USE_HTTPS = process.env.USE_HTTPS || 'false';
+const protocol = USE_HTTPS ? 'https' : 'http';
+const NODE_SERVER_URL = `${protocol}://192.168.1.24:5000`;
+const FLASK_SERVER_URL = `${protocol}://192.168.1.24:4000`;
+
+const http = require('http');
 const https = require('https');
+
+// Depending on the USE_HTTPS value, require the appropriate module
+//const http = USE_HTTPS === 'true' ? require('https') : require('http');
 const fs = require('fs');
 const path = require('path');
 const socketIO = require('socket.io');
@@ -31,13 +41,12 @@ const NODEJS_HOST = process.env.NODEJS_HOST || 'localhost';
 //app.use(cors({ origin: `https://${FLASK_HOST}:${FLASK_PORT}` }));
 
 // Get the client-side application's origin from an environment variable
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `https://localhost:4000`;
+//const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `https://localhost:4000`;
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `${USE_HTTPS === 'true' ? 'https' : 'http'}://localhost:4000`;
 let uploadComplete = true;
 let initialSize = 0;
 let expectedCompletionSize = 0;
 
-
-//console.log(ansi.yellowBackground().blackText().italic().bold().underline().text(`   client origin is  ${CLIENT_ORIGIN}   `).getLine());
 new Ansi().yellow().bgBlack().bold().italic().underline().text(`   client origin is  ${CLIENT_ORIGIN}   `).print();
 
 // Set up CORS
@@ -78,7 +87,9 @@ console.log('\x1b[36m%s\x1b[0m', `Node.js app listening at https://${NODEJS_HOST
 // Create an HTTP server
 //const server = http.createServer(app);
 // Create an HTTPS server
-const server = https.createServer(options, app);
+//const server = https.createServer(options, app);
+// Depending on the USE_HTTPS value, create the appropriate server
+const server = USE_HTTPS === 'true' ? https.createServer(options, app) : http.createServer(app);
 
 // Create an HTTP server with custom request logging
 /*const server = http.createServer((req, res) => {
@@ -355,6 +366,15 @@ app.get('/test_nodejs', (req, res) => {
     res.send('Server is running');
 });
 
+/*
+// Node.js server
+app.get('/config', (req, res) => {
+    res.json({ nodeServerUrl: process.env.NODE_SERVER_URL });
+});
+*/
+
+
+/*
 // Start the server
 //server.listen(4000, '0.0.0.0', () => {
 server.listen(NODEJS_PORT, NODEJS_HOST, () => {
@@ -363,9 +383,18 @@ server.listen(NODEJS_PORT, NODEJS_HOST, () => {
     //https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
     console.log(`\x1b[31m  Node.js app listening at https://${NODEJS_HOST}:${NODEJS_PORT} \x1b[0m`);
 });
+*/
 
 
-// Node.js server
-app.get('/config', (req, res) => {
-    res.json({ nodeServerUrl: process.env.NODE_SERVER_URL });
+// Start the server
+//server.listen(4000, '0.0.0.0', () => {
+server.listen(NODEJS_PORT, NODEJS_HOST, () => {
+//      console.log('Node.js app listening at http://0.0.0.0:4000');
+//      console.log('\x1b[31m%s\x1b[0m', 'Node.js app listening at http://0.0.0.0:4000');
+    //https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
+    new Ansi().yellow().bgCyan().text(`Node.js app listening at http${USE_HTTPS === 'true' ? 's' : ''}://${NODEJS_HOST}:${NODEJS_PORT}`).print();
 });
+
+
+
+

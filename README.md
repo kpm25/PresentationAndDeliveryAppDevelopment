@@ -42,20 +42,25 @@ environment variables to your liking , example below:
 
 
  ```bash
-# Node.js port and host
+#node js port and host
 NODEJS_PORT=5000
 NODEJS_HOST=0.0.0.0
 
-# Python Flask port and host
+
+#python flask port and host
 FLASK_PORT=4000
 FLASK_HOST=0.0.0.0
 
-# Client origin
+
+#client origin
 CLIENT_ORIGIN=https://192.168.1.24:4000
 
-# Server URLs
-NODE_SERVER_URL=https://192.168.1.24:5000
-FLASK_SERVER_URL=https://192.168.1.24:4000
+#server urls
+NODE_SERVER_URL=//192.168.1.24:5000
+FLASK_SERVER_URL=//192.168.1.24:4000
+
+# Set USE_HTTPS to either 'true' or 'false' so sets protocol to either http or https in server setup
+USE_HTTPS=true
 ```
 
 If these environment variables are not set, the application will use default values.  

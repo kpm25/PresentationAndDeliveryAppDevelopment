@@ -6,14 +6,31 @@ import os
 import sys
 import atexit
 import shutil
-from werkzeug.serving import is_running_from_reloader
+from werkzeug.serving import is_running_from_reloader, run_simple
+import ssl
 from typing import Optional
 from logging import Filter
 
-app = Flask(__name__, static_url_path='/static')
-
 # Load the environment variables
 load_dotenv()
+# Get the USE_HTTPS value from .env file
+USE_HTTPS = os.getenv('USE_HTTPS', 'false')
+
+# NODE_SERVER_URL = f"{protocol}://192.168.1.24:5000"
+# FLASK_SERVER_URL = f"{protocol}://192.168.1.24:4000"
+protocol = 'https' if USE_HTTPS == 'true' else 'http'
+NODE_SERVER_URL = f"{protocol}:{os.getenv('NODE_SERVER_URL')}"
+FLASK_SERVER_URL = f"{protocol}:{os.getenv('FLASK_SERVER_URL')}"
+
+if USE_HTTPS == 'true':
+    # If USE_HTTPS is true, use SSL context
+    context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+    context.load_cert_chain(certfile='new_cert.pem', keyfile='new_key_no_passphrase.pem')
+else:
+    # If USE_HTTPS is not true, set context to None
+    context = None
+
+app = Flask(__name__, static_url_path='/static')
 
 # Register the blueprint with the main app
 app.register_blueprint(dropzone, url_prefix='/')
@@ -23,11 +40,17 @@ app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024 * 1024  # 4GB
 node_process: Optional[subprocess.Popen] = None
 
 
-#route to give the server url
+# route to give the server url
+# @app.route('/config')
+# def get_config():
+#     print(f"Node server url: {os.getenv('NODE_SERVER_URL')} Flask server url: {os.getenv('FLASK_SERVER_URL')}")
+#     return jsonify(nodeServerUrl=os.getenv('NODE_SERVER_URL'), flaskServerUrl=os.getenv('FLASK_SERVER_URL'))
+
+# route to give the server url
 @app.route('/config')
 def get_config():
-    print(f"Node server url: {os.getenv('NODE_SERVER_URL')} Flask server url: {os.getenv('FLASK_SERVER_URL')}")
-    return jsonify(nodeServerUrl=os.getenv('NODE_SERVER_URL'), flaskServerUrl=os.getenv('FLASK_SERVER_URL'))
+    print(f"Node server url: {NODE_SERVER_URL} Flask server url: {FLASK_SERVER_URL}")
+    return jsonify(nodeServerUrl=NODE_SERVER_URL, flaskServerUrl=FLASK_SERVER_URL)
 
 
 def start_node_app():
@@ -114,4 +137,6 @@ if __name__ == '__main__':
         print('******Starting Node.js app...')
         start_node_app()
         atexit.register(stop_node_app)
-    app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
+    # app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
+    # Run the Flask app with the appropriate context
+    run_simple('0.0.0.0', 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
