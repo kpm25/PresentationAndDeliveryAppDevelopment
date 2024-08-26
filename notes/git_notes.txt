@@ -20,3 +20,12 @@ The git rm -f command does two things:
 
 It removes the file from your Git repository, meaning it will no longer be tracked by Git.
 It also deletes the file from your local file system.
+
+
+In a Git commit message, the first line is typically used as the commit title or summary.
+This line should be short, concise, and give a clear idea of the changes made in the commit.
+The rest of the message, starting from the second line, can provide more detailed information about the changes.
+When you use the git commit -m command, you can provide a multi-line commit message by using the -m option multiple times.
+Each -m is treated as a separate paragraph. For example:
+
+git commit -m "Commit title" -m "Detailed paragraph about the changes." -m "Additional information or context." -m "And so on."

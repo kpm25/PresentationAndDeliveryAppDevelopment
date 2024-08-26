@@ -14,7 +14,7 @@ const cors = require('cors'); // Require the cors package
 console.log('Enter app.js file.....');
 const Ansi = require('./ansi_text.js');
 ////ansi text colors
- ansi = new Ansi();
+// ansi = new Ansi();
 
 // Create an Express application
 const app = express();
@@ -34,9 +34,11 @@ const NODEJS_HOST = process.env.NODEJS_HOST || 'localhost';
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `https://localhost:4000`;
 let uploadComplete = true;
 let initialSize = 0;
+let expectedCompletionSize = 0;
 
 
-console.log(ansi.yellowBackground().blackText().italic().bold().underline().text(`   client origin is  ${CLIENT_ORIGIN}   `).getLine());
+//console.log(ansi.yellowBackground().blackText().italic().bold().underline().text(`   client origin is  ${CLIENT_ORIGIN}   `).getLine());
+new Ansi().yellow().bgBlack().bold().italic().underline().text(`   client origin is  ${CLIENT_ORIGIN}   `).print();
 
 // Set up CORS
 //app.use(cors({ origin: CLIENT_ORIGIN }));
@@ -55,8 +57,9 @@ const options = {
 
 //if key and cert have text content then print keys and cert exist
 if (options.key && options.cert) {
-    const text = ansi.redBackground().whiteText().italic().bold().underline().text(`Certificate and key files were loaded `).getLine();
-    console.log(text);
+ //   const text = ansi.redBackground().whiteText().italic().bold().underline().text(`Certificate and key files were loaded `).getLine();
+    new Ansi().red().bgWhite().bold().italic().underline().text(`Certificate and key files were loaded `).print();
+
 
 }
 
@@ -66,7 +69,8 @@ if (options.key && options.cert) {
 
 
 //port and host
-  console.log(ansi.rgbBackground(0, 123, 123).rgbText(255, 165, 255).italic().bold().underline().text(`Port from env is: ${process.env.NODEJS_PORT}, Host from env is: ${process.env.NODEJS_HOST}`).getLine());
+ // console.log(ansi.rgbBackground(0, 123, 123).rgbText(255, 165, 255).italic().bold().underline().text(`Port from env is: ${process.env.NODEJS_PORT}, Host from env is: ${process.env.NODEJS_HOST}`).getLine());
+    new Ansi().bgRGB(0, 123, 123).rgb(255, 165, 255).italic().bold().underline().text(`Port from env is: ${process.env.NODEJS_PORT}, Host from env is: ${process.env.NODEJS_HOST}`).print();
 
 //debug in cyan color
 console.log('\x1b[36m%s\x1b[0m', `Node.js app listening at https://${NODEJS_HOST}:${NODEJS_PORT}`);
@@ -138,7 +142,8 @@ io.on('connection', (socket) => {
         //socket.emit('filesUploadedResponse',  {path: fileData.path, count: fileData.count});
 
         //rainbow color debug message with cyan background
-         console.log(ansi.randomColorText(` socket.on('filesUploaded', (fileData) =>  Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`, 0, 255, 255).getLine());
+        // console.log(ansi.randomColorText(` socket.on('filesUploaded', (fileData) =>  Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`, 0, 255, 255).getLine());
+        new Ansi().randomColorText(` socket.on('filesUploaded', (fileData) =>  Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`, 0, 255, 255).print();
         // console.clear();
 
             //wait 0.5 seconds and then clear the console
@@ -231,7 +236,7 @@ io.on('connection', (socket) => {
 // Function to calculate the initial size of the upload directory
 app.post('/getInitialSize', (req, res) => {
  /*   if(!uploadeComplete){
-        console.log(ansi.redBackground().whiteText().italic().bold().underline().text(`Cant get initial size,because upload is not complete`).getLine());
+
     return res.json({ message: 'Upload is not complete' });
     }*/
   //   if(uploadComplete){ //if upload, this means that the upload was completed and we can get get another upload
@@ -269,8 +274,9 @@ app.get('/getFolderSize', (req, res) => {
     const uploadCompleted =  calculatedFolderSize   >= expectedCompletionSize;
     if(uploadCompleted && !uploadComplete){
 
-       //   console.log(ansi.randomColorText(`Upload is complete, folder size is: ${calculatedFolderSize}, expectedCompletionSize is: ${expectedCompletionSize}`).getLine() );
-          console.log(ansi.randomColorText(`Upload is complete, folder size is: ${calculatedFolderSize}, expectedCompletionSize is: ${expectedCompletionSize}`, 255, 0, 255).getLine());
+
+      //    console.log(ansi.randomColorText(`Upload is complete, folder size is: ${calculatedFolderSize}, expectedCompletionSize is: ${expectedCompletionSize}`, 255, 0, 255).getLine());
+        new Ansi().randomColorText(`Upload is complete, folder size is: ${calculatedFolderSize}, expectedCompletionSize is: ${expectedCompletionSize}`, 255, 0, 255).print();
        //initailize the variables
         initialSize = 0;
         expectedCompletionSize = 0;
@@ -284,7 +290,8 @@ app.get('/getFolderSize', (req, res) => {
             const folderSize = calculateFolderSize(folderPath); // Use your existing function to calculate the folder size
             //debug in cyan color yellow text
              //  console.log(ansi.cyanBackground().yellowText().italic().bold().underline().text(`\n\nFolder size is: ${folderSize} , folder path is: ${folderPath}\n\n`).getLine());
-                console.log(ansi.randomColorText(`\n\nFolder size is: ${folderSize} , folder path is: ${folderPath}\n\n`, 255, 0, 255).getLine());
+              //  console.log(ansi.randomColorText(`\n\nFolder size is: ${folderSize} , folder path is: ${folderPath}\n\n`, 255, 0, 255).getLine());
+                new Ansi().randomColorText(`\n\nFolder size is: ${folderSize} , folder path is: ${folderPath}\n\n`, 255, 0, 255).print();
 
              res.json({ folderSize: folderSize });
            //send socket message to reload the page
@@ -301,13 +308,13 @@ app.post('/uploadCompleted', (req, res) => {
     uploadComplete = true;
      initialSize = 0;
     expectedCompletionSize = 0;
-    ansi.red().bgWhite().bold().text(`\n\n\nIN ROUTE: /uploadCompleted ===> Upload is complete...\nupload.Dir is: ${req.body.uploadDir}\n\n\n totalFileCount is: ${req.body.totalFiles}\n\n\n`).print();
+    new Ansi().red().bgWhite().bold().text(`\n\n\nIN ROUTE: /uploadCompleted ===> Upload is complete...\nupload.Dir is: ${req.body.uploadDir}\n\n\n totalFileCount is: ${req.body.totalFiles}\n\n\n`).print();
 
     //gold bold text on cyan background display status of:
 //    uploadComplete = true;
 //     initialSize = 0;
 //    expectedCompletionSize = 0;
-    ansi.gold().bgCyan().bold().text(`\n\n\nIN ROUTE: /uploadCompleted ===> Upload is complete...\nupload.Dir is: ${req.body.uploadDir}\n\n\n totalFileCount is: ${req.body.totalFiles}\n\n\n`).print();
+    new Ansi().gold().bgCyan().bold().text(`\n\n\nIN ROUTE: /uploadCompleted ===> Upload is complete...\nupload.Dir is: ${req.body.uploadDir}\n\n\n totalFileCount is: ${req.body.totalFiles}\n\n\n`).print();
 
     res.json({ message: 'Upload is complete' });
 });

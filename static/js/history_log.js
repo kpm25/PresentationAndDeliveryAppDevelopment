@@ -188,8 +188,9 @@
         console.log(`\x1b[1;4;41m after..yyyyyFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
         console.log(`\x1b[5m after..zzzzzile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);*//**//*
 */
-          const ansi = new Ansi();
-        console.log(ansi.rgbBackground(122, 122, 0).rgbText(0, 0, 255).text(`filepath: ${filepath} fileCount: ${fileCount}`).getLine());
+
+      //  console.log(ansi.rgbBackground(122, 122, 0).rgbText(0, 0, 255).text(`filepath: ${filepath} fileCount: ${fileCount}`).getLine());
+        new Ansi().bgRGB(122, 122, 0).rgb(0, 0, 255).bold().text(`filepath: ${filepath} fileCount: ${fileCount}`).print();
 
         // Send a POST request to the server to append the log
         fetch('/append_log', {

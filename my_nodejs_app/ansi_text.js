@@ -1,23 +1,3 @@
-// const readline = require('readline');
-
-
-/*
-
-
-ideas to add:
-
-cleaner way to add text and color, example
-new Ansi().green().bgBlack().write('showProgressBarPopup()')
-
-....
-
-
-TODO: Change Background on all functions to bgRed, bgGreen, bgBlue, etc
-TODO: Change all test functions from redText, greenText, blueText, etc simply to red, green, blue, etc
-TODO: add a enum for colors and background colors or dictionary to simplify the code
-TODO: clean up the code and remove all outdated code
-*/
-
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -186,257 +166,7 @@ TODO: clean up the code and remove all outdated code
            }
 
 
-             /*
-              TODO: clean this up later..
-             */
-                rgbText(r, g, b) {
-//                    this.pending += `\x1B[38;2;${r};${g};${b}m ${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;${r};${g};${b}m`;
-                    return this;
-                }
 
-                redText() {
-                 //   this.pending = `\x1B[38;2;255;0;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;255;0;0m`;
-                    return this;
-                }
-
-                orangeText() {
-                  //  this.pending = `\x1B[38;2;255;128;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;255;128;0m`;
-                    return this;
-                }
-
-                yellowText() {
-                 //   this.pending = `\x1B[38;2;255;255;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;255;255;0m`;
-                    return this;
-                }
-
-                limeText() {
-                  //  this.pending = `\x1B[38;2;128;255;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;128;255;0m`;
-                    return this;
-                }
-
-                greenText() {
-                    //this.pending = `\x1B[38;2;0;255;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;0;255;0m`;
-                    return this;
-                }
-
-                cyanText() {
-                 //   this.pending = `\x1B[38;2;0;255;128m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;0;255;128m`;
-                    return this;
-                }
-
-                skyBlueText() {
-                   // this.pending = `\x1B[38;2;0;255;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;0;255;255m`;
-                    return this;
-                }
-
-                lightBlueText() {
-                  //  this.pending = `\x1B[38;2;0;128;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;0;128;255m`;
-                    return this;
-                }
-
-                blueText() {
-                 //   this.pending = `\x1B[38;2;0;0;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;0;0;255m`;
-                    return this;
-                }
-
-                purpleText() {
-                  //  this.pending = `\x1B[38;2;128;0;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;128;0;255m`;
-                    return this;
-                }
-
-                magentaText() {
-                   // this.pending = `\x1B[38;2;255;0;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;255;0;255m`;
-                    return this;
-                }
-
-                pinkText() {
-                   // this.pending = `\x1B[38;2;255;0;128m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;255;0;128m`;
-                    return this;
-                }
-
-                whiteText() {
-                 //   this.pending = `\x1B[38;2;255;255;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;255;255;255m`;
-                    return this;
-                }
-
-                blackText() {
-                   // this.pending = `\x1B[38;2;0;0;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[38;2;0;0;0m`;
-                    return this;
-                }
-
-
-
-            // Background color functions
-            //rgbBackground:
-            rgbBackground(r, g, b) {
-//                this.pending += `\x1B[48;2;${r};${g};${b}m ${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;${r};${g};${b}m`;
-                return this;
-            }
-
-            redBackground() {
-//                this.pending = `\x1B[48;2;255;0;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;255;0;0m`;
-                return this;
-            }
-
-            orangeBackground() {
-//                this.pending = `\x1B[48;2;255;128;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;255;128;0m`;
-                return this;
-            }
-
-            yellowBackground() {
-//                this.pending = `\x1B[48;2;255;255;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                 this.pending += `\x1B[48;2;255;255;0m`;
-                return this;
-            }
-
-            limeBackground() {
-//                this.pending = `\x1B[48;2;128;255;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;128;255;0m`;
-                return this;
-            }
-
-            greenBackground() {
-              //  this.pending = `\x1B[48;2;0;255;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;0;255;0m`;
-                return this;
-            }
-
-            cyanBackground() {
-              //  this.pending = `\x1B[48;2;0;255;128m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;0;255;128m`;
-                return this;
-            }
-
-            skyBlueBackground() {
-                //this.pending = `\x1B[48;2;0;255;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;0;255;255m`;
-                return this;
-            }
-
-            lightBlueBackground() {
-              //  this.pending = `\x1B[48;2;0;128;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;0;128;255m`;
-                return this;
-            }
-
-            blueBackground() {
-              //  this.pending = `\x1B[48;2;0;0;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending +=`\x1B[48;2;0;0;255m`;
-                return this;
-            }
-
-            purpleBackground() {
-             //   this.pending = `\x1B[48;2;128;0;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;128;0;255m`;
-                return this;
-            }
-
-            magentaBackground() {
-             //   this.pending = `\x1B[48;2;255;0;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;255;0;255m`;
-                return this;
-            }
-
-            pinkBackground() {
-              //  this.pending = `\x1B[48;2;255;0;128m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;255;0;128m`;
-                return this;
-            }
-
-            whiteBackground() {
-              //  this.pending = `\x1B[48;2;255;255;255m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;255;255;255m`;
-                return this;
-            }
-
-            blackBackground() {
-               // this.pending = `\x1B[48;2;0;0;0m${this.autoReset ? '\x1B[0m' : ''}`;
-                this.pending += `\x1B[48;2;0;0;0m`;
-                return this;
-            }
-
-/*
-
-               bold() {
-                    this.pending += `\x1B[1m`;
-                    return this;
-                }
-
-                dim() {
-//                    this.pending = `\x1B[2m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[2m`;
-                    return this;
-                }
-
-                italic() {
-//                    this.pending = `\x1B[3m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[3m`;
-                    return this;
-                }
-
-                underline() {
-                    this.pending += `\x1B[4m`;
-                    return this;
-                }
-
-                blink() {
-//                    this.pending = `\x1B[5m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[5m`;
-                    return this;
-                }
-
-                invert() {
-//                    this.pending = `\x1B[7m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[7m`;
-                    return this;
-                }
-
-                hide() {
-//                    this.pending = `\x1B[8m${this.autoReset ? '\x1B[0m' : ''}`;
-                    this.pending += `\x1B[8m`;
-                    return this;
-                }
-
-             //slow blink
-                slowBlink() {
-                    this.pending += `\x1B[5m`;
-                    return this;
-                }
-
-                //rapid blink
-                rapidBlink() {
-                    this.pending += `\x1B[6m`;
-                    return this;
-                }
-
-                strikethroughOn() {
-                    this.pending += `\x1B[9m`;
-                    return this;
-                }
-
-                  strikethroughOff() {
-                    this.pending += `\x1B[29m`;
-                    return this;
-                  }
-*/
 
 
                 // Modify the reset method to also set the autoReset flag
@@ -453,23 +183,6 @@ TODO: clean up the code and remove all outdated code
                 }
 
 
-
-
-          /*      getLine() {
-                    const result = this.str;
-                    this.resetString();
-                    return result;
-                }*/
-/*                getLine() {
-                    const result = this.autoReset ?   `${this.str}${this.pending} \x1B[0m` : `${this.str}${this.pending}`;
-//                     this.resetString();
-                    this.str = '';
-                    console.log('\x1b[0m');
-                    return result;
-                }*/
- /*              getText() {
-                    return this.autoReset ? `${this.str}${this.pending}\x1B[0m` : `${this.str}${this.pending}`;
-                }*/
             getText() {
                 const result = this.autoReset ? `${this.str}${this.pending}\x1B[0m` : `${this.str}${this.pending}`;
                 this.str = '';
@@ -509,10 +222,6 @@ TODO: clean up the code and remove all outdated code
 
               randomColorText(message, bgR = null, bgG = null, bgB = null) {
                     let temp = '';
-                //  console.log('this.str is: ' + this.str);
-                      //bgR, bgG, bgB
-               //  console.log('bgR: ' + bgR + ' bgG: ' + bgG + ' bgB: ' + bgB);
-
                     for (let i = 0; i < message.length; i++) {
                         const r = Math.floor(Math.random() * 256);
                         const g = Math.floor(Math.random() * 256);
@@ -528,34 +237,7 @@ TODO: clean up the code and remove all outdated code
                     return this;
                 }
 
-                /*animateRandomColorText(message, rgb = {r: null, g: null, b: null}, duration = 500) {
-                    if (typeof process !== 'undefined' && process.stdout) { // Check if it's a Node.js environment
-                        setInterval(() => {
-                            let temp = '';
-                            for (let i = 0; i < message.length; i++) {
-                                const r = Math.floor(Math.random() * 256);
-                                const g = Math.floor(Math.random() * 256);
-                                const b = Math.floor(Math.random() * 256);
-                                if (rgb.r !== null && rgb.g !== null && rgb.b !== null) {
-                                    temp += `\x1B[38;2;${r};${g};${b};48;2;${rgb.r};${rgb.g};${rgb.b}m${message[i]}`;
-                                } else {
-                                    temp += `\x1B[38;2;${r};${g};${b}m${message[i]}`;
-                                }
-                            }
-                            this.str += temp;
-                            process.stdout.write('\x1Bc'); // Clear console
-                            process.stdout.write(this.str); // Write to console
-                            this.str = '';
-                        }, duration); // Change color every duration milliseconds
-                    } else {
-                        console.warn('animateRandomColorText is not supported in this environment');
-                    }
-                    return this;
-                }//end animateRandomColorText*/
 
-
-
-//              animateRandomColorText(message, rgb = {r: null, g: null, b: null}, duration = 500) {
                 animateRandomColorText(message, rgbOrDuration = [null, null, null], duration = 500) {
                    if (typeof process !== 'undefined' && process.stdout && this.readline) { // Check if it's a Node.js environment
                         let rgb;
@@ -823,12 +505,19 @@ TODO: clean up the code and remove all outdated code
                   //a function that tests random color text
                   testRandomColorText(ansi){
                         //random color text
-                         console.log(ansi.randomColorText("This is random color text").getLine());
+//                         console.log(ansi.randomColorText("This is random color text").getLine());
+//
+//
+//                      console.log(ansi.randomColorText("This is MORE random color text").getLine());
+//
+//                       console.log(ansi.randomColorText("This is MORE random color text", 255, 0, 255).getLine());
+                              ansi.randomColorText("This is random color text").print();
 
+                    //      console.log(ansi.randomColorText("This is MORE random color text").getLine());
+                            ansi.randomColorText("This is MORE random color text").print();
 
-                      console.log(ansi.randomColorText("This is MORE random color text").getLine());
-
-                       console.log(ansi.randomColorText("This is MORE random color text", 255, 0, 255).getLine());
+                        //   console.log(ansi.randomColorText("This is MORE random color text", 255, 0, 255).getLine());
+                            ansi.randomColorText("This is MORE random color text", 255, 0, 255).print();
 
                 } //end testRandomColorText
 

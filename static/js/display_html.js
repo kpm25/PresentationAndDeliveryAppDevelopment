@@ -652,8 +652,7 @@ $(document).ready(async function() {
 
               RefreshFileList(getSelectedLabel('lesson-label'));
 
-            const ansi = new Ansi();
-           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('A file was upload').getLine());
+            new Ansi().bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text('A file was uploaded').print();
 
         });
 
@@ -672,9 +671,7 @@ $(document).ready(async function() {
             // Refresh the file list
             RefreshFileList(getSelectedLabel('lesson-label'));
 
-            const ansi = new Ansi();
-
-             console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('A file was deleted').getLine());
+            new Ansi().bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text('A file was deleted').print();
 
             // Play success sound
             playSuccessSound();

@@ -331,17 +331,6 @@ function testVariousANSI(){
 
  }
 
- //a function that tests random color text
-    function testRandomColorText(ansi){
-            //random color text
-         console.log(ansi.randomColorText("This is random color text").getLine());
-
-
-      console.log(ansi.randomColorText("This is MORE random color text").getLine());
-
-       console.log(ansi.randomColorText("This is MORE random color text", 255, 0, 255).getLine());
-
-    }
 
 
  //functions testing new code:
@@ -535,62 +524,66 @@ function testVariousANSI(){
     ansi.animateRandomColorText(text, rgb, duration);
 }*/
 
+  //a function that tests random color text
+    function testRandomColorText(ansi){
+            //random color text
+//         console.log(ansi.randomColorText("This is random color text").getLine());
+        ansi.randomColorText("This is random color text").print();
+
+
+//      console.log(ansi.randomColorText("This is MORE random color text").getLine());
+        ansi.randomColorText("This is MORE random color text").print();
+
+    //   console.log(ansi.randomColorText("This is MORE random color text", 255, 0, 255).getLine());
+        ansi.randomColorText("This is MORE random color text", 255, 0, 255).print();
+
+    }
+
+
  function testAnimatedRandomColorText(ansi, text, rgb = [null, null, null], duration = 500){
     // animated random color text
     ansi.animateRandomColorText(text, rgb, duration);
 }
 
- function testAnsiLibrary(){
-
-
-      let ansi = new Ansi();
-     //   testAnsiCommands(ansi);
-    //    testRandomColorText(ansi);
-    /*        testAnimatedRandomColorText(ansi, "This is animated random color text");
-             ansi.animateRandomColorText("This is animated random color text", {r: 255, g: 255, b: 255}, 1000);
-        let ansi = new Ansi();*/
-      //testAnimatedRandomColorText(ansi, "This is animated random color text", {r: 122, g: 122, b: 122}, 1000);
-      //ansi.animateRandomColorText("hello", [255, 122, 234], 200);
-    //ansi.animateRandomColorText("world");
-    //ansi.animateRandomColorText("world", 200);
-       //ansi.animateRandomColorText("world" , 2000);
-
-
-        //testNewCode(ansi);
-
-
-     //BUILT IN ANSI TESTS
-   //    ansi.test();
-      ansi.testAnimation();
-
-  //  testNewCode(ansi);
-
-
-/*     let ansi = new Ansi();
-
-// Call with parameters
-ansi.animateRandomColorText("This is animated random color text", {r: 255, g: 255, b: 255}, 1000);
-
-// Call without parameters, defaults will be used
-ansi.animateRandomColorText("This is animated random color text");*/
-              // Set up the SIGINT event listener
-/*
-        process.on('SIGINT', function() {
-            process.stdin.setRawMode(false);
-            ansi.resetAnsi();
-            console.log('Text reset to default');
-            process.exit();
-        });
-*/
-
-        console.log('\n\n\n\nnormal text');
-
-  }
+ function testAnsiLibrary(testNumber, testString){
 
 
 
+         if (testNumber == null){
+             console.log("No test number provided");
+             return;
+        }else if (testNumber < 1 || testNumber > 6){
+             console.log("Invalid test number");
+             return;
+         }
 
-  testAnsiLibrary();
+         //const ansi = new Ansi();
+        switch(testNumber){
+             case 1:
+                 testAnsiCommands( new Ansi());
+                 break;
+                case 2:
+                 testRandomColorText( new Ansi());
+                 break;
+                case 3:
+                 testNewCode( new Ansi());
+                 break;
+                case 4:
+                 testAnimatedRandomColorText( new Ansi(), testString, [255, 255, 255], 1000);
+                 break;
+                case 5:
+                  new Ansi().test();
+                break;
+                case 6:
+                  new Ansi().testAnimation();
+                default:
+                 console.log("Invalid test number");
+                 break;
+
+        }//end switch
+
+      console.log('\n\n\n\nnormal text');
+    }
 
 
 
@@ -598,9 +591,48 @@ ansi.animateRandomColorText("This is animated random color text");*/
 
 
 
+    testNumber = parseInt( process.argv[2]);
+    testString = process.argv[3];
+
+    console.log("command line arguments provided");
+    console.log(`test_number: ${testNumber}, test_string: ${testString}`);
+
+
+if ((testNumber && testString)) {
+    console.log("command line arguments provided.... ");
+    console.log(`test_number: ${testNumber}, test_string: ${testString}`);
+    testAnsiLibrary(testNumber, testString);
+} else if (process.argv.length === 2) {
+    console.log("Not run from command line.....");
+    testAnsiLibrary(3, "The function was not run from the command line....");
+} else {
+    console.log("No command line arguments provided");
+}
 
 
 
+
+// script.js
+function myConsoleTest() {
+    console.log('Hello, world From Run from Console!');
+}
+
+
+
+
+
+// script.js
+function myFunction() {
+    // Check if this script is run directly from the command line
+    if (require.main === module) {
+        // Check if the function name is provided as a command line argument
+        if (process.argv[2] === 'myConsoleTest') {
+            myConsoleTest();
+        }
+        return;
+    }
+
+}
 
 
 

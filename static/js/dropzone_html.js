@@ -481,7 +481,7 @@ function initializeDropzone() {
             },*/
             init: function() {
                 this.on("maxfilesexceeded", function(file) {
-                        new Ansi().pink().bgGreen().bold().text(`Max files exceeded: ${file.name}, file count: ${this.files.length}`).print();
+                         new Ansi().pink().bgGreen().bold().text(`Max files exceeded: ${file.name}, file count: ${this.files.length}`).print();
                         this.removeFile(file); // If more than 200 files are dropped, remove the excess files
 
                 });
@@ -541,7 +541,6 @@ function initializeDropzone() {
 
                     //                lastSuccessResponse = response; // Store the last response
                     lastSuccessResponse = {file: file, response: response}; // Store the last response
-                    //console.log(new Ansi().rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`File progress: ${file.upload.progress}`).getLine());
 
                 });
                 this.on('queuecomplete', function() {
@@ -554,9 +553,7 @@ function initializeDropzone() {
                             // Iterate over each file in the accepted_files list
                             lastSuccessResponse.response.accepted_files.forEach(function(acceptedFile) {
                                 //    console.log(`CHECKING FILENAME: ${acceptedFile}`);
-                                //        console.log(new Ansi().rgbBackground(255, 255, 0).rgbText(0, 0, 255).text(JSON.stringify(lastSuccessResponse.file)).getLine());
-                                //     console.log(new Ansi().rgbBackground(0, 255, 255).rgbText(255, 255, 255).text(`File size: ${lastSuccessResponse.file.size}, formatBytes value: ${formatBytes(lastSuccessResponse.file.size)}`).getLine());
-                                //     console.log(`\x1b[32m File uploaded successfully! , file: ${lastSuccessResponse.file.size}, filepath: ${acceptedFile} response: ${lastSuccessResponse.message}\x1b[0m`);
+
                                 socket.emit('fileAdded', acceptedFile);
                                 fileCount++; // Increment the counter for each successful upload
                                 // Log each individual file upload
@@ -623,8 +620,6 @@ function initializeDropzone() {
 
 
                         uploadCompleted = true; // Set the flag to true when the upload is complete
-                        //  console.log(new Ansi().rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text(`Upload completed: ${fileFolderPath}, count: ${fileCount}, uploadCompleted: ${uploadCompleted}`).getLine());
-
                         hasSentGetInitialSizeToServer =  false; // Reset the flag
 
 
@@ -640,7 +635,8 @@ function initializeDropzone() {
                             success: function(response) {
                                 console.log('Success:', response);
                                 //bold black text on pink background
-                                console.log(new Ansi().pinkBackground().blackText(0, 0, 0).bold().text(`In BLock:  this.on('queuecomplete', function(), ===> Upload completed: ${fileFolderPath}, count: ${fileCount}, uploadCompleted: ${uploadCompleted}`).getLine());
+//                                console.log(new Ansi().pinkBackground().blackText(0, 0, 0).bold().text(`In BLock:  this.on('queuecomplete', function(), ===> Upload completed: ${fileFolderPath}, count: ${fileCount}, uploadCompleted: ${uploadCompleted}`).getLine());
+                                  new Ansi().pink().bgBlack().bold().text(`Upload completed: ${fileFolderPath}, count: ${fileCount}, uploadCompleted: ${uploadCompleted}`).print();
                             },
                             error: function(jqXHR, textStatus, errorThrown) {
                                 console.error('Error sending data to server:', errorThrown);
@@ -659,7 +655,6 @@ function initializeDropzone() {
                             setTimeout(() => {
                                 // Set the new URL
                                 //bold black text on red background
-                                   console.log(new Ansi().rgbBackground(255, 0, 0).rgbText(0, 0, 0).bold().text(`In BLock:  this.on('queuecomplete', function(), ===> Redirecting to: ${url_to_redirect}`).getLine());
                                   window.location.href = `https://192.168.1.24:4000/?${queryString}`;
                                   window.location.reload();
                             }, 2000);*/
@@ -834,7 +829,6 @@ $(document).ready(function() {
             setDefaultSemesterByMonth();
             // Initialize Dropzone instance
             initializeDropzone();
-            ansi = new Ansi();
 
             // Add event listener for the upload button
             $('#startUpload').click(function() {
@@ -847,14 +841,13 @@ $(document).ready(function() {
                                 // Start the upload
                                 if (dropzoneInstance) {
 
-                                        console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Upload has already started, please wait for it to complete.`).getLine());
-
+//                                         console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Upload has already started, please wait for it to complete.`).getLine());
+                                      new Ansi().bgRGB(255, 0, 255).rgb(255, 255, 255).bold().text(`Upload has already started, please wait for it to complete.`).print();
                                      // Assume dropzoneInstance is your Dropzone instance
                                         let totalFileSizeToSend = dropzoneInstance.files.reduce((total, file) => total + file.size, 0);
 
 
-
-                                            console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Total file size: ${totalFileSizeToSend}, formatBytes value: ${formatBytes(totalFileSizeToSend)}`).getLine());
+                                        new Ansi().bgRGB(255, 0, 255).rgb(255, 255, 255).bold().text(`Total file size: ${totalFileSizeToSend}, formatBytes value: ${formatBytes(totalFileSizeToSend)}`).print();
                                            // Emit an event to get the initial size of the upload directory
                                              const semesterFolder = semesterDict[selectedSemester];
                                             const gradeFolder = gradeDict[selectedGrade];
@@ -871,7 +864,8 @@ $(document).ready(function() {
                                             success: function(response) {
                                                  // Check if the upload has already started
                                                 //    if (!response.uploadStarted && !uploadedCompleted) {
-                                                        console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Initial size is: ${response.initialSize}, totalFileSize: ${totalFileSizeToSend} , expectedCompleteFolderSize: ${response.expectedCompletionSize}, uploadStarted: ${response.uploadStarted}`).getLine());
+                                    //         console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Initial size is: ${response.initialSize}, totalFileSize: ${totalFileSizeToSend} , expectedCompleteFolderSize: ${response.expectedCompletionSize}, uploadStarted: ${response.uploadStarted}`).getLine());
+                                               new Ansi().bgRGB(255, 0, 255).rgb(255, 255, 255).bold().text(`Initial size is: ${response.initialSize}, totalFileSize: ${totalFileSizeToSend} , expectedCompleteFolderSize: ${response.expectedCompletionSize}, uploadStarted: ${response.uploadStarted}`).print();
         //                                                return;
         //                                            }
 
@@ -927,145 +921,7 @@ $(document).ready(function() {
 
 
 
-        /*    function getFolderSize() {
-                const uploadDirToCheck = `LessonFolders/${semesterFolder}/${gradeFolder}/${weekFolder}/${lessonFolder}`;
-                $.ajax({
-                    url: `https://192.168.1.24:5000/getFolderSize?path=${encodeURIComponent(uploadDirToCheck)}`,
-                    type: 'GET',
-                    success: function(response) {
-                        console.log(`Current folder size: ${response.folderSize}`);
-                        // Update your progress bar here using response.folderSize
-                        console.log(new Ansi().rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}`).getLine());
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.error('Error getting folder size:', errorThrown);
-                    }
-                });
-            }*/
-        /*
-                    function getFolderSize(params) {
-                        let timeCompleted = 0;
-                        const ansi = new Ansi();
-                        intervalId = setInterval(function() { // Removed 'let' keyword
-                            $.ajax({
-                                url: `https://192.168.1.24:5000/getFolderSize?path=${encodeURIComponent(params.uploadDirToCheck)}`,
-                                type: 'GET',
-                                success: function(response) {
-                                    console.log(`Current folder size: ${response.folderSize}`);
-                                    const percentage = (response.folderSize / params.totalFileSize) * 100;
-                                    console.log(`Upload completion: ${percentage}% , time completed: ${timeCompleted}`);
-                                    console.log(ansi.rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}`).getLine());
 
-                                    if(response.folderSize >= params.expectedCompleteFolderSize || timeCompleted > 10000){
-                                        console.log(`Upload completion: ${percentage}%`);
-                                        clearInterval(intervalId); // Stop making AJAX requests
-                                        alert(`Upload completion: ${percentage}% , folder size: ${response.folderSize}, expectedCompleteFolderSize: ${params.expectedCompleteFolderSize}`);
-                                    }
-                                },
-                                error: function(jqXHR, textStatus, errorThrown) {
-                                    console.error('Error getting folder size:', errorThrown);
-                                }
-                            });
-                            timeCompleted += params.deltatime;
-                            console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`Seconds: ${seconds}`).getLine());
-                        }, params.deltatime);
-                    }
-        */
-
-
-           /* function getFolderSize(params) {
-
-
-
-
-                function makeRequest() {
-
-                    // Only make the AJAX request if the upload has not completed
-                    if (!uploadCompleted) {
-                        $.ajax({
-                            url: `https://192.168.1.24:5000/getFolderSize?path=${encodeURIComponent(params.uploadDirToCheck)}`,
-                            type: 'GET',
-                            success: function(response) {
-                                 if(intervalId !== null){
-                                         try{
-                                                  console.log(`Current folder size: ${response.folderSize}`);
-                                                 const percentage = (response.folderSize / params.totalFileSize) * 100;
-                                                 console.log(`Upload completion: ${percentage}% , time completed: ${timeCompleted}`);
-                                                 console.log(ansi.rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}`).getLine());
-
-
-
-
-                                                 // Show the progress bar popup when the upload starts
-                                                 if (!isProgressBarRunning) {
-                                                     showProgressBarPopup();
-                                                 }
-
-                                                 // Calculate the number of squares to show
-                                                 const numberOfSquaresToShow = Math.floor(percentage);
-
-                                                 // Get the current number of squares in the progress bar
-                                                 let progressBarPopup = document.getElementById('progressBarPopup');
-                                                 let currentNumberOfSquares = progressBarPopup ? progressBarPopup.children[0].children.length : 0;
-
-                                                 // Add squares to the progress bar popup based on the percentage progress
-                                                 for (let i = currentNumberOfSquares; i < numberOfSquaresToShow; i++) {
-                                                     addSquareToProgressBarPopup(i + 1); // i + 1 because square IDs start from 1
-                                                 }
-
-
-                                                 *//* if(response.folderSize >= params.expectedCompleteFolderSize || timeCompleted > 10000){
-                                                        console.log(`Upload completion: ${percentage}%`);
-                                                        uploadCompleted = true; // Set the flag to true when the upload is complete
-                                                    } else {
-                                                        // Only schedule the next call if the upload is not complete
-                                                        timeCompleted += params.deltatime;
-                                                        console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`Seconds: ${seconds}`).getLine());
-                                                        setTimeout(makeRequest, params.deltatime);
-                                                    }*//*
-                                                 if(response.isComplete){
-                                                     console.log(`Upload completion: ${percentage}%`);
-                                                     //                            uploadCompleted = true; // Set the flag to true when the upload is complete
-                                                     //                             uploadStarted = false; // Set the flag to false when the upload is complete
-                                                     //break the interval
-                                                     //                              clearInterval(intervalId);
-                                                     intervalId = null;
-                                                     timeCompleted = 0;
-                                                     uploadCompleted = false;
-                                                     //                             //refresh the page
-                                                     //                            location.reload();
-                                                     // Hide the progress bar popup when the upload is complete
-                                                     hideProgressBarPopup();
-
-                                                     //stop the interval method
-                                                     clearInterval(intervalId);
-                                                 } else {
-                                                     // Only schedule the next call if the upload is not complete
-                                                     timeCompleted += params.deltatime;
-                                                     console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`timeCompleted: ${timeCompleted}`).getLine());
-                                                     setTimeout(makeRequest, params.deltatime);
-                                                 }
-                                             }else{
-                                                 console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`Interval id is null`).getLine());
-
-                                             }
-                                 }catch(error){
-                                        console.error('Error getting folder size:', error);
-
-                                        }
-
-
-                              },
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                console.error('Error getting folder size:', errorThrown);
-                            }
-                        });
-                    }
-                }
-
-                // Start the first request
-                makeRequest();
-            }*/
 
             function getFolderSize(params) {
                         function makeRequest() {
@@ -1078,13 +934,9 @@ $(document).ready(function() {
                                                 console.log(`Current folder size: ${response.folderSize}`);
                                                 const percentage = (response.folderSize / params.totalFileSize) * 100;
                                                 console.log(`Upload completion: ${percentage}% , time completed: ${timeCompleted}`);
-                                                console.log(ansi.rgbBackground(255, 0, 100).rgbText(255, 255, 0).text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}, percentage: ${percentage}%, expectedCompleteFolderSize: ${params.expectedCompleteFolderSize} , timeCompleted: ${timeCompleted}`).getLine());
-                                                console.log(ansi.randomColorText(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}, percentage: ${percentage}%, expectedCompleteFolderSize: ${params.expectedCompleteFolderSize} , timeCompleted: ${timeCompleted}`, 190, 185, 170).getLine());
 
-//                                                    if (!isProgressBarRunning) {
-//                                                        showProgressBarPopup();
-//                                                    }
-
+                                                new  Ansi().bgRGB(255, 0, 100).rgb(255, 255, 0).bold().text(`Current folder size: ${response.folderSize}, formatBytes value: ${formatBytes(response.folderSize)}, percentage: ${percentage}%, expectedCompleteFolderSize: ${params.expectedCompleteFolderSize} , timeCompleted: ${timeCompleted}`).print();
+                                                new Ansi().randomColorText("Current folder size: " + response.folderSize + ", formatBytes value: " + formatBytes(response.folderSize) + ", percentage: " + percentage + "%, expectedCompleteFolderSize: " + params.expectedCompleteFolderSize + " , timeCompleted: " + timeCompleted).print();
                                                     const numberOfSquaresToShow = Math.floor(percentage);
                                                     let progressBarPopup = document.getElementById('progressBarPopup');
                                                     let currentNumberOfSquares = progressBarPopup ? progressBarPopup.children[0].children.length : 0;
@@ -1096,7 +948,7 @@ $(document).ready(function() {
                 //                                    if(response.isComplete){
                                                     if(percentage < 100){
                                                         timeCompleted += params.deltatime;
-                                                        console.log(ansi.rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`timeCompleted: ${timeCompleted}`).getLine());
+                                                        new Ansi().bgRGB(255, 0, 255).rgb(0, 0, 255).bold().text(`timeCompleted: ${timeCompleted}`).print();
                                                         setTimeout(makeRequest, params.deltatime);
 
                                                         /*timeCompleted = 0;
@@ -1105,10 +957,11 @@ $(document).ready(function() {
                                                         clearInterval(intervalId);*/
                                                         //clear in socket response for uploaded files
                                                     } else if(percentage >= 100){
-                                                            console.log(new Ansi().rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`Upload completion: ${percentage}%, timeCompleted: ${timeCompleted}, uploadCompleted: ${uploadCompleted}`).getLine());
+                                                           // console.log(new Ansi().rgbBackground(255, 0, 255).rgbText(0, 0, 255).text(`Upload completion: ${percentage}%, timeCompleted: ${timeCompleted}, uploadCompleted: ${uploadCompleted}`).getLine());
+                                                            new Ansi().bgRGB(255, 0, 255).rgb(0, 0, 255).bold().text(`Upload completion: ${percentage}%, timeCompleted: ${timeCompleted}, uploadCompleted: ${uploadCompleted}`).print();
                                                              toastr.info(`..inside  makeRequest(), Upload completion: ${percentage}%`);
-                                                            console.log(ansi.rgbBackground(255, 255, 0).rgbText(0, 255, 0).bold().text(`resetting page to url:/index, percentage completed: ${percentage}%, uploadCompleted: ${uploadCompleted}, timeCompleted: ${timeCompleted}`).getLine());
-
+                                                         //   console.log(ansi.rgbBackground(255, 255, 0).rgbText(0, 255, 0).bold().text(`resetting page to url:/index, percentage completed: ${percentage}%, uploadCompleted: ${uploadCompleted}, timeCompleted: ${timeCompleted}`).getLine());
+                                                             new Ansi().bgRGB(255, 255, 0).rgb(0, 255, 0).bold().text(`resetting page to url:/index, percentage completed: ${percentage}%, uploadCompleted: ${uploadCompleted}, timeCompleted: ${timeCompleted}`).print();
 
                 //                                            https://192.168.1.24:4000/?currentSemester=1&currentGrade=1&currentWeek=1&currentLesson=8
                                                             // Set your parameters
@@ -1118,8 +971,8 @@ $(document).ready(function() {
                                                                 let lessonId = getSelectedId('lesson-label');
 
                                                                 //debug in yellow text, cyan background AND bold
-                                                                console.log(ansi.yellowText(0, 255, 255).cyanBackground(255, 255, 255).bold().text(`semesterId: ${semesterId}, gradeId: ${gradeId}, weekId: ${weekId}, lessonId: ${lessonId}`).getLine());
-
+                                                              //  console.log(ansi.yellowText(0, 255, 255).cyanBackground(255, 255, 255).bold().text(`semesterId: ${semesterId}, gradeId: ${gradeId}, weekId: ${weekId}, lessonId: ${lessonId}`).getLine());
+                                                                 new Ansi().yellow().bgCyan().bold().text(`semesterId: ${semesterId}, gradeId: ${gradeId}, weekId: ${weekId}, lessonId: ${lessonId}`).print();
                                                                 // Create a string from the parameters
                                                                 let params = {
                                                                     currentSemester: semesterId,
@@ -1133,7 +986,6 @@ $(document).ready(function() {
 
 
                                                                 //debug in yellow text, cyan background AND bold the url
-                                                              //  console.log(ansi.yellowText(0, 255, 255).cyanBackground(255, 255, 255).bold().text(window.location.href).getLine());
 
 
                                                                   timeCompleted = 0;
@@ -1147,7 +999,7 @@ $(document).ready(function() {
                                                                 if(dropzoneInstance){
                                                                     fileCount = 0; // Reset the counter after setting the message
                                                                     dropzoneInstance.removeAllFiles();
-                                                                    console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`dropzoneInstance.removeAllFiles() called`).getLine());
+                                                                    new Ansi().bgRGB(255, 0, 255).rgb(255, 255, 255).bold().text(`dropzoneInstance.removeAllFiles() called`).print();
                                                                 }
 
 
@@ -1425,8 +1277,8 @@ $(document).ready(function() {
                 let lessonId = getSelectedId('lesson-label');
 
                 //debug in yellow text, cyan background AND bold
-                console.log(new Ansi().yellowText(0, 255, 255).cyanBackground(255, 255, 255).bold().text(`semesterId: ${semesterId}, gradeId: ${gradeId}, weekId: ${weekId}, lessonId: ${lessonId}`).getLine());
-
+            //    console.log(new Ansi().yellowText(0, 255, 255).cyanBackground(255, 255, 255).bold().text(`semesterId: ${semesterId}, gradeId: ${gradeId}, weekId: ${weekId}, lessonId: ${lessonId}`).getLine());
+                new Ansi().yellow().bgCyan().bold().text(`semesterId: ${semesterId}, gradeId: ${gradeId}, weekId: ${weekId}, lessonId: ${lessonId}`).print();
                 // Create a string from the parameters
                 let params = {
                     currentSemester: semesterId,
@@ -1449,10 +1301,12 @@ $(document).ready(function() {
           playSuccessSound();
           socket.emit('test_event');
         console.log('Test event emitted');
-          const ansi = new Ansi();
-           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('Test event emitted').getLine());
+//          const ansi = new Ansi();
+//           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('Test event emitted').getLine());
+        new Ansi().bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text('Test event emitted').print();
         toastr.success("A test event was fired");
-        console.log(new Ansi().rgbBackground(122, 122, 0).rgbText(0, 0, 255).text(`test message...`).getLine());
+//        console.log(new Ansi().rgbBackground(122, 122, 0).rgbText(0, 0, 255).text(`test message...`).getLine());
+        new Ansi().bgRGB(122, 122, 0).rgb(0, 0, 255).text(`test message...`).print();
 
     }
 
@@ -1465,8 +1319,8 @@ function setDefaultSemesterByMonth() {
         // Get the current month
         const currentMonth = new Date().getMonth();
         //bold cyan on white in capitals
-         console.log(new Ansi().bold().cyanText(0, 255, 255).text(`FRESH LOAD!!! ==>  CURRENT MONTH IS: ${currentMonth}`).getLine());
-
+    //     console.log(new Ansi().bold().cyanText(0, 255, 255).text(`FRESH LOAD!!! ==>  CURRENT MONTH IS: ${currentMonth}`).getLine());
+        new Ansi().bold().cyan().text(`FRESH LOAD!!! ==>  CURRENT MONTH IS: ${currentMonth}`).print();
         // Check if the current month is between March and August
         if (currentMonth >= 2 && currentMonth <= 7) {
             // Select Semester 2 by default
@@ -1474,14 +1328,16 @@ function setDefaultSemesterByMonth() {
             console.log("semester 2 selected");
             selectedSemester =  $('#semester2').val();
             //bold cyan on white in capitals
-            console.log(new Ansi().bold().cyanText(0, 255, 255).text(`FRESH LOAD!!! ==>  SELECTED SEMESTER IS: ${selectedSemester}`).getLine());
+         //   console.log(new Ansi().bold().cyanText(0, 255, 255).text(`FRESH LOAD!!! ==>  SELECTED SEMESTER IS: ${selectedSemester}`).getLine());
+            new Ansi().bold().cyan().text(`FRESH LOAD!!! ==>  SELECTED SEMESTER IS: ${selectedSemester}`).print();
         } else {
             // Select Semester 1 by default
             $('#semester1').addClass('selected');
             console.log("semester 1 selected");
             selectedSemester =  $('#semester1').val();
             //bold cyan on white in capitals
-            console.log(new Ansi().bold().cyanText(0, 255, 255).text(`FRESH LOAD!!! ==>  SELECTED SEMESTER IS: ${selectedSemester}`).getLine());
+         //   console.log(new Ansi().bold().cyanText(0, 255, 255).text(`FRESH LOAD!!! ==>  SELECTED SEMESTER IS: ${selectedSemester}`).getLine());
+            new Ansi().bold().cyan().text(`FRESH LOAD!!! ==>  SELECTED SEMESTER IS: ${selectedSemester}`).print();
         }
 
     return selectedSemester;
@@ -1603,7 +1459,8 @@ The JSON object returned by the getSelectedLabels function will look like this w
                 selectedLabelValues["semester"].value = getSemester(i);
                 selectedLabelValues["semester"].id = `semester${i}`;
                 selectedLabelValues["semester"].label = document.getElementById(selectedLabelValues["semester"].id ); //get the label of the selected semester
-                console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedSemester: ${selectedSemester}`).getLine());
+              //  console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedSemester: ${selectedSemester}`).getLine());
+                new Ansi().skyBlue().bgYellow().bold().text(`selectedSemester: ${selectedSemester}`).print();
             }
         }
 
@@ -1611,7 +1468,8 @@ The JSON object returned by the getSelectedLabels function will look like this w
             selectedLabelValues["semester"].value = setDefaultSemesterByMonth();
             selectedLabelValues["semester"].id = `semester${parseInt(selectedSemester)}`;
             selectedLabelValues["semester"].label = document.getElementById(selectedLabelValues["semester"].id); //get the label of the selected semester
-            console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedSemester: ${selectedSemester}`).getLine());
+           // console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedSemester: ${selectedSemester}`).getLine());
+            new Ansi().skyBlue().bgYellow().bold().text(`selectedSemester: ${selectedSemester}`).print();
         }
 
         // Check which grade has .selected class and get the int value of its id
@@ -1621,7 +1479,8 @@ The JSON object returned by the getSelectedLabels function will look like this w
                 selectedLabelValues["grade"].value = getGrade(i);
                 selectedLabelValues["grade"].id = `grade${i}`;
                 selectedLabelValues["grade"].label = document.getElementById(selectedLabelValues["grade"].id); //get the label of the selected grade
-                console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedGrade: ${selectedGrade}`).getLine());
+              //  console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedGrade: ${selectedGrade}`).getLine());
+                new Ansi().skyBlue().bgYellow().bold().text(`selectedGrade: ${selectedGrade}`).print();
             }
         }
 
@@ -1631,7 +1490,8 @@ The JSON object returned by the getSelectedLabels function will look like this w
             selectedLabelValues["grade"].value = getGrade(1);
             selectedLabelValues["grade"].id = `grade1`;
             selectedLabelValues["grade"].label = document.getElementById(selectedLabelValues["grade"].id); //get the label of the selected grade
-            console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedGrade: ${selectedGrade}`).getLine());
+           // console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedGrade: ${selectedGrade}`).getLine());
+            new Ansi().skyBlue().bgYellow().bold().text(`selectedGrade: ${selectedGrade}`).print();
         }
 
         // Check which week has .selected class and get the int value of its id
@@ -1641,7 +1501,8 @@ The JSON object returned by the getSelectedLabels function will look like this w
                 selectedLabelValues["week"].value = getWeek(i);
                 selectedLabelValues["week"].id = `week${i}`;
                 selectedLabelValues["week"].label = document.getElementById(selectedLabelValues["week"].id); //get the label of the selected week
-                console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedWeek: ${selectedWeek}`).getLine());
+             //   console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedWeek: ${selectedWeek}`).getLine());
+                new Ansi().skyBlue().bgYellow().bold().text(`selectedWeek: ${selectedWeek}`).print();
             }
         }
 
@@ -1651,7 +1512,8 @@ The JSON object returned by the getSelectedLabels function will look like this w
             selectedLabelValues["week"].value = getWeek(1);
             selectedLabelValues["week"].id = `week1`;
             selectedLabelValues["week"].label = document.getElementById(selectedLabelValues["week"].id); //get the label of the selected week
-            console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedWeek: ${selectedWeek}`).getLine());
+        //    console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedWeek: ${selectedWeek}`).getLine());
+            new Ansi().skyBlue().bgYellow().bold().text(`selectedWeek: ${selectedWeek}`).print();
         }
 
         // Check which lesson-label has .selected class and get the data-value of its id
@@ -1661,7 +1523,8 @@ The JSON object returned by the getSelectedLabels function will look like this w
                 selectedLabelValues["lesson"].value = getLesson(i);
                 selectedLabelValues["lesson"].id = `lesson${i}`;
                 selectedLabelValues["lesson"].label = document.getElementById(selectedLabelValues["lesson"].id); //get the label of the selected lesson
-                console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedLesson: ${selectedLesson}`).getLine());
+              //  console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedLesson: ${selectedLesson}`).getLine());
+                new Ansi().skyBlue().bgYellow().bold().text(`selectedLesson: ${selectedLesson}`).print();
             }
         }
 
@@ -1671,7 +1534,8 @@ The JSON object returned by the getSelectedLabels function will look like this w
             selectedLabelValues["lesson"].value = getLesson(1);
             selectedLabelValues["lesson"].id = `lesson1`;
             selectedLabelValues["lesson"].label = document.getElementById(selectedLabelValues["lesson"].id); //get the label of the selected lesson
-            console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedLesson: ${selectedLesson}`).getLine());
+       //     console.log(new Ansi().skyBlueText().yellowBackground().bold().text(`selectedLesson: ${selectedLesson}`).getLine());
+            new Ansi().skyBlue().bgYellow().bold().text(`selectedLesson: ${selectedLesson}`).print();
         }
 
 
@@ -1704,7 +1568,8 @@ The JSON object returned by the getSelectedLabels function will look like this w
         // Get the selected semester, grade, week, and lesson
            const selectedLabels = getSelectedLabels();
         //pink text with yellow background
-        console.log(new Ansi().rgbBackground(255, 255, 0).rgbText(255, 0, 255).text(`FRESH RELOAD!!!!!! selectedSemester: ${selectedLabels.selectedSemester}, selectedGrade: ${selectedLabels.selectedGrade}, selectedWeek: ${selectedLabels.selectedWeek}, selectedLesson: ${selectedLabels.selectedLesson}`).getLine());
+    //    console.log(new Ansi().rgbBackground(255, 255, 0).rgbText(255, 0, 255).text(`FRESH RELOAD!!!!!! selectedSemester: ${selectedLabels.selectedSemester}, selectedGrade: ${selectedLabels.selectedGrade}, selectedWeek: ${selectedLabels.selectedWeek}, selectedLesson: ${selectedLabels.selectedLesson}`).getLine());
+        new Ansi().bgRGB(255, 255, 0).rgb(255, 0, 255).text(`FRESH RELOAD!!!!!! selectedSemester: ${selectedLabels.selectedSemester}, selectedGrade: ${selectedLabels.selectedGrade}, selectedWeek: ${selectedLabels.selectedWeek}, selectedLesson: ${selectedLabels.selectedLesson}`).print();
 
   });
 
@@ -1771,16 +1636,16 @@ $(document).ready(async function() {
            // Listen for 'filesUploadedResponse' events from the server
         socket.on('filesUploadedResponse', function(fileData) {
           toastr.success(`socket.on('filesUploadedResponse', function(fileData)====> Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`);
-              const ansi = new Ansi();
-               console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text(`socket.on('filesUploadedResponse', function(fileData)====>  Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`).getLine());
-                playSuccessSound();
+             // const ansi = new Ansi();
+              new Ansi().bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text(`socket.on('filesUploadedResponse', function(fileData)====>  Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`).print();
+
+
+
+            playSuccessSound();
             /////////////////////////////////////
               //  https://192.168.1.24:4000/?currentSemester=1&currentGrade=1&currentWeek=1&currentLesson=8
                 // Set your parameters
                    const url_to_redirect = getURLForCurrentDropzoneRedirect();
-
-                    //debug in yellow text, cyan background AND bold the url
-                  //  console.log(ansi.yellowText(0, 255, 255).cyanBackground(255, 255, 255).bold().text(window.location.href).getLine());
 
 
                       timeCompleted = 0;
@@ -1789,8 +1654,8 @@ $(document).ready(async function() {
                       lastSuccessResponse = null; // Reset the last response
 
                     //debug in green text, yellow background AND bold
-                     console.log(ansi.greenText(0, 255, 255).yellowBackground().bold().text(`url_to_redirect: ${url_to_redirect}, uploadCompleted: ${uploadCompleted}, timeCompleted: ${timeCompleted}`).getLine());
-
+                   //  console.log(ansi.greenText(0, 255, 255).yellowBackground().bold().text(`url_to_redirect: ${url_to_redirect}, uploadCompleted: ${uploadCompleted}, timeCompleted: ${timeCompleted}`).getLine());
+                         new Ansi().green().bgYellow().bold().text(`url_to_redirect: ${url_to_redirect}, uploadCompleted: ${uploadCompleted}, timeCompleted: ${timeCompleted}`).print();
                      playSuccessSound();
                      toastr.success(`Upload completed: ${fileData.path}, count: ${fileData.count}, uploadCompleted: ${uploadCompleted}`);
 
@@ -1799,7 +1664,7 @@ $(document).ready(async function() {
                      if(dropzoneInstance){
                         fileCount = 0; // Reset the counter after setting the message
                         dropzoneInstance.removeAllFiles();
-                        console.log(ansi.rgbBackground(255, 0, 255).rgbText(255, 255, 255).text(`dropzoneInstance.removeAllFiles() called`).getLine());
+                         new Ansi().bgRGB(255, 0, 255).rgb(255, 255, 255).text(`dropzoneInstance.removeAllFiles() called`).print();
                     }
 
 
@@ -1820,7 +1685,7 @@ $(document).ready(async function() {
         //reload the page
            socket.on('reload', function() {
                toastr.warning('Reloading page...');
-               console.log(new Ansi().rgbBackground(255, 0, 255).rgbText(255, 0, 0).bold().text('Reloading page...').getLine());
+                new Ansi().bgRGB(255, 0, 255).rgb(255, 0, 0).bold().text('Reloading page...').print();
                playSuccessSound();
         //        location.reload();
 
@@ -1833,8 +1698,7 @@ $(document).ready(async function() {
         socket.on('fileDeletedResponse', function(filepath) {
             // Message to show file deleted successfully
             toastr.success('File deleted successfully: ' + filepath);
-           const ansi = new Ansi();
-           console.log(ansi.rgbBackground(255, 0, 0).rgbText(255, 255, 255).bold().text('File deleted successfully: ' + filepath).getLine());
+            new Ansi().bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text('File deleted successfully: ' + filepath).print();
 
             // Refresh the file list
             RefreshFileList(getSelectedLabel('lesson-label'));
@@ -2065,8 +1929,7 @@ $(document).ready(async function() {
         console.log(`\x1b[1;4;41m after..yyyyyFile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);
         console.log(`\x1b[5m after..zzzzzile uploaded successfully! , filepath: ${filepath} fileCount: ${fileCount} timestamp: ${timestamp}\x1b[0m`);*//*
 
-          const ansi = new Ansi();
-        console.log(ansi.rgbBackground(122, 122, 0).rgbText(0, 0, 255).text(`filepath: ${filepath} fileCount: ${fileCount}`).getLine());
+
 
         // Send a POST request to the server to append the log
         fetch('/append_log', {
@@ -2166,8 +2029,7 @@ $(document).ready(async function() {
             const logLinesOfSingleFileData = data.filter(log => log.filecount === 1).length;
             //log in yellow color
 
-            const ansi = new Ansi();
-           console.log(ansi.rgbBackground(122, 122, 0).rgbText(0, 0, 255).text(`log Lines Of Single File Data:: ${logLinesOfSingleFileData}`).getLine());
+
             //clear the history log
             historyLog.value = '';
             let count = logLinesOfSingleFileData;

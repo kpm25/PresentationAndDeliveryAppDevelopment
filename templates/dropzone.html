@@ -288,7 +288,7 @@
     function showProgressBarPopup() {
         let progressBarPopup = document.getElementById('progressBarPopup');
            //debugging
-        console.log(new Ansi().redText().whiteBackground().bold().text('showProgressBarPopup.......').getLine());
+        new Ansi().red().bgWhite().bold().text('showProgressBarPopup.......').print();
         if (!progressBarPopup) {
             createProgressBarPopup();
             progressBarPopup = document.getElementById('progressBarPopup');
@@ -296,7 +296,7 @@
         // Check if progressBarPopup exists before trying to access its style property
         if (progressBarPopup) {
             progressBarPopup.style.display = 'block';
-            console.log(new Ansi().yellowText().blueBackground().bold().text('Progress bar displayed').getLine());
+            new Ansi().yellow().bgBlue().bold().text('Progress bar displayed').print();
             // Add the text to the progress bar
             let textElement = document.createElement('p');
             textElement.className = 'uploading-text';
@@ -318,7 +318,7 @@
     function hideProgressBarPopup() {
         let progressBarPopup = document.getElementById('progressBarPopup');
         //debugging
-        console.log(new Ansi().redText().whiteBackground().bold().text('hideProgressBarPopup.......').getLine());
+        new Ansi().red().bgWhite().bold().text('hideProgressBarPopup.......').print();
         if (!progressBarPopup) {
             return;
         }
@@ -334,7 +334,7 @@
     function addSquareToProgressBarPopup(id) {
         let progressBarPopup = document.getElementById('progressBarPopup');
           //debugging
-            console.log(new Ansi().redText().whiteBackground().bold().text('removeSquareFromProgressBarPopup.......').getLine());
+        new Ansi().red().bgWhite().bold().text('addSquareToProgressBarPopup.......').print();
         if (!progressBarPopup) {
             createProgressBarPopup();
             progressBarPopup = document.getElementById('progressBarPopup');
@@ -352,7 +352,7 @@
     function removeSquareFromProgressBarPopup() {
         let progressBarPopup = document.getElementById('progressBarPopup');
         //debugging
-        console.log(new Ansi().redText().whiteBackground().bold().text('removeSquareFromProgressBarPopup.......').getLine());
+        new Ansi().red().bgWhite().bold().text('removeSquareFromProgressBarPopup.......').print();
         if (!progressBarPopup) {
             return;
         }
@@ -368,7 +368,7 @@
     //remove all squares from the progress bar popup
     function removeAllSquaresFromProgressBarPopup() {
         //debugging
-        console.log(new Ansi().redText().whiteBackground().bold().text('removeAllSquaresFromProgressBarPopup.......').getLine());
+        new Ansi().red().bgWhite().bold().text('removeAllSquaresFromProgressBarPopup.......').print();
         let progressBarPopup = document.getElementById('progressBarPopup');
         if (!progressBarPopup) {
             return;
@@ -402,24 +402,24 @@
                                 }
 
                             } catch (error) {
-                                console.log(new Ansi().redText().whiteBackground().bold().text(`Error: ${error.message}`).getLine());
+                                new Ansi().red().bgWhite().bold().text(`Error: ${error.message}`).print();
                             }
                             //flex the square vertically between top and bottom of uts parent, so its centered vertically
                             // document.getElementById(`square-${i}`).style.alignSelf = 'center';
-                            console.log(new Ansi().yellowText().blueBackground().bold().text(`Square ${i} added`).getLine());
+                            new Ansi().yellow().bgBlue().bold().text(`Square ${i} added`).print();
                             //debug the number of squares in the progress bar
-                            console.log(new Ansi().blueText().orangeBackground().bold().text(`Number of children squares: ${document.getElementById('progressBarPopup').children[0].children.length}`).getLine());
+                            new Ansi().blue().bgOrange().bold().text(`Number of children squares: ${document.getElementById('progressBarPopup').children[0].children.length}`).print();
                             i++;
                         } else {
                             // Log when the interval is being cleared
-                            console.log(new Ansi().yellowText().redBackground().bold().text('Interval cleared').getLine());
+                            new Ansi().yellow().bgRed().bold().text('Interval cleared').print();
 
                             // After all squares have been added, hide the progress bar and clear the interval
                             hideProgressBarPopup();
                             clearInterval(intervalId);
 
                             //on completion debug with green background, yellow text, BOLD
-                            console.log(new Ansi().yellowText().greenBackground().bold().text('Progress bar completed').getLine());
+                            new Ansi().yellow().bgGreen().bold().text('Progress bar completed').print();
 
                             // Reset the flag to false
 //                            isProgressBarRunning = false;
