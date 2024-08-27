@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from dropzone_blueprint import dropzone
 from dotenv import load_dotenv
 import subprocess
@@ -6,9 +6,11 @@ import os
 import sys
 import atexit
 import shutil
+import requests
 from werkzeug.serving import is_running_from_reloader, run_simple
 import ssl
 from typing import Optional
+import stat
 from logging import Filter
 
 # Load the environment variables
@@ -21,6 +23,18 @@ USE_HTTPS = os.getenv('USE_HTTPS', 'false')
 protocol = 'https' if USE_HTTPS == 'true' else 'http'
 NODE_SERVER_URL = f"{protocol}:{os.getenv('NODE_SERVER_URL')}"
 FLASK_SERVER_URL = f"{protocol}:{os.getenv('FLASK_SERVER_URL')}"
+CONTENT_SERVER_URL = f"http:{os.getenv('CONTENT_SERVER_URL')}"
+
+# content folder name
+CONTENT_FOLDER = os.getenv('CONTENT_FOLDER')
+
+# Define the Content port
+CONTENT_PORT = os.getenv('CONTENT_PORT')
+# Define the Content host
+CONTENT_HOST = os.getenv('CONTENT_HOST')
+
+# Keep a reference to the server process
+server_process = None
 
 if USE_HTTPS == 'true':
     # If USE_HTTPS is true, use SSL context
@@ -51,6 +65,90 @@ node_process: Optional[subprocess.Popen] = None
 def get_config():
     print(f"Node server url: {NODE_SERVER_URL} Flask server url: {FLASK_SERVER_URL}")
     return jsonify(nodeServerUrl=NODE_SERVER_URL, flaskServerUrl=FLASK_SERVER_URL)
+
+
+def print_permissions(path):
+    print(f"Permissions for {path}: {stat.filemode(os.stat(path).st_mode)}")
+
+
+# routes for the content server
+@app.route('/content_server', methods=['POST'])
+def start_content_server():
+    global server_process
+    secret_key = request.json.get('secret_key')
+    print(f"Secret key: {secret_key}")
+    # does it match the secret key??
+    if secret_key == 'abc123':
+        print(f"Secret key matches")
+
+        if server_process and server_process.poll() is None:
+            return jsonify({'message': 'Server already started, you need to stop and restart it to view again...', 'url': f"{CONTENT_SERVER_URL}"}), 200
+
+
+
+        #TODO: FIX THIS BUG, so that the server can be reviewed while running
+        # if server_process and server_process.poll() is None:
+        #     # Check if the server is still accessible
+        #     try:
+        #         response = requests.get(CONTENT_SERVER_URL)
+        #         response.raise_for_status()
+        #     except requests.exceptions.RequestException as e:
+        #         print(f"Error accessing server: {e}")
+        #         server_process = None  # Reset the server process so it can be started again
+        #     else:
+        #         return jsonify({'message': 'Server already started', 'url': f"{CONTENT_SERVER_URL}"}), 200
+
+
+        #TODO: ALSO LOOK AT THIS CODE FOR POSSIBLE SOLUTIONS
+        # if server_process and server_process.poll() is None:
+        #     try:
+        #         response = requests.post('http://localhost:4000/stop_content_server', json={'secret_key': secret_key}, timeout=5)
+        #         response.raise_for_status()
+        #     except requests.exceptions.RequestException as e:
+        #         print(f"Error stopping server: {e}")
+        #         return jsonify({'message': 'Error stopping server', 'error': str(e)}), 500
+        #     else:
+        #         server_process = None
+
+
+        if os.path.isdir(CONTENT_FOLDER):
+            print_permissions(CONTENT_FOLDER)
+            for root, dirs, files in os.walk(CONTENT_FOLDER):
+                for name in dirs:
+                    print_permissions(os.path.join(root, name))
+                for name in files:
+                    print_permissions(os.path.join(root, name))
+
+            print(f"CONTENT_FOLDER exists: {os.listdir(CONTENT_FOLDER)}")
+            server_process = subprocess.Popen(['python', '-m', 'http.server', CONTENT_PORT, '--bind', CONTENT_HOST],
+                                              cwd=CONTENT_FOLDER, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if server_process.returncode is not None:
+                stdout, stderr = server_process.communicate()
+                print(f"stdout: {stdout.decode('utf-8')}")
+                print(f"stderr: {stderr.decode('utf-8')}")
+                return jsonify({'message': 'Error starting server', 'stdout': stdout.decode('utf-8'),
+                                'stderr': stderr.decode('utf-8')}), 500
+            return jsonify({'message': 'Server started', 'url': f"{CONTENT_SERVER_URL}"}), 200
+        else:
+            return jsonify({'message': f'Directory \'{CONTENT_FOLDER}\' does not exist'}), 400
+
+    else:
+        return jsonify({'message': 'Invalid secret key'}), 403
+
+
+@app.route('/stop_content_server', methods=['POST'])
+def stop_content_server():
+    global server_process
+    secret_key = request.json.get('secret_key')
+    if secret_key == 'abc123':
+        if server_process:
+            server_process.terminate()
+            server_process = None
+            return jsonify({'message': 'Server stopped'}), 200
+        else:
+            return jsonify({'message': 'Server is not running'}), 400
+    else:
+        return jsonify({'message': 'Invalid secret key'}), 403
 
 
 def start_node_app():

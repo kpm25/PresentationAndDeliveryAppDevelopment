@@ -515,7 +515,6 @@ $(document).ready(function() {
 
 
 
-
     }); //end of document ready function
 
 
@@ -690,6 +689,54 @@ $(document).ready(async function() {
 
 
 
+           //test code to start and go to the server of the content folder
+//  <button class="select-button" onclick="startContentServer()" id="startContentServerButton">Go To Content Folder</button>
+//                 <button class="select-button" onclick="stopContentServer()" id="stopContentServerButton" style="display: none;">Close Content Folder</button>
+function startContentServer() {
+    const secret_key = prompt("Please enter the secret key:");
+    $.ajax({
+        url: '/content_server',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ secret_key: secret_key }),
+        success: function(response) {
+            if (response.message === 'Server started') {
+                console.log("In function startContentServer() - Server started successfully. Redirecting to the content server url: " + response.url);
+                //set display to none for start button
+//                document.getElementById('startContentServerButton').style.display = 'none';
+//                //set display to block for stop button
+//                document.getElementById('stopContentServerButton').style.display = 'block';
+                window.location.href = response.url;
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function() {
+            alert('An error occurred while starting the server.');
+        }
+    });
+}
+
+
+function stopContentServer() {
+    const secret_key = prompt("Please enter the secret key:");
+    $.ajax({
+        url: '/stop_content_server',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ secret_key: secret_key }),
+        success: function(response) {
+            //set display to block for start button
+//            document.getElementById('startContentServerButton').style.display = 'block';
+//            //set display to none for stop button
+//            document.getElementById('stopContentServerButton').style.display = 'none';
+            alert(response.message);
+        },
+        error: function() {
+            alert('An error occurred while stopping the server.');
+        }
+    });
+}
 
 
 

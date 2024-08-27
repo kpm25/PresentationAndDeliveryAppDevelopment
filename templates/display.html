@@ -112,11 +112,15 @@
                         Your browser does not support the audio element.
                     </audio>
 
-              <button  class="select-button" onclick="playSuccessSound()"   id="playButton">Play Success Sound</button>
+              <button  class="select-button" onclick="playSuccessSound()"   id="playButton" style="display: none;">Play Sound</button>
 <!--                button with link inside to dropzone page-->
 <!--                <button class="select-button" onclick="window.location.href='/'" id="dropzoneButton">Go to Dropzone</button>-->
                 <button class="select-button" onclick="redirectToDropzone()" id="dropzoneButton">Go to Dropzone</button>
                 <button class="select-button" onclick="socketTest()">Socket Test</button>
+<!--                test buttons to start/stop and navigate to Server of Content Folder tree-->
+                <button class="select-button" onclick="startContentServer()" id="startContentServerButton">Go To Content Folder</button>
+                 <button class="select-button" onclick="stopContentServer()" id="stopContentServerButton" >Close Content Folder</button>
+
 
             </div>
 
@@ -171,7 +175,9 @@
 
 
 
+<script>
 
+</script>
 </body>
 
 </html>
