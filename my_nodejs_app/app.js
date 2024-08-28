@@ -8,9 +8,11 @@ const express = require('express');
 
 // Get the USE_HTTPS value from .env file
 const USE_HTTPS = process.env.USE_HTTPS || 'false';
-const protocol = USE_HTTPS ? 'https' : 'http';
+const protocol = USE_HTTPS === 'true' ? 'https' : 'http';
 const NODE_SERVER_URL = `${protocol}://192.168.1.24:5000`;
 const FLASK_SERVER_URL = `${protocol}://192.168.1.24:4000`;
+
+
 
 const http = require('http');
 const https = require('https');
@@ -41,8 +43,9 @@ const NODEJS_HOST = process.env.NODEJS_HOST || 'localhost';
 //app.use(cors({ origin: `https://${FLASK_HOST}:${FLASK_PORT}` }));
 
 // Get the client-side application's origin from an environment variable
-//const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `https://localhost:4000`;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `${USE_HTTPS === 'true' ? 'https' : 'http'}://localhost:4000`;
+//const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `https://localhost:4000`;  ..notes from .env file: CLIENT_ORIGIN=//192.168.1.24:4000, so need to add protocol and ':' to the origin
+//const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `${USE_HTTPS === 'true' ? 'https' : 'http'}://localhost:4000`;
+const CLIENT_ORIGIN = `${protocol}:${process.env.CLIENT_ORIGIN}` || `${protocol}://localhost:4000`;
 let uploadComplete = true;
 let initialSize = 0;
 let expectedCompletionSize = 0;
@@ -82,7 +85,9 @@ if (options.key && options.cert) {
     new Ansi().bgRGB(0, 123, 123).rgb(255, 165, 255).italic().bold().underline().text(`Port from env is: ${process.env.NODEJS_PORT}, Host from env is: ${process.env.NODEJS_HOST}`).print();
 
 //debug in cyan color
-console.log('\x1b[36m%s\x1b[0m', `Node.js app listening at https://${NODEJS_HOST}:${NODEJS_PORT}`);
+//console.log('\x1b[36m%s\x1b[0m', `Node.js app listening at https://${NODEJS_HOST}:${NODEJS_PORT}`);
+//new Ansi().cyan().text(`Node.js app listening at ${USE_HTTPS === 'true' ? 'https' : 'http'}://${NODEJS_HOST}:${NODEJS_PORT}`).print();
+new Ansi().cyan().text(`Node.js app listening at ${protocol}://${NODEJS_HOST}:${NODEJS_PORT}`).print();
 
 // Create an HTTP server
 //const server = http.createServer(app);
@@ -145,7 +150,8 @@ io.on('connection', (socket) => {
   //   socket.emit('filesUploaded', { path: fileFolderPath, count: fileCount });
     socket.on('filesUploaded', (fileData) => {
         //debug in cyan color
-        console.log(`\x1b[36m%s\x1b[0m Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`);
+//        console.log(`\x1b[36m%s\x1b[0m Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`);
+        new Ansi().cyan().text(`Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`).print();
 
         // Broadcast a 'playsound' event to all other clients
          // socket.broadcast.emit('filesUploadedResponse', fileData);

@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint, request, jsonify, render_template, redirect, url_for, g, current_app, send_file
-from helper_file_methods import is_audio, is_image, is_compressed, is_video, save_file, setup_lesson_folders, \
-    format_bytes, reverse_format_bytes
+from helper_file_methods import is_audio, is_image, is_compressed, is_document, is_video, save_file, \
+    setup_lesson_folders, \
+    format_bytes, reverse_format_bytes, check_all_grade_folders_exist
 from werkzeug.utils import secure_filename
 import datetime
 import json
@@ -41,6 +42,12 @@ def index():
 
 @dropzone.route('/display', methods=['GET'])
 def display_files():
+    # if check_all_grade_folders_exist is False, then call setup_lesson_folders
+    if not check_all_grade_folders_exist():
+        setup_lesson_folders()
+        # debug cyan
+        print("\033[92m" + '***Setting up the lesson folders in display_files()...    ')
+
     # Define your semester, grade, week, and lesson here
     semester = 'Semester1'
     grade = 'Grade1'
@@ -188,6 +195,13 @@ def dropzone_lessons():
 
 @dropzone.route('/dropzone_lessons/<path:file_path>', methods=['POST'])
 def dropzone_lessons_path(file_path):
+    # if check_all_grade_folders_exist is False, then call setup_lesson_folders
+    if not check_all_grade_folders_exist():
+        setup_lesson_folders()
+        # debug cyan
+        print("\033[92m" + '***Setting up the lesson folders...    ')
+
+    # main code for dropzone_lessons_path
     print('\n\nfilename received: ', file_path + '\n\n')
     # Extract the file name and extension
     file_name = os.path.basename(file_path)
@@ -247,14 +261,26 @@ def dropzone_lessons_path(file_path):
                 print(f'\n\n\nOriginal filename: {new_file_name}\n\n\n')
 
             # Determine the type of the file
-            if is_audio(file_name):
+            # if is_audio(file_name):
+            #     file_type = 'audio'
+            # elif is_image(file_name):
+            #     file_type = 'image'
+            # elif is_compressed(file_name):
+            #     file_type = 'compressed'
+            # elif is_video(file_name):
+            #     file_type = 'video'
+            # else:
+            #     file_type = ''
+            if is_audio(new_file_name):
                 file_type = 'audio'
-            elif is_image(file_name):
+            elif is_image(new_file_name):
                 file_type = 'image'
-            elif is_compressed(file_name):
+            elif is_compressed(new_file_name):
                 file_type = 'compressed'
-            elif is_video(file_name):
+            elif is_video(new_file_name):
                 file_type = 'video'
+            elif is_document(new_file_name):
+                file_type = 'document'
             else:
                 file_type = ''
 
@@ -424,7 +450,7 @@ def delete_file():
         return jsonify({'message': 'File not found'}), 404
 
 
-# route /page1 display image1.html
+# route /page1 display image1.html .These two routes are for testing purposes and can be removed soon.
 @dropzone.route('/image1')
 def image1():
     return render_template('image1.html')

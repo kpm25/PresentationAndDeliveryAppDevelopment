@@ -692,7 +692,7 @@ $(document).ready(async function() {
            //test code to start and go to the server of the content folder
 //  <button class="select-button" onclick="startContentServer()" id="startContentServerButton">Go To Content Folder</button>
 //                 <button class="select-button" onclick="stopContentServer()" id="stopContentServerButton" style="display: none;">Close Content Folder</button>
-function startContentServer() {
+/*function startContentServer() {
     const secret_key = prompt("Please enter the secret key:");
     $.ajax({
         url: '/content_server',
@@ -736,7 +736,100 @@ function stopContentServer() {
             alert('An error occurred while stopping the server.');
         }
     });
+}*/
+
+
+function startContentServer() {
+    const secret_key = prompt("Please enter the secret key:");
+    $.ajax({
+        url: '/content_server',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ secret_key: secret_key }),
+        success: function(response) {
+            if (response.message === 'Content Folder Http Server started') {
+                console.log("In function startContentServer() - Server started successfully. Redirecting to the content server url: " + response.url);
+                window.location.href = response.url;
+                updateButtonDisplay();
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function() {
+            alert('An error occurred while starting the server.');
+        }
+    });
 }
+
+function stopContentServer() {
+    const secret_key = prompt("Please enter the secret key:");
+    $.ajax({
+        url: '/stop_content_server',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ secret_key: secret_key }),
+        success: function(response) {
+            alert(response.message);
+            updateButtonDisplay();
+        },
+        error: function() {
+            alert('An error occurred while stopping the server.');
+        }
+    });
+}
+
+function updateButtonDisplay() {
+    $.ajax({
+        url: '/content_server_status',
+        type: 'GET',
+        success: function(response) {
+            if (response.content_server_running) {
+                // If the server is running, hide the start button and show the stop button
+                $('#startContentServerButton').hide();
+                $('#stopContentServerButton').show();
+            } else {
+                // If the server is not running, show the start button and hide the stop button
+                $('#startContentServerButton').show();
+                $('#stopContentServerButton').hide();
+            }
+        },
+        error: function() {
+            alert('An error occurred while checking the server status.');
+        }
+    });
+}
+
+
+$(document).ready(function() {
+    $.ajax({
+        url: '/content_server_status',
+        type: 'GET',
+        success: function(response) {
+            updateButtonDisplay();
+        },
+        error: function() {
+            alert('An error occurred while checking the server status.');
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

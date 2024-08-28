@@ -2,20 +2,20 @@ import os
 import math
 
 
-def setup_folder_structure():
-    lesson_folders = ['lesson1', 'lesson2', 'lesson3']
-    file_types = ['zip', 'video', 'audio', 'image']
-
-    base_dir = 'lessons'
-    os.makedirs(base_dir, exist_ok=True)
-
-    for lesson in lesson_folders:
-        lesson_path = os.path.join(base_dir, lesson)
-        os.makedirs(lesson_path, exist_ok=True)
-
-        for file_type in file_types:
-            type_path = os.path.join(lesson_path, file_type)
-            os.makedirs(type_path, exist_ok=True)
+# def setup_folder_structure():
+#     lesson_folders = ['lesson1', 'lesson2', 'lesson3']
+#     file_types = ['zip', 'video', 'audio', 'image']
+#
+#     base_dir = 'lessons'
+#     os.makedirs(base_dir, exist_ok=True)
+#
+#     for lesson in lesson_folders:
+#         lesson_path = os.path.join(base_dir, lesson)
+#         os.makedirs(lesson_path, exist_ok=True)
+#
+#         for file_type in file_types:
+#             type_path = os.path.join(lesson_path, file_type)
+#             os.makedirs(type_path, exist_ok=True)
 
 
 # def setup_lesson_folders():
@@ -86,6 +86,21 @@ def setup_lesson_folders():
                     os.makedirs(lesson_path, exist_ok=True)
 
 
+def check_all_grade_folders_exist():
+    base_dir = 'LessonFolders'
+    semesters = ['Semester1', 'Semester2']
+    grades = ['Grade' + str(i) for i in range(1, 6)]
+
+    for semester in semesters:
+        for grade in grades:
+            grade_folder_path = os.path.join(base_dir, semester, grade)
+            if not os.path.exists(grade_folder_path):
+                print(f"Folder {grade_folder_path} does not exist.")
+                return False
+    print("All grade folders exist under both Semester1 and Semester2.")
+    return True
+
+
 # This version of the function will create a directory structure like this:
 # LessonFolders/
 #     Semester1/
@@ -127,6 +142,13 @@ def is_compressed(filename):
 def is_video(filename):
     result = '.' in filename and filename.rsplit('.', 1)[1].lower() in {'mp4', 'mkv', 'flv', 'avi', 'mov', 'wmv'}
     print(f"is_video({filename}): {result}")
+    return result
+
+
+def is_document(filename):
+    result = '.' in filename and filename.rsplit('.', 1)[1].lower() in {'doc', 'docx', 'ppt', 'pptx', 'pdf', 'xls',
+                                                                        'xlsx', 'txt'}
+    print(f"is_document({filename}): {result}")
     return result
 
 
@@ -179,10 +201,10 @@ def format_bytes(_bytes, decimals=2):
 
 
 if __name__ == '__main__':
-    option = 2
+    option = 1
     if option == 1:
-        setup_folder_structure()
-        print('Folder structure setup complete.')
+        check_all_grade_folders_exist()
+        print('Grade folders check complete.')
     elif option == 2:
         setup_lesson_folders()
         print('Lesson folders setup complete.')

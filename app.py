@@ -35,6 +35,8 @@ CONTENT_HOST = os.getenv('CONTENT_HOST')
 
 # Keep a reference to the server process
 server_process = None
+# boolean flag to check if the server is running
+content_server_running = False
 
 if USE_HTTPS == 'true':
     # If USE_HTTPS is true, use SSL context
@@ -68,13 +70,14 @@ def get_config():
 
 
 def print_permissions(path):
-    print(f"Permissions for {path}: {stat.filemode(os.stat(path).st_mode)}")
+    print(f"Permissions for {path}, mode set is: {stat.filemode(os.stat(path).st_mode)}")
 
 
 # routes for the content server
 @app.route('/content_server', methods=['POST'])
 def start_content_server():
     global server_process
+    global content_server_running
     secret_key = request.json.get('secret_key')
     print(f"Secret key: {secret_key}")
     # does it match the secret key??
@@ -82,11 +85,10 @@ def start_content_server():
         print(f"Secret key matches")
 
         if server_process and server_process.poll() is None:
-            return jsonify({'message': 'Server already started, you need to stop and restart it to view again...', 'url': f"{CONTENT_SERVER_URL}"}), 200
+            return jsonify({'message': 'Server already started, you need to stop and restart it to view again...',
+                            'url': f"{CONTENT_SERVER_URL}"}), 200
 
-
-
-        #TODO: FIX THIS BUG, so that the server can be reviewed while running
+        # TODO: FIX THIS BUG, so that the server can be reviewed while running
         # if server_process and server_process.poll() is None:
         #     # Check if the server is still accessible
         #     try:
@@ -98,8 +100,7 @@ def start_content_server():
         #     else:
         #         return jsonify({'message': 'Server already started', 'url': f"{CONTENT_SERVER_URL}"}), 200
 
-
-        #TODO: ALSO LOOK AT THIS CODE FOR POSSIBLE SOLUTIONS
+        # TODO: ALSO LOOK AT THIS CODE FOR POSSIBLE SOLUTIONS
         # if server_process and server_process.poll() is None:
         #     try:
         #         response = requests.post('http://localhost:4000/stop_content_server', json={'secret_key': secret_key}, timeout=5)
@@ -109,7 +110,6 @@ def start_content_server():
         #         return jsonify({'message': 'Error stopping server', 'error': str(e)}), 500
         #     else:
         #         server_process = None
-
 
         if os.path.isdir(CONTENT_FOLDER):
             print_permissions(CONTENT_FOLDER)
@@ -126,9 +126,12 @@ def start_content_server():
                 stdout, stderr = server_process.communicate()
                 print(f"stdout: {stdout.decode('utf-8')}")
                 print(f"stderr: {stderr.decode('utf-8')}")
-                return jsonify({'message': 'Error starting server', 'stdout': stdout.decode('utf-8'),
-                                'stderr': stderr.decode('utf-8')}), 500
-            return jsonify({'message': 'Server started', 'url': f"{CONTENT_SERVER_URL}"}), 200
+                return jsonify(
+                    {'message': 'Error starting Content Folder Http Server', 'stdout': stdout.decode('utf-8'),
+                     'stderr': stderr.decode('utf-8')}), 500
+            else:
+                content_server_running = True
+                return jsonify({'message': 'Content Folder Http Server started', 'url': f"{CONTENT_SERVER_URL}"}), 200
         else:
             return jsonify({'message': f'Directory \'{CONTENT_FOLDER}\' does not exist'}), 400
 
@@ -136,19 +139,42 @@ def start_content_server():
         return jsonify({'message': 'Invalid secret key'}), 403
 
 
+# testing routes to view the content folder as a raw python http server
 @app.route('/stop_content_server', methods=['POST'])
 def stop_content_server():
     global server_process
+    global content_server_running
     secret_key = request.json.get('secret_key')
     if secret_key == 'abc123':
         if server_process:
             server_process.terminate()
             server_process = None
-            return jsonify({'message': 'Server stopped'}), 200
+            content_server_running = False
+            return jsonify({'message': 'Content Folder Http Server stopped'}), 200
         else:
-            return jsonify({'message': 'Server is not running'}), 400
+            return jsonify({'message': 'Content Folder Http Server is not running'}), 400
     else:
         return jsonify({'message': 'Invalid secret key'}), 403
+
+
+# method to stop the content server
+def stop_content_http_server():
+    global server_process
+    if server_process:
+        print('Stopping content http server...')
+        server_process.terminate()
+        server_process = None
+    else:
+        print('...Content http server was not running when stop was called...')
+
+
+# route to check if the content server is running
+@app.route('/content_server_status', methods=['GET'])
+def get_content_server_status():
+    global content_server_running
+    # print in yellow color bold
+    print(f"\033[93mContent server running: {content_server_running}\033[0m")
+    return jsonify({'content_server_running': content_server_running}), 200
 
 
 def start_node_app():
@@ -237,4 +263,5 @@ if __name__ == '__main__':
         atexit.register(stop_node_app)
     # app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
     # Run the Flask app with the appropriate context
+    atexit.register(stop_content_http_server)
     run_simple('0.0.0.0', 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
