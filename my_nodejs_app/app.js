@@ -7,8 +7,10 @@ require('dotenv').config();
 const express = require('express');
 
 // Get the USE_HTTPS value from .env file
-const USE_HTTPS = process.env.USE_HTTPS || 'false';
-const protocol = USE_HTTPS === 'true' ? 'https' : 'http';
+//const USE_HTTPS = process.env.USE_HTTPS || 'false';
+const USE_HTTPS = (process.env.USE_HTTPS || 'false').toLowerCase() === 'true';
+//const protocol = USE_HTTPS === 'true' ? 'https' : 'http';
+const protocol = USE_HTTPS ? 'https' : 'http';
 const NODE_SERVER_URL = `${protocol}://192.168.1.24:5000`;
 const FLASK_SERVER_URL = `${protocol}://192.168.1.24:4000`;
 
@@ -60,19 +62,19 @@ app.use(cors());
 
 app.use(express.json());
 
-//certificate and key files
-const options = {
-  key: fs.readFileSync('./new_key_no_passphrase.pem'),
-  cert: fs.readFileSync('./new_cert.pem')
-}
-//  console.log(`\x1b[1;4;41m Certificate and key files were loaded ${options.key} and ${options.cert} \x1b[0m`);
+let options;
+new Ansi().blue().bgPink().bold().italic().underline().text(`USE_HTTPS is: ${USE_HTTPS}`).print();
+if (USE_HTTPS) {
+    //certificate and key files
+     options = {
+        key: fs.readFileSync('./new_key_no_passphrase.pem'),
+        cert: fs.readFileSync('./new_cert.pem')
+    }
 
-//if key and cert have text content then print keys and cert exist
-if (options.key && options.cert) {
- //   const text = ansi.redBackground().whiteText().italic().bold().underline().text(`Certificate and key files were loaded `).getLine();
-    new Ansi().red().bgWhite().bold().italic().underline().text(`Certificate and key files were loaded `).print();
-
-
+    //if key and cert have text content then print keys and cert exist
+    if (options.key && options.cert) {
+        new Ansi().red().bgWhite().bold().italic().underline().text(`Certificate and key files were loaded `).print();
+    }
 }
 
 
@@ -94,7 +96,8 @@ new Ansi().cyan().text(`Node.js app listening at ${protocol}://${NODEJS_HOST}:${
 // Create an HTTPS server
 //const server = https.createServer(options, app);
 // Depending on the USE_HTTPS value, create the appropriate server
-const server = USE_HTTPS === 'true' ? https.createServer(options, app) : http.createServer(app);
+//const server = USE_HTTPS === 'true' ? https.createServer(options, app) : http.createServer(app);
+const server = USE_HTTPS ? https.createServer(options, app) : http.createServer(app);
 
 // Create an HTTP server with custom request logging
 /*const server = http.createServer((req, res) => {
@@ -398,7 +401,8 @@ server.listen(NODEJS_PORT, NODEJS_HOST, () => {
 //      console.log('Node.js app listening at http://0.0.0.0:4000');
 //      console.log('\x1b[31m%s\x1b[0m', 'Node.js app listening at http://0.0.0.0:4000');
     //https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
-    new Ansi().yellow().bgCyan().text(`Node.js app listening at http${USE_HTTPS === 'true' ? 's' : ''}://${NODEJS_HOST}:${NODEJS_PORT}`).print();
+//    new Ansi().yellow().bgCyan().text(`Node.js app listening at http${USE_HTTPS === 'true' ? 's' : ''}://${NODEJS_HOST}:${NODEJS_PORT}`).print();
+    new Ansi().yellow().bgCyan().text(`Node.js app listening at ${protocol}://${NODEJS_HOST}:${NODEJS_PORT}`).print();
 });
 
 

@@ -16,11 +16,13 @@ from logging import Filter
 # Load the environment variables
 load_dotenv()
 # Get the USE_HTTPS value from .env file
-USE_HTTPS = os.getenv('USE_HTTPS', 'false')
+# USE_HTTPS = os.getenv('USE_HTTPS', 'false')
+USE_HTTPS = os.getenv('USE_HTTPS', 'false').lower() == 'true'
 
 # NODE_SERVER_URL = f"{protocol}://192.168.1.24:5000"
 # FLASK_SERVER_URL = f"{protocol}://192.168.1.24:4000"
-protocol = 'https' if USE_HTTPS == 'true' else 'http'
+# protocol = 'https' if USE_HTTPS == 'true' else 'http'
+protocol = 'https' if USE_HTTPS else 'http'
 NODE_SERVER_URL = f"{protocol}:{os.getenv('NODE_SERVER_URL')}"
 FLASK_SERVER_URL = f"{protocol}:{os.getenv('FLASK_SERVER_URL')}"
 CONTENT_SERVER_URL = f"http:{os.getenv('CONTENT_SERVER_URL')}"
@@ -38,7 +40,8 @@ server_process = None
 # boolean flag to check if the server is running
 content_server_running = False
 
-if USE_HTTPS == 'true':
+# if USE_HTTPS == 'true':
+if USE_HTTPS:
     # If USE_HTTPS is true, use SSL context
     context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
     context.load_cert_chain(certfile='new_cert.pem', keyfile='new_key_no_passphrase.pem')
