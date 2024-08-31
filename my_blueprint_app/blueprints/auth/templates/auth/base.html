@@ -1,0 +1,38 @@
+<!-- auth/templates/base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Auth App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth/css/style.css') }}">
+    <script src="{{ url_for('static', filename='auth/js/script.js') }}"></script>
+</head>
+<body>
+    <header>
+         <img src="{{ url_for('static', filename='auth/img/logo.png') }}" alt="Logo" height="50">
+        <h1>Authentication App</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('auth.auth_index') }}">Home</a></li>
+            <li><a href="{{ url_for('auth.view_auth_db') }}">View Database</a></li>
+            <li><a href="{{ url_for('auth.create') }}">Create User</a></li>
+            <!-- Add more navigation links specific to auth blueprint -->
+        </ul>
+    </nav>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+<!--        display link back to home if not home-->
+        {% if not  request.path == url_for('auth.auth_index') %}
+            <br><br><a href="{{ url_for('auth.auth_index') }}">Back to Authentication</a> <br><br>
+        {% endif %}
+
+          <h6 id="footer_message"></h6>
+        &copy; 2024 Authentication App
+    </footer>
+
+</body>
+</html>

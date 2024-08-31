@@ -1,0 +1,58 @@
+<!-- templates/base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+<body>
+    <header>
+
+        <div style="display: flex; align-items: center; justify-content: center;"  id="home_link">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" height="50">
+            <h1 style="margin-left: 20px;">My App</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('auth.auth_index') }}">Auth</a></li>
+                <li><a href="{{ url_for('auth.view_auth_db') }}">Auth DB</a></li>
+                <li><a href="{{ url_for('auth.create') }}">Create User</a></li>
+                <li><a href="{{ url_for('blog.blog_index') }}">Blog</a></li>
+                <li><a href="{{ url_for('blog.view_blog_db') }}">Blog DB</a></li>
+                <li><a href="{{ url_for('blog.create') }}">Create Blog</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+           <footer id="footer">
+           {% if 'blueprint_base_url' in g %}
+                {% set endpoint = g.blueprint_base_url + '.' + g.blueprint_base_url + '_index' %}
+                {% if request.endpoint != endpoint %}
+                   <br><br> <a href="{{ url_for(endpoint) }}">Back to Blueprint Home</a><br><br>
+                {% endif %}
+            {% endif %}
+                <!-- Footer content -->
+                {% if request.endpoint != 'core.core_index' %}
+                    <br><br><a href="{{ url_for('core.core_index') }}">Home</a><br><br>
+                {% endif %}
+               <h6 id="footer_message"></h6>
+                <p>&copy; 2020 My App</p>
+           </footer>
+
+    <script>
+        //on load change pointer to hand over home link
+        document.getElementById('home_link').style.cursor = 'pointer';
+        document.getElementById('home_link').onclick = function() {
+            window.location.href = "{{ url_for('core.core_index') }}";
+        }
+    </script>
+</body>
+</html>

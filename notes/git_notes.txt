@@ -29,3 +29,9 @@ When you use the git commit -m command, you can provide a multi-line commit mess
 Each -m is treated as a separate paragraph. For example:
 
 git commit -m "Commit title" -m "Detailed paragraph about the changes." -m "Additional information or context." -m "And so on."
+
+
+The .gitignore file applies to its containing directory and all subdirectories. The patterns in the .gitignore file match
+against the paths relative to its location. For example, a .gitignore file located in the root directory of your project will
+apply to the entire project. If you place a .gitignore file in a subdirectory, it will only apply to that directory and its
+subdirectories.

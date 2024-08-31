@@ -1,0 +1,16 @@
+<!-- blog/templates/index.html -->
+
+{% if IS_BLUEPRINT %}
+    {% extends "base.html" %}
+{% else %}
+    {% extends "blog/base.html" %}
+{% endif %}
+
+
+{% block title %}Blog{% endblock %}
+
+{% block content %}
+    <h2>Welcome to the Blog</h2>
+    <p>Here you'll find interesting posts about various topics.</p>
+    <!-- Add more content specific to the blog index page -->
+{% endblock %}

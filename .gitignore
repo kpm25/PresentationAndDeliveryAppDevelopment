@@ -9,7 +9,7 @@ node_server_flag.txt
 #history log
 history.log
 
-prompt_notes.txt
+notes/prompt_notes.txt
 
 # certificates
 new_cert.csr

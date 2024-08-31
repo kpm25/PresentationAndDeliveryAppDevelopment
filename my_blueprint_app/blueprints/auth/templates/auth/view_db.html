@@ -1,0 +1,30 @@
+{% if IS_BLUEPRINT %}
+    {% extends "base.html" %}
+{% else %}
+    {% extends "auth/base.html" %}
+{% endif %}
+
+
+{% block title %}Auth Database{% endblock %}
+
+{% block content %}
+    <h2>Authentication Database</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in data %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,306 @@
+Project structure:
+
+/flask_blueprints_test
+   /myapp
+        /blueprints
+            /auth
+                __init__.py
+                routes.py
+                models.py
+                config.py    # Configuration for auth blueprint
+                utils.py
+                /templates
+                    index.html         # Index page for auth blueprint
+                    view_db.html       # Template to display auth.db contents
+                /instance
+                    auth.db            # SQLite database specific to auth blueprint
+            /blog
+                __init__.py
+                routes.py
+                models.py
+                config.py    # Configuration for blog blueprint
+                utils.py
+                /templates
+                    index.html         # Index page for blog blueprint
+                    view_db.html       # Template to display blog.db contents
+                /instance
+                    blog.db            # SQLite database specific to blog blueprint
+        /static
+            /css
+                style.css
+            /js
+                script.js
+            /img
+                logo.png
+        /templates
+            base.html                 # Base template for the entire application
+            index.html                # Main index page with links to auth and blog
+        config.py                     # Configuration settings for Flask app
+        /instance
+            main.db                   # SQLite database for main application data
+        __init__.py                   # Package initialization (empty for now)
+   run.py                        # Main entry point to run the application
+
+
+====================================================================================================
+====================================================================================================
+====================================================================================================
+
+/flask_blueprints_test
+    /blueprints
+        /auth
+            __init__.py
+            app.py
+            routes.py
+            models.py
+            utils.py
+            /templates
+                index.html         # Index page for auth blueprint
+                view_db.html       # Template to display auth.db contents
+            /instance
+                auth.db            # SQLite database specific to auth blueprint
+        /blog
+            __init__.py
+            app.py
+            routes.py
+            models.py
+            utils.py
+            /templates
+                index.html         # Index page for blog blueprint
+                view_db.html       # Template to display blog.db contents
+            /instance
+                blog.db            # SQLite database specific to blog blueprint
+    /static
+        /css
+            style.css
+        /js
+            script.js
+        /img
+            logo.png
+    /templates
+        base.html                 # Base template for the entire application
+        index.html                # Main index page with links to auth and blog
+    config.py                     # Configuration settings for Flask app
+    run.py                        # Main entry point to run the application
+    __init__.py                   # Package initialization (empty for now)
+
+
+
+============DEVELOPMENT=======================
+/myapp
+    /blueprints
+        /auth
+            __init__.py
+            app.py
+            routes.py
+            tests.py
+            models.py
+            auth.db  # SQLite database specific to auth blueprint
+            /templates
+                auth_template.html
+                view_db.html  # Template to display auth.db contents
+        /blog
+            __init__.py
+            app.py
+            routes.py
+            tests.py
+            models.py
+            blog.db  # SQLite database specific to blog blueprint
+            /templates
+                blog_template.html
+                view_db.html  # Template to display blog.db contents
+    /static
+        /css
+            style.css
+        /js
+            script.js
+        /img
+            logo.png
+    /templates
+        base.html
+        index.html  # Main index page with links to auth and blog
+    __init__.py
+    config.py
+    run.py
+
+
+Detailed Files:
+
+Blueprints (/blueprints)
+
+/auth:
+
+    __init__.py: Initialize the auth blueprint.
+    app.py: Entry point for running the auth blueprint as a standalone application.
+    routes.py: Defines routes specific to authentication.
+    tests.py: Contains tests for the authentication blueprint.
+    models.py: Defines database models for authentication.
+    auth.db: SQLite database file specific to the authentication blueprint.
+    /templates: Directory for HTML templates used by the authentication blueprint.
+    auth_template.html: Template for authentication related pages.
+    view_db.html: Template to display contents of auth.db.
+
+/blog:
+
+    __init__.py: Initialize the blog blueprint.
+    app.py: Entry point for running the blog blueprint as a standalone application.
+    routes.py: Defines routes specific to the blog.
+    tests.py: Contains tests for the blog blueprint.
+    models.py: Defines database models for the blog.
+    blog.db: SQLite database file specific to the blog blueprint.
+    /templates: Directory for HTML templates used by the blog blueprint.
+    blog_template.html: Template for blog related pages.
+    view_db.html: Template to display contents of blog.db.
+
+Static Files (/static)
+
+    /css: Contains CSS stylesheets.
+    style.css: Sample CSS file.
+    /js: Contains JavaScript files.
+    script.js: Sample JavaScript file.
+    /img: Contains image files.
+    logo.png: Sample image file.
+
+Global Templates (/templates)
+
+    base.html: Base template that other templates extend from.
+    index.html: Main index page template with links to auth and blog blueprints.
+
+Main Application Files
+
+    __init__.py: Initializes the Flask application and registers all the blueprints.
+    config.py: Configuration settings for the Flask application.
+    run.py: Entry point for running the Flask application.
+
+Sample Code
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++
+==================================================
+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+Let's update the structure and code to ensure each blueprint (auth and blog) follows a consistent pattern, including having their own index.html
+ and a page to display their SQLite database contents (view_db.html). We'll use SQLAlchemy to create the SQLite databases (auth.db and blog.db)
+ and ensure they are organized within the project.
+
+ 2. Using Instance Folder for SQLite Database Files
+Using an instance folder within each blueprint to store SQLite database files (auth.db and blog.db) is a good practice. This helps in organizing and separating the database files specific to each blueprint.
+
+
+/myapp
+    /blueprints
+        /auth
+            __init__.py
+            app.py
+            routes.py
+            models.py
+            utils.py
+            /templates
+                index.html         # Index page for auth blueprint
+                view_db.html       # Template to display auth.db contents
+            /instance
+                auth.db            # SQLite database specific to auth blueprint
+        /blog
+            __init__.py
+            app.py
+            routes.py
+            models.py
+            utils.py
+            /templates
+                index.html         # Index page for blog blueprint
+                view_db.html       # Template to display blog.db contents
+            /instance
+                blog.db            # SQLite database specific to blog blueprint
+    /static
+        /css
+            style.css
+        /js
+            script.js
+        /img
+            logo.png
+    /templates
+        base.html                 # Base template for the entire application
+        index.html                 # Main index page with links to auth and blog
+    __init__.py
+    config.py
+    run.py
+
+
+
+1. Database Creation in Models Module
+It's best practice to handle database creation and model definitions within the models.py module of each blueprint. This keeps the responsibilities of each module clear and organized.
+
+Example models.py for auth Blueprint:
+
+
+how to run individual blueprints as standalone applications using the app.py entry point file. This allows you to test and develop each blueprint separately.
+
+D:\ProgrammingProjects\Python\flask_blueprints_test\.venv\Scripts\python.exe -m blueprints.auth.app
+
+
+
+
+
+----------------------------------------------------------------------------------------------------
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+commands to create a requirements.txt file unique to a blueprint, and then deactivate the blueprint's virtual environment and reactivate the main one:
+
+# Navigate to the blueprint directory
+cd path_to_blueprint_directory  # Replace with the path to your blueprint directory
+
+# Create a virtual environment in the blueprint directory
+python -m venv venv
+
+# Activate the virtual environment
+.\venv\Scripts\activate
+
+# Install the necessary packages for the blueprint
+pip install necessary_packages  # Replace with the necessary packages for this blueprint
+
+# Generate the requirements.txt file
+pip freeze > requirements.txt
+
+# Deactivate the virtual environment
+deactivate
+
+# Navigate back to the main project directory
+cd path_to_main_project_directory  # Replace with the path to your main project directory
+
+# Activate the main virtual environment
+.\main_venv\Scripts\activate  # Replace 'main_venv' with the name of your main virtual environment
+
+This will create a requirements.txt file in the blueprint directory that only includes the packages installed
+in the blueprint's virtual environment. After that, it deactivates the blueprint's virtual environment and
+reactivates the main one.  Remember to replace path_to_blueprint_directory, necessary_packages,
+path_to_main_project_directory, and main_venv with the actual paths and names in your project.
+
+
+
+===> if you no longer need the virtual environment created specifically for the blueprint, you can delete it.
+Here's how you can do it in PowerShell:
+
+# Navigate to the blueprint directory
+cd path_to_blueprint_directory  # Replace with the path to your blueprint directory
+
+# Remove the virtual environment
+Remove-Item -Recurse -Force venv
+
+# how to install the packages from the requirements.txt file into the main virtual environment:
+pip install -r path_to_blueprint_directory\requirements.txt
+
+
+
+----------------------------------------------------------------------------------------------------
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+To run the blog blueprint independently, you can use the following command in the blog/app.py file:
+
+python -m my_app.blueprints.blog.app
+
+ python -m my_app.blueprints.auth.app  # Run the auth blueprint as a standalone application
+

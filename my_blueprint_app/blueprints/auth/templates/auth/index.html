@@ -1,0 +1,16 @@
+<!-- auth/templates/index.html -->
+
+{% if IS_BLUEPRINT %}
+    {% extends "base.html" %}
+{% else %}
+    {% extends "auth/base.html" %}
+{% endif %}
+
+
+{% block title %}Authentication{% endblock %}
+
+{% block content %}
+    <h2>Welcome to Authentication</h2>
+    <p>This is the index page for the authentication blueprint.</p>
+    <!-- Add more content specific to authentication -->
+{% endblock %}

@@ -49,7 +49,14 @@ else:
     # If USE_HTTPS is not true, set context to None
     context = None
 
-app = Flask(__name__, static_url_path='/static')
+# this has been moved to the create_app method in the app.py file for testing adding blueprints
+# app = Flask(__name__, static_url_path='/static')
+
+# Import the create_app function from my_blueprint_app.app to test the blueprint app modules
+from my_blueprint_app.app import create_app
+
+# Create the Flask application instance
+app = create_app()
 
 # Register the blueprint with the main app
 app.register_blueprint(dropzone, url_prefix='/')
