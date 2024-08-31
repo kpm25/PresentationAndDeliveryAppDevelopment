@@ -3,6 +3,7 @@
 # The create_app function is called in the manage.py file to run the application.
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+# from flask_migrate import Migrate
 from .config import Config
 
 db = SQLAlchemy()
@@ -37,13 +38,13 @@ def create_app():
         # Create the database tables
         db.create_all()
 
-        from my_blueprint_app.blueprints.auth.utils import StaticMethod as AuthStaticMethod
-        from my_blueprint_app.blueprints.blog.utils import StaticMethod as BlogStaticMethod
+        # from my_blueprint_app.blueprints.auth.utils import StaticMethod as AuthStaticMethod
+        # from my_blueprint_app.blueprints.blog.utils import StaticMethod as BlogStaticMethod
 
         # Add sample data only if the tables are empty
-        if not User.query.first() and not Post.query.first():
-            AuthStaticMethod.execute(AuthStaticMethod.ADD_SAMPLE_DATA, app)
-            BlogStaticMethod.execute(BlogStaticMethod.ADD_SAMPLE_DATA, app)
+        # if not User.query.first() and not Post.query.first():
+        #     AuthStaticMethod.execute(AuthStaticMethod.ADD_SAMPLE_DATA, app)
+        #     BlogStaticMethod.execute(BlogStaticMethod.ADD_SAMPLE_DATA, app)
 
         # AuthStaticMethod.execute(AuthStaticMethod.DELETE_ALL, app)
         # BlogStaticMethod.execute(BlogStaticMethod.DELETE_ALL, app)
