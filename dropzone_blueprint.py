@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint, request, jsonify, render_template, redirect, url_for, g, current_app, send_file
 from helper_file_methods import is_audio, is_image, is_compressed, is_document, is_video, save_file, \
     setup_lesson_folders, \
-    format_bytes, reverse_format_bytes, check_all_grade_folders_exist
+    format_bytes, reverse_format_bytes, check_all_grade_folders_exist, setup_lesson_folders_min
 from werkzeug.utils import secure_filename
 import datetime
 import json
@@ -31,7 +31,7 @@ upload_progress[upload_id] = 0
 def index():
     # if the folder structure is not set up, set it up
     if not os.path.exists('LessonFolders'):
-        setup_lesson_folders()
+        setup_lesson_folders_min()
         # debug cyan
         print("\033[92m" + '***Setting up the lesson folders    ')
     else:
@@ -44,7 +44,7 @@ def index():
 def display_files():
     # if check_all_grade_folders_exist is False, then call setup_lesson_folders
     if not check_all_grade_folders_exist():
-        setup_lesson_folders()
+        setup_lesson_folders_min()
         # debug cyan
         print("\033[92m" + '***Setting up the lesson folders in display_files()...    ')
 
@@ -87,7 +87,7 @@ def list_files(semester, grade, week, lesson):
 # def dropzone_test():
 #     #if the folder structure is not set up, set it up
 #     if not os.path.exists('LessonFolders'):
-#         setup_lesson_folders()
+#         setup_lesson_folders_min()
 #         #debug cyan
 #         print("\033[92m" + '***Setting up the lesson folders    ')
 #     else:
@@ -195,9 +195,9 @@ def dropzone_lessons():
 
 @dropzone.route('/dropzone_lessons/<path:file_path>', methods=['POST'])
 def dropzone_lessons_path(file_path):
-    # if check_all_grade_folders_exist is False, then call setup_lesson_folders
+    # if check_all_grade_folders_exist is False, then call setup_lesson_folders_min
     if not check_all_grade_folders_exist():
-        setup_lesson_folders()
+        setup_lesson_folders_min()
         # debug cyan
         print("\033[92m" + '***Setting up the lesson folders...    ')
 

@@ -85,6 +85,32 @@ def setup_lesson_folders():
                     lesson_path = os.path.join(week_path, lesson)
                     os.makedirs(lesson_path, exist_ok=True)
 
+    # Count the total number of directories using os.walk and a list comprehension
+    dir_count = sum([len(dirs) for _, dirs, _ in os.walk(base_dir)])
+
+    print(f'Total directory count in setup_lesson_folders: {dir_count}')
+
+
+def setup_lesson_folders_min():
+    semesters = ['Semester1', 'Semester2']
+    grades = ['Grade' + str(i) for i in range(1, 6)]
+
+    base_dir = 'LessonFolders'
+    os.makedirs(base_dir, exist_ok=True)
+
+    for semester in semesters:
+        semester_path = os.path.join(base_dir, semester)
+        os.makedirs(semester_path, exist_ok=True)
+
+        for grade in grades:
+            grade_path = os.path.join(semester_path, grade)
+            os.makedirs(grade_path, exist_ok=True)
+
+    # Count the total number of directories using os.walk and a list comprehension
+    dir_count = sum([len(dirs) for _, dirs, _ in os.walk(base_dir)])
+
+    print(f'Total directory count in setup_lesson_folders_min: {dir_count}')
+
 
 def check_all_grade_folders_exist():
     base_dir = 'LessonFolders'
@@ -201,12 +227,15 @@ def format_bytes(_bytes, decimals=2):
 
 
 if __name__ == '__main__':
-    option = 1
+    option = 3
     if option == 1:
         check_all_grade_folders_exist()
         print('Grade folders check complete.')
     elif option == 2:
         setup_lesson_folders()
+        print('Lesson folders setup complete.')
+    elif option == 3:
+        setup_lesson_folders_min()
         print('Lesson folders setup complete.')
     else:
         print('Invalid option. Please choose 1 or 2.')

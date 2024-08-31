@@ -1,4 +1,5 @@
 let socket; // Declare socket in an outer scope
+let ansi = null; // Declare ansi in an outer scope
 
 
    //toastr configuration will make in a base template later on and any other common code
@@ -57,7 +58,7 @@ function RefreshFileList(selectedLabel) {
                 selectedLesson = selectedLabel.dataset.value;
                 console.log("selected lesson is: ", selectedLesson);
             } else {
-                new Ansi().green().bgRed().bold().text('In RefreshFileList(selectedLabel) ==> selectedLabel is null').print();
+                    ansi.green().bgRed().bold().text('In RefreshFileList(selectedLabel) ==> selectedLabel is null').print();
                 return;
             }
 
@@ -88,7 +89,7 @@ function RefreshFileList(selectedLabel) {
                     //if file_count is 0, display an error message and throw an error
                     if (data.file_count === 0 ) {
 //                        console.error('No files found for the selected lesson, data:', data);
-                        new Ansi().white().bgRed().bold().text(`No Files found for selected path!!!, data: ${data} `).print();
+                            ansi.white().bgRed().bold().text(`No Files found for selected path!!!, data: ${data} `).print();
                         throw data;
                     }if(!canLessonBeDisplayed()){
                         console.error('No Lesson selected, data:', data);
@@ -159,7 +160,7 @@ function RefreshFileList(selectedLabel) {
     })
     .catch(error => {
 //        console.error('Error:', error);
-                new Ansi().white().bgRed().bold().text('No Files found for selected path!!!').print();
+                    ansi.white().bgRed().bold().text('No Files found for selected path!!!').print();
         // Display the message and directory path from the server
         const fileDisplayDiv = document.getElementById('fileDisplay');
         fileDisplayDiv.innerHTML = `<h1>${error.message}</h1>
@@ -196,8 +197,7 @@ function RefreshFileList(selectedLabel) {
         });
     });
 
-    // Initialize the click event for the lesson labels
-    updateLessonLabelClickEvent();
+
 
     //function to display lesson files but checks if semester, grade, week and lesson are selected
     function canLessonBeDisplayed() {
@@ -300,8 +300,179 @@ function RefreshFileList(selectedLabel) {
         window.location.href = url;
     }
 
-$(document).ready(function() {
-        //function to take a current semester as int and return the selected semester as string
+
+
+
+         //deletefile function
+
+       function deleteFile(filePath) {
+            console.log("filePath: ", filePath);
+            console.log("Deleting file:", filePath);
+
+            // Send a DELETE request to the server to delete the file
+            fetch(`/delete_file`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "path": filePath
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Extract the JSON body of the response
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("File deleted successfully:", data);
+                // Refresh the file list
+                fetchAndDisplayFiles(); // Call the function that fetches and displays the file list
+                 playSuccessSound();
+            })
+            .catch(error => {
+                console.error('Error deleting file:', error);
+            });
+        }
+
+
+
+
+     //function to reset the selections
+    function fetchAndDisplayFiles() {
+        //get a reference to the selected lesson  and call the labelClickEvent function
+        const selectedLesson = document.querySelector('.lesson-label.selected');
+        if (selectedLesson) {
+            labelClickEvent.call(selectedLesson);
+        }
+
+
+    }
+
+
+   //socket test
+    function socketTest() {
+        // Emit a 'test_event' event
+          playSuccessSound();
+          socket.emit('test_event');
+        console.log('Test event emitted');
+        console.log('\x1b[31m%s\x1b[0m', 'A sound was played');
+        //cyan debug message
+        console.log('\x1b[36m%s\x1b[0m', 'A file was uploaded');
+        toastr.success("A test event was fired");
+    }
+
+
+
+
+
+
+     // Helper method to get selected label
+        function getSelectedLabel(labelClass) {
+            // Check which of the labels is selected
+            const selectedLabel = document.querySelector(`.${labelClass}.selected`);
+            return selectedLabel;
+        }
+
+
+/*// gets the urls from the server
+$(document).ready(function() {S
+    fetchServerUrls();
+
+    try {
+        socket = io.connect(`${nodeServerUrl}`); // Connect to the Socket.IO server
+    } catch (error) {
+        console.error('Error connecting to Socket.IO server:', error);
+    }
+
+});*/
+
+
+
+//this funcvtion returns a promise that fetches the server urls
+$(document).ready(async function() {
+     ansi = new Ansi(); // Initialize the Ansi object here
+    await fetchServerUrls();
+
+    try {
+        socket = io.connect(`${nodeServerUrl}`); // Connect to the Socket.IO server
+        //debug print socket version to console
+        console.log("socket version: ", socket.io.engine.transport.query.EIO);
+        console.log("socket protocol....: ", socket.io.engine.transport.query.transport);
+
+
+        //SOCKET IO EVENTS
+
+       // Listen for 'playsound' events from the server
+        socket.on('playsound', () => {
+            console.log('Playing sound');
+            playSuccessSound();
+        });
+
+        socket.on('test_event', (data) => {
+           toastr.warning(data);
+        });
+
+              //clearHistoryResponse
+        socket.on('clearHistoryResponse', () => {
+           // Message to show history log cleared successfully
+           toastr.info('History log cleared!');
+           // Update the log
+            update_log();
+       });
+
+
+
+      // Listen for 'fileUploaded' events from the server and display the files accordingly
+        socket.on('fileAddedResponse', function(filepath) {
+
+
+            //message to show file uploaded successfully
+            toastr.success(`File uploaded successfully at path:  ${filepath}`);
+
+
+              RefreshFileList(getSelectedLabel('lesson-label'));
+
+                ansi.bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text('A file was uploaded').print();
+
+        });
+
+         // Listen for 'filesUploadedResponse' events from the server
+        socket.on('filesUploadedResponse', function(fileData) {
+          toastr.success(`Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`);
+            playSuccessSound();
+            update_log(); // Update the log
+        } );
+
+        // Listen for 'fileDeletedResponse' events from the server
+        socket.on('fileDeletedResponse', function(filepath) {
+            // Message to show file deleted successfully
+            toastr.success('File deleted successfully: ' + filepath);
+
+            // Refresh the file list
+            RefreshFileList(getSelectedLabel('lesson-label'));
+
+                ansi.bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text('A file was deleted').print();
+
+            // Play success sound
+            playSuccessSound();
+             update_log(); // Update the log
+        });
+
+
+
+    } catch (error) {
+        console.error('Error connecting to Socket.IO server:', error);
+    }
+
+
+     //setup labels etc..
+      // Initialize the click event for the lesson labels
+        updateLessonLabelClickEvent();
+
+       //function to take a current semester as int and return the selected semester as string
         function getSemester(semesterInt) {
             if (semesterInt === 1) {
                 return "Semester1";
@@ -376,7 +547,7 @@ $(document).ready(function() {
             // Set the selected week
             let selectedWeekInt = parseInt(params.get('currentWeek') || null);
             if (isNaN(selectedWeekInt)) {
-                console.error("Invalid week parameter in URL");
+                ansi.red().bgWhite().bold().text('Invalid week parameter in URL').print();
 //                selectedWeek = null;
                 setDefaultWeek();
             } else {
@@ -512,176 +683,6 @@ $(document).ready(function() {
         }
 
 
-
-
-
-    }); //end of document ready function
-
-
-
-
-         //deletefile function
-
-       function deleteFile(filePath) {
-            console.log("filePath: ", filePath);
-            console.log("Deleting file:", filePath);
-
-            // Send a DELETE request to the server to delete the file
-            fetch(`/delete_file`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "path": filePath
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    // Extract the JSON body of the response
-                    return response.json().then(err => { throw err; });
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("File deleted successfully:", data);
-                // Refresh the file list
-                fetchAndDisplayFiles(); // Call the function that fetches and displays the file list
-                 playSuccessSound();
-            })
-            .catch(error => {
-                console.error('Error deleting file:', error);
-            });
-        }
-
-
-
-
-     //function to reset the selections
-    function fetchAndDisplayFiles() {
-        //get a reference to the selected lesson  and call the labelClickEvent function
-        const selectedLesson = document.querySelector('.lesson-label.selected');
-        if (selectedLesson) {
-            labelClickEvent.call(selectedLesson);
-        }
-
-
-    }
-
-
-   //socket test
-    function socketTest() {
-        // Emit a 'test_event' event
-          playSuccessSound();
-          socket.emit('test_event');
-        console.log('Test event emitted');
-        console.log('\x1b[31m%s\x1b[0m', 'A sound was played');
-        //cyan debug message
-        console.log('\x1b[36m%s\x1b[0m', 'A file was uploaded');
-        toastr.success("A test event was fired");
-    }
-
-
-
-
-
-
-     // Helper method to get selected label
-        function getSelectedLabel(labelClass) {
-            // Check which of the labels is selected
-            const selectedLabel = document.querySelector(`.${labelClass}.selected`);
-            return selectedLabel;
-        }
-
-
-/*// gets the urls from the server
-$(document).ready(function() {S
-    fetchServerUrls();
-
-    try {
-        socket = io.connect(`${nodeServerUrl}`); // Connect to the Socket.IO server
-    } catch (error) {
-        console.error('Error connecting to Socket.IO server:', error);
-    }
-
-});*/
-
-
-
-//this funcvtion returns a promise that fetches the server urls
-$(document).ready(async function() {
-    await fetchServerUrls();
-
-    try {
-        socket = io.connect(`${nodeServerUrl}`); // Connect to the Socket.IO server
-        //debug print socket version to console
-        console.log("socket version: ", socket.io.engine.transport.query.EIO);
-        console.log("socket protocol....: ", socket.io.engine.transport.query.transport);
-
-
-        //SOCKET IO EVENTS
-
-       // Listen for 'playsound' events from the server
-        socket.on('playsound', () => {
-            console.log('Playing sound');
-            playSuccessSound();
-        });
-
-        socket.on('test_event', (data) => {
-           toastr.warning(data);
-        });
-
-              //clearHistoryResponse
-        socket.on('clearHistoryResponse', () => {
-           // Message to show history log cleared successfully
-           toastr.info('History log cleared!');
-           // Update the log
-            update_log();
-       });
-
-
-
-      // Listen for 'fileUploaded' events from the server and display the files accordingly
-        socket.on('fileAddedResponse', function(filepath) {
-
-
-            //message to show file uploaded successfully
-            toastr.success(`File uploaded successfully at path:  ${filepath}`);
-
-
-              RefreshFileList(getSelectedLabel('lesson-label'));
-
-            new Ansi().bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text('A file was uploaded').print();
-
-        });
-
-         // Listen for 'filesUploadedResponse' events from the server
-        socket.on('filesUploadedResponse', function(fileData) {
-          toastr.success(`Files were uploaded to the server at path:  ${fileData.path}, count: ${fileData.count}`);
-            playSuccessSound();
-            update_log(); // Update the log
-        } );
-
-        // Listen for 'fileDeletedResponse' events from the server
-        socket.on('fileDeletedResponse', function(filepath) {
-            // Message to show file deleted successfully
-            toastr.success('File deleted successfully: ' + filepath);
-
-            // Refresh the file list
-            RefreshFileList(getSelectedLabel('lesson-label'));
-
-            new Ansi().bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text('A file was deleted').print();
-
-            // Play success sound
-            playSuccessSound();
-             update_log(); // Update the log
-        });
-
-
-
-    } catch (error) {
-        console.error('Error connecting to Socket.IO server:', error);
-    }
 });
 
 
