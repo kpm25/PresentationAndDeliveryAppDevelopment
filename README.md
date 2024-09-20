@@ -32,6 +32,7 @@ python -m venv .venv
     ```bash
     pip install -r requirements.txt
     ```
+    ==> **_Make sure you're in the project's root directory before running the above command._**
 
 ### Node.js Dependencies
 
@@ -42,12 +43,55 @@ python -m venv .venv
     ```bash
     npm install
     ```
+ ==> **_Make sure you're in the `my_nodejs_app` directory before running the above command._**
 
-## Running the Project
 
-To run the project, you need to start both the Python application and the Node.js server.
 
-### Starting the Python Application
+
+### Environment Variables
+
+The application uses environment variables for configuration. These are stored in a `.env` file in the root directory of the project. If the `.env` file does not exist when you start the application, a default one will be created.
+
+You can modify the `.env` file to set the environment variables to your liking. Here's an example:
+
+```bash
+# IP address
+IP_ADDRESS=192.168.1.24
+
+# Node.js server port
+NODEJS_PORT=5000
+
+# Flask server port
+FLASK_PORT=4000
+
+# Content server port
+CONTENT_PORT=4001
+
+# Client URL
+CLIENT_ORIGIN=//$IP_ADDRESS:4000
+
+# Server URLs
+NODE_SERVER_URL=//$IP_ADDRESS:5000
+FLASK_SERVER_URL=//$IP_ADDRESS:4000
+CONTENT_SERVER_URL=//$IP_ADDRESS:4001
+
+# Content folder name
+CONTENT_FOLDER=LessonFolders
+
+# Set USE_HTTPS to either 'true' or 'false' to use either HTTP or HTTPS in server setup
+USE_HTTPS=false
+```
+Replace 192.168.1.24 with your own IP address. (0.0.0.0 is also a valid IP address, AND it will listen on all network interfaces)
+If these environment variables are not set, the application will use default values.
+
+### **Running the Project**
+
+To run the project, both the Python application and the Node.js server need to be started.  
+
+
+Make sure you're in the project's root directory before running the application.
+
+### **Starting the Python Application**
 
 Navigate to the project directory in your terminal and run the following command:
 
@@ -56,47 +100,9 @@ python app.py
 ```
 
 This command will start both the Python application and the Node.js server.  
-Environment Variables.
 
-You can create a .env file in the root directory of the project and set the following 
-environment variables to your liking , example below:
+### **Verifying the Application**
 
-
- ```bash
-#node js port and host
-NODEJS_PORT=5000
-# NODEJS_HOST=0.0.0.0
-NODEJS_HOST=192.168.1.24
-
-
-#python flask port and host
-FLASK_PORT=4000
-#FLASK_HOST=0.0.0.0
-FLASK_HOST=192.168.1.24
-
-
-#content server port and host
-CONTENT_PORT=4001
-#CONTENT_SERVER_HOST=0.0.0.0
-CONTENT_HOST=192.168.1.24
-
-#client urls
-CLIENT_ORIGIN=//192.168.1.24:4000
-
-#server urls
-NODE_SERVER_URL=//192.168.1.24:5000
-FLASK_SERVER_URL=//192.168.1.24:4000
-CONTENT_SERVER_URL=//192.168.1.24:4001
-
-#content folder name
-CONTENT_FOLDER=LessonFolders
-
-# Set USE_HTTPS to either 'true' or 'false' so sets protocol to either http or https in server setup
-USE_HTTPS=false
-```
-
-If these environment variables are not set, the application will use default values.  
-Verifying the Application
 You should see a message indicating that the server is running.
 You can verify this by checking the node_server_flag.txt file exists on the tree or 
 by going to the following URL:
@@ -104,8 +110,7 @@ by going to the following URL:
 http://localhost:5000/test_nodejs
 
 The project will be running on the address specified in the .env file. and on the port specified in the .env file.
-For example, if you set the FLASK_PORT to 4000 and FLASK_HOST to 192.168.1.24, the project will be running on, and 
-USE_HTTPS is set to false, the project will be running on the following address:
+For example, if you set the FLASK_PORT to 4000 and FLASK_HOST to 192.168.1.24  and USE_HTTPS is set to false, then project will be running on the following address:
 
 http://192.168.1.24:4000
 
@@ -119,3 +124,26 @@ new Ansi().yellow().bgGreen().bold().text(`Your text here`).print();
 
 This will print the text in bold, with a yellow font color and a green background.  
 Please refer to the project's source code for more details on how to use the Ansi class.
+
+
+### HTTPS Configuration
+
+If you set `USE_HTTPS` to `true` in the `.env` file, the application will use HTTPS instead of HTTP. For this to work, you need to generate SSL certificates and place them in the appropriate directory.
+
+Here's a basic guide on how to generate a self-signed SSL certificate:
+
+1. Navigate to the root directory of your project in the terminal.
+
+2. Run the following command to generate a new private key and a self-signed certificate:
+
+    ```bash
+    openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
+    ```
+
+3. You will be prompted to enter a passphrase for the private key. Remember this passphrase, as you will need it to start the server.
+
+4. The `key.pem` and `cert.pem` files will be created in the current directory. These are your private key and certificate, respectively.
+
+Remember, self-signed certificates are not validated by a Certificate Authority (CA) and should not be used in production. For a production environment, you should obtain a certificate from a trusted CA.
+
+After generating the certificates, update the server configuration to use them. The exact steps depend on your server setup.
