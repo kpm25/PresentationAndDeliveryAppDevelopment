@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' http://192.168.1.24:4000; style-src 'self' http://192.168.1.24:4000;">-->
     <title>Layout Design</title>
       <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
 
@@ -136,6 +137,9 @@
                   display: inline-block;*/
 
             }
+        .log_label {
+           font-size: 0.6em; text-align: center; font-family: Arial, sans-serif;
+        }
     </style>
     <link rel="stylesheet" href="static/css/editable_table_styles.css" type="text/css">
 </head>
@@ -225,7 +229,7 @@
                     History Log
                     <div>
                         <input type="checkbox" id="muteSound" name="muteSound">
-                        <label for="muteSound" style="font-size: 0.6em; text-align: center; font-family: Arial, sans-serif;">Mute Sound</label>
+                        <label id="log_label" for="muteSound"  >Mute Sound</label>
                     </div>
                    <button class="tiny-select-button" onclick="increaseHistoryLogFontSize()">+</button>
                      <button class="tiny-select-button" onclick="decreaseHistoryLogFontSize()">-</button>

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<!--     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' http://192.168.1.24:4000; style-src 'self' http://192.168.1.24:4000;">-->
     <title>File Display</title>
       <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
      <link rel="stylesheet" href="static/css/dropzone_styles.css">
@@ -42,6 +43,12 @@
             cursor: pointer;
             float: right;
             margin-bottom: 3px;
+        }
+     .log_label {
+           font-size: 0.6em; text-align: center; font-family: Arial, sans-serif;
+        }
+        #playButton {
+            display: none;
         }
     </style>
         <link rel="stylesheet" href="static/css/editable_table_styles.css" type="text/css">
@@ -112,7 +119,7 @@
                         Your browser does not support the audio element.
                     </audio>
 
-              <button  class="select-button" onclick="playSuccessSound()"   id="playButton" style="display: none;">Play Sound</button>
+              <button  class="select-button" onclick="playSuccessSound()"   id="playButton"  >Play Sound</button>
 <!--                button with link inside to dropzone page-->
 <!--                <button class="select-button" onclick="window.location.href='/'" id="dropzoneButton">Go to Dropzone</button>-->
                 <button class="select-button" onclick="redirectToDropzone()" id="dropzoneButton">Go to Dropzone</button>
@@ -129,7 +136,7 @@
                     History Log
                     <div>
                         <input type="checkbox" id="muteSound" name="muteSound">
-                        <label for="muteSound" style="font-size: 0.6em; text-align: center; font-family: Arial, sans-serif;">Mute Sound</label>
+                        <label class="log_label" for="muteSound" >Mute Sound</label>
                     </div>
                    <button class="tiny-select-button" onclick="increaseHistoryLogFontSize()">+</button>
                      <button class="tiny-select-button" onclick="decreaseHistoryLogFontSize()">-</button>
