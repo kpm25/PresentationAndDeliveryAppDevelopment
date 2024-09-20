@@ -28,7 +28,7 @@ def before_request():
 
 
 @auth_bp.route('/')
-@login_required
+# @login_required
 def auth_index():
     print(f'inside auth/routes.py IS_BLUEPRINT: {IS_BLUEPRINT}')
     return render_template(f'{blueprint_base_url}/index.html', title='Authentication')
@@ -69,7 +69,7 @@ def logout():
 
 
 @auth_bp.route('/view_db')
-@login_required
+# @login_required
 def view_auth_db():
     if User is not None:
         users = User.query.all()
@@ -82,7 +82,7 @@ def view_auth_db():
 
 
 # create a new user
-@login_required
+# @login_required
 @auth_bp.route('/create', methods=['GET', 'POST'])
 def create():
     # user above html form to create a new user
@@ -97,15 +97,16 @@ def create():
 
 
 @auth_bp.route('/clear_table')
-@login_required
+# @login_required
 def clear_table():
     if User is not None:
         UserSampleData.delete_all()
     return redirect(url_for(f'{blueprint_base_url}.view_auth_db'))
 
 
-@login_required
+
 @auth_bp.route('/set_starting_data')
+# @login_required
 def set_starting_data():
     if User is not None:
         UserSampleData.add_sample_data()

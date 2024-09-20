@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from dropzone_blueprint import dropzone
 from dotenv import load_dotenv
+from helper_file_methods import generate_default_env
 import subprocess
 import os
 import sys
@@ -13,8 +14,15 @@ from typing import Optional
 import stat
 from logging import Filter
 
+# Generate the default .env file if it does not exist
+generate_default_env()
+
 # Load the environment variables
 load_dotenv()
+
+# Get the IP_ADDRESS value from .env file
+IP_ADDRESS = os.getenv('IP_ADDRESS')
+
 # Get the USE_HTTPS value from .env file
 # USE_HTTPS = os.getenv('USE_HTTPS', 'false')
 USE_HTTPS = os.getenv('USE_HTTPS', 'false').lower() == 'true'
@@ -23,9 +31,15 @@ USE_HTTPS = os.getenv('USE_HTTPS', 'false').lower() == 'true'
 # FLASK_SERVER_URL = f"{protocol}://192.168.1.24:4000"
 # protocol = 'https' if USE_HTTPS == 'true' else 'http'
 protocol = 'https' if USE_HTTPS else 'http'
-NODE_SERVER_URL = f"{protocol}:{os.getenv('NODE_SERVER_URL')}"
-FLASK_SERVER_URL = f"{protocol}:{os.getenv('FLASK_SERVER_URL')}"
-CONTENT_SERVER_URL = f"http:{os.getenv('CONTENT_SERVER_URL')}"
+# NODE_SERVER_URL = f"{protocol}:{os.getenv('NODE_SERVER_URL')}"
+# FLASK_SERVER_URL = f"{protocol}:{os.getenv('FLASK_SERVER_URL')}"
+# CONTENT_SERVER_URL = f"http:{os.getenv('CONTENT_SERVER_URL')}"
+
+# Replace $IP_ADDRESS with the actual IP address in the environment variables
+NODE_SERVER_URL = f"{protocol}:{os.getenv('NODE_SERVER_URL').replace('$IP_ADDRESS', IP_ADDRESS)}"
+FLASK_SERVER_URL = f"{protocol}:{os.getenv('FLASK_SERVER_URL').replace('$IP_ADDRESS', IP_ADDRESS)}"
+CONTENT_SERVER_URL = f"http:{os.getenv('CONTENT_SERVER_URL').replace('$IP_ADDRESS', IP_ADDRESS)}"
+
 
 # content folder name
 CONTENT_FOLDER = os.getenv('CONTENT_FOLDER')
@@ -33,7 +47,8 @@ CONTENT_FOLDER = os.getenv('CONTENT_FOLDER')
 # Define the Content port
 CONTENT_PORT = os.getenv('CONTENT_PORT')
 # Define the Content host
-CONTENT_HOST = os.getenv('CONTENT_HOST')
+# CONTENT_HOST = os.getenv('CONTENT_HOST')
+CONTENT_HOST = os.getenv('CONTENT_HOST').replace('$IP_ADDRESS', IP_ADDRESS)
 
 # Keep a reference to the server process
 server_process = None
@@ -205,7 +220,7 @@ def start_node_app():
     print("Entered start_node_app method...")
     global node_process
 
-    # Check if there are any other instances running on port 4000 and shut them down
+    # Check if there are any other instances running on port 5000 and shut them down
     result = subprocess.run('netstat -ano | findstr :5000', shell=True, stdout=subprocess.PIPE)
     lines = result.stdout.decode().split('\n')
     for line in lines:
@@ -288,4 +303,6 @@ if __name__ == '__main__':
     # app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
     # Run the Flask app with the appropriate context
     atexit.register(stop_content_http_server)
-    run_simple('0.0.0.0', 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
+    # run_simple('0.0.0.0', 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
+    run_simple(IP_ADDRESS, 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
+

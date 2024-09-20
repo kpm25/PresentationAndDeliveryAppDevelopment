@@ -1,6 +1,7 @@
 import os
 import math
-
+import subprocess
+import platform
 
 # def setup_folder_structure():
 #     lesson_folders = ['lesson1', 'lesson2', 'lesson3']
@@ -224,6 +225,62 @@ def format_bytes(_bytes, decimals=2):
     i = math.floor(math.log(_bytes, k))
 
     return f"{round(_bytes / math.pow(k, i), dm)} {sizes[i]}"
+
+
+# generate default env file if it does not exist
+def generate_default_env():
+    if not os.path.exists('.env'):
+        with open('.env', 'w') as f:
+            f.write(
+                "#Define IP address\n"
+                "IP_ADDRESS=192.168.1.26\n\n"
+                "#node js port and host\n"
+                "NODEJS_PORT=5000\n"
+                "# NODEJS_HOST=0.0.0.0\n"
+                "NODEJS_HOST=$IP_ADDRESS\n\n"
+                "#python flask port and host\n"
+                "FLASK_PORT=4000\n"
+                "#FLASK_HOST=0.0.0.0\n"
+                "FLASK_HOST=$IP_ADDRESS\n\n"
+                "#content server port and host\n"
+                "CONTENT_PORT=4001\n"
+                "#CONTENT_SERVER_HOST=0.0.0.0\n"
+                "CONTENT_HOST=$IP_ADDRESS\n\n"
+                "#client urls\n"
+                "CLIENT_ORIGIN=//$IP_ADDRESS:4000\n\n"
+                "#server urls\n"
+                "NODE_SERVER_URL=//$IP_ADDRESS:5000\n"
+                "FLASK_SERVER_URL=//$IP_ADDRESS:4000\n"
+                "CONTENT_SERVER_URL=//$IP_ADDRESS:4001\n\n"
+                "#content folder name\n"
+                "CONTENT_FOLDER=LessonFolders\n\n"
+                "# Set USE_HTTPS to either 'true' or 'false' so sets protocol to either http or https in server setup\n"
+                "USE_HTTPS=false\n"
+            )
+
+            # debug message in blue
+            print('\033[34m' + 'Default .env file created.' + '\033[0m')
+            print(
+                '\033[34m' + 'Please update the IP_ADDRESS in the .env file with your machine\'s IP address.' + '\033[0m')
+
+            # Determine the operating system
+            os_name = platform.system()
+            if os_name == 'Windows':
+                ip_command = 'ipconfig'
+                print(
+                    '\033[34m' + 'You can find your IP address by running "ipconfig" in the command line.' + '\033[0m')
+            elif os_name == 'Darwin' or os_name == 'Linux':
+                ip_command = 'ifconfig'
+                print(
+                    '\033[34m' + 'You can find your IP address by running "ifconfig" in the command line.' + '\033[0m')
+            else:
+                print('\033[31m' + 'Unsupported operating system. Please manually find your IP address.' + '\033[0m')
+                return
+
+            # Run the command and display the output to the user
+            result = subprocess.run(ip_command, capture_output=True, text=True)
+            print('\033[34m' + f'Here is the output of "{ip_command}":' + '\033[0m')
+            print(result.stdout)
 
 
 if __name__ == '__main__':

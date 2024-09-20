@@ -6,14 +6,31 @@
 require('dotenv').config();
 const express = require('express');
 
+// Get the IP_ADDRESS value from .env file
+const IP_ADDRESS = process.env.IP_ADDRESS;
+
 // Get the USE_HTTPS value from .env file
 //const USE_HTTPS = process.env.USE_HTTPS || 'false';
 const USE_HTTPS = (process.env.USE_HTTPS || 'false').toLowerCase() === 'true';
 //const protocol = USE_HTTPS === 'true' ? 'https' : 'http';
 const protocol = USE_HTTPS ? 'https' : 'http';
-const NODE_SERVER_URL = `${protocol}://192.168.1.24:5000`;
-const FLASK_SERVER_URL = `${protocol}://192.168.1.24:4000`;
 
+//++++ENV VARIABLES++++
+// Replace $IP_ADDRESS with the actual IP address in the environment variables
+//const NODEJS_HOST = process.env.NODEJS_HOST.replace('$IP_ADDRESS', IP_ADDRESS);
+//const FLASK_HOST = process.env.FLASK_HOST.replace('$IP_ADDRESS', IP_ADDRESS);
+//const CONTENT_HOST = process.env.CONTENT_HOST.replace('$IP_ADDRESS', IP_ADDRESS);
+//const CLIENT_ORIGIN = `${protocol}:${process.env.CLIENT_ORIGIN.replace('$IP_ADDRESS', IP_ADDRESS)}`;
+//const NODE_SERVER_URL = `${protocol}:${process.env.NODE_SERVER_URL.replace('$IP_ADDRESS', IP_ADDRESS)}`;
+//const FLASK_SERVER_URL = `${protocol}:${process.env.FLASK_SERVER_URL.replace('$IP_ADDRESS', IP_ADDRESS)}`;
+//const CONTENT_SERVER_URL = `${protocol}:${process.env.CONTENT_SERVER_URL.replace('$IP_ADDRESS', IP_ADDRESS)}`;
+
+//+++ END ENV VARIABLES++++
+
+//const NODE_SERVER_URL = `${protocol}://192.168.1.24:5000`;
+//const FLASK_SERVER_URL = `${protocol}://192.168.1.24:4000`;
+const NODE_SERVER_URL = `${protocol}:${process.env.NODE_SERVER_URL.replace('$IP_ADDRESS', IP_ADDRESS)}`;
+const FLASK_SERVER_URL = `${protocol}:${process.env.FLASK_SERVER_URL.replace('$IP_ADDRESS', IP_ADDRESS)}`;
 
 
 const http = require('http');
@@ -35,11 +52,13 @@ const app = express();
 
 //get ports and hosts from .env file FLASK_PORT and FLASK_HOST
 const FLASK_PORT = process.env.FLASK_PORT || 4000;
-const FLASK_HOST = process.env.FLASK_HOST || 'localhost';
+//const FLASK_HOST = process.env.FLASK_HOST || 'localhost';
+const FLASK_HOST = process.env.FLASK_HOST.replace('$IP_ADDRESS', IP_ADDRESS) || 'localhost';
 
 //get port and host from .env file NODEJS_PORT and NODEJS_HOST
 const NODEJS_PORT = process.env.NODEJS_PORT || 5000;
-const NODEJS_HOST = process.env.NODEJS_HOST || 'localhost';
+//const NODEJS_HOST = process.env.NODEJS_HOST || 'localhost';
+const NODEJS_HOST = process.env.NODEJS_HOST.replace('$IP_ADDRESS', IP_ADDRESS) || 'localhost';
 
 ////app.use(cors({ origin: `http://192.168.1.24:${process.env.FLASK_PORT}` }));
 //app.use(cors({ origin: `https://${FLASK_HOST}:${FLASK_PORT}` }));
@@ -47,7 +66,9 @@ const NODEJS_HOST = process.env.NODEJS_HOST || 'localhost';
 // Get the client-side application's origin from an environment variable
 //const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `https://localhost:4000`;  ..notes from .env file: CLIENT_ORIGIN=//192.168.1.24:4000, so need to add protocol and ':' to the origin
 //const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN  || `${USE_HTTPS === 'true' ? 'https' : 'http'}://localhost:4000`;
-const CLIENT_ORIGIN = `${protocol}:${process.env.CLIENT_ORIGIN}` || `${protocol}://localhost:4000`;
+//const CLIENT_ORIGIN = `${protocol}:${process.env.CLIENT_ORIGIN}` || `${protocol}://localhost:4000`;
+const CLIENT_ORIGIN = `${protocol}:${process.env.CLIENT_ORIGIN.replace('$IP_ADDRESS', IP_ADDRESS)}` || `${protocol}://localhost:4000`;
+
 let uploadComplete = true;
 let initialSize = 0;
 let expectedCompletionSize = 0;

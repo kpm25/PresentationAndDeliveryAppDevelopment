@@ -1,0 +1,2 @@
+# can update the requirements.txt file with the following command:
+# pip freeze > requirements.txt
