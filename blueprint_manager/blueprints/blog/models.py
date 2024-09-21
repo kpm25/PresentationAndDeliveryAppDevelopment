@@ -12,7 +12,7 @@ if IS_BLUEPRINT  is False:
     db = SQLAlchemy()
 else:
     print(f'blog/models.py,IS_BLUEPRINT: {IS_BLUEPRINT}, so db is called from main app')
-    from my_blueprint_app.app import db
+    from blueprint_manager.app import db
 
 class Post(db.Model):
     __tablename__ = 'post'

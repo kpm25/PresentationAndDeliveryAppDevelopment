@@ -1,4 +1,4 @@
-# This file is the entry point of the application. my_blueprint_app/app.py is where the Flask application is created and configured.
+# This file is the entry point of the application. blueprint_manager/app.py is where the Flask application is created and configured.
 # The create_app function is the entry point of the application. It creates the Flask application instance, configures it, and registers the blueprints.
 # The create_app function is called in the manage.py file to run the application.
 from flask import Flask
@@ -19,27 +19,27 @@ def create_app():
 
     @app.context_processor
     def inject_is_blueprint():
-        from my_blueprint_app.blueprints.auth.config import IS_BLUEPRINT
+        from blueprint_manager.blueprints.auth.config import IS_BLUEPRINT
         return dict(IS_BLUEPRINT=IS_BLUEPRINT)
 
     with app.app_context():
-        from my_blueprint_app.blueprints.core.routes import core_bp
-        from my_blueprint_app.blueprints.auth.routes import auth_bp
-        from my_blueprint_app.blueprints.blog.routes import blog_bp
+        from blueprint_manager.blueprints.core.routes import core_bp
+        from blueprint_manager.blueprints.auth.routes import auth_bp
+        from blueprint_manager.blueprints.blog.routes import blog_bp
 
         app.register_blueprint(core_bp, url_prefix='/blueprint')
         app.register_blueprint(auth_bp, url_prefix='/auth')
         app.register_blueprint(blog_bp, url_prefix='/blog')
 
         # Import the models after the blueprints
-        from my_blueprint_app.blueprints.auth.models import User
-        from my_blueprint_app.blueprints.blog.models import Post
+        from blueprint_manager.blueprints.auth.models import User
+        from blueprint_manager.blueprints.blog.models import Post
 
         # Create the database tables
         db.create_all()
 
-        # from my_blueprint_app.blueprints.auth.utils import StaticMethod as AuthStaticMethod
-        # from my_blueprint_app.blueprints.blog.utils import StaticMethod as BlogStaticMethod
+        # from blueprint_manager.blueprints.auth.utils import StaticMethod as AuthStaticMethod
+        # from blueprint_manager.blueprints.blog.utils import StaticMethod as BlogStaticMethod
 
         # Add sample data only if the tables are empty
         # if not User.query.first() and not Post.query.first():

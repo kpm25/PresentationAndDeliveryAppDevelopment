@@ -40,6 +40,17 @@ def index():
     return render_template('dropzone.html')
 
 
+# home route render home.html
+@dropzone.route('/home')
+def home():
+    return render_template('home.html')
+
+
+# @dropzone.route('/home_styles.css')
+# def home_styles():
+#     return current_app.send_static_file('home_styles.css')
+#
+
 @dropzone.route('/display', methods=['GET'])
 def display_files():
     # if check_all_grade_folders_exist is False, then call setup_lesson_folders

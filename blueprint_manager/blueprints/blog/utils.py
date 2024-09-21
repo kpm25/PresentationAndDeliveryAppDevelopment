@@ -17,8 +17,8 @@ if IS_BLUEPRINT is False:
     from .models import Post, db
 else:
     # to be defined later by main app
-    from my_blueprint_app.app import db
-    from my_blueprint_app.blueprints.blog.models import Post
+    from blueprint_manager.app import db
+    from blueprint_manager.blueprints.blog.models import Post
 
 
 def get_local_ip():

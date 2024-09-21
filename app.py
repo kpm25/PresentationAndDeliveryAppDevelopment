@@ -67,10 +67,10 @@ else:
 # this has been moved to the create_app method in the app.py file for testing adding blueprints
 # app = Flask(__name__, static_url_path='/static')
 
-# Import the create_app function from my_blueprint_app.app to test the blueprint app modules
-from my_blueprint_app.app import create_app
+# Import the create_app function from blueprint_manager.app to test the blueprint app modules
+from blueprint_manager.app import create_app
 from flask_login import LoginManager, login_required, UserMixin
-from my_blueprint_app.blueprints.auth.models import User
+from blueprint_manager.blueprints.auth.models import User
 
 login_manager = LoginManager()
 

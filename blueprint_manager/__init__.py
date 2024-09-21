@@ -7,7 +7,7 @@
 # db = SQLAlchemy()
 #
 # def create_app(config_name='default'):
-#     app = Flask(__name__, template_folder='./my_blueprint_app/templates', static_folder='./my_blueprint_app/static')
+#     app = Flask(__name__, template_folder='./blueprint_manager/templates', static_folder='./blueprint_manager/static')
 #     app.config.from_object(Config)
 #
 #     # Initialize SQLAlchemy with the app

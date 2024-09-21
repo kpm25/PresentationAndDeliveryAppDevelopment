@@ -14,8 +14,8 @@ if IS_BLUEPRINT is False:
     from .models import User, db
 else:
     # to be defined later by main app
-    from my_blueprint_app.app import db
-    from my_blueprint_app.blueprints.auth.models import User
+    from blueprint_manager.app import db
+    from blueprint_manager.blueprints.auth.models import User
 
 blueprint_base_url = 'auth'
 
