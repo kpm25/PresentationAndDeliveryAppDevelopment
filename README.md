@@ -1,5 +1,8 @@
 # Presentation And Delivery App Development
 
+This project can be downloaded as a zip file or cloned as a local GitHub repository. Choose the method that suits you best.
+
+
 ## Setup Instructions
 
 ### Python Dependencies
@@ -45,7 +48,22 @@ python -m venv .venv
     ```
  ==> **_Make sure you're in the `my_nodejs_app` directory before running the above command._**
 
+### **Running the Project**
 
+To run the project, both the Python application and the Node.js server need to be started.  
+
+
+Make sure you're in the project's root directory before running the application.
+
+### **Starting the Python Application**
+
+Navigate to the project directory in your terminal and run the following command:
+
+```bash
+python app.py
+```
+
+This command will start both the Python application and the Node.js server.  
 
 
 ### Environment Variables
@@ -81,25 +99,10 @@ CONTENT_FOLDER=LessonFolders
 # Set USE_HTTPS to either 'true' or 'false' to use either HTTP or HTTPS in server setup
 USE_HTTPS=false
 ```
-Replace 192.168.1.24 with your own IP address. (0.0.0.0 is also a valid IP address, AND it will listen on all network interfaces)
+Replace 192.168.1.24 with your own IP address. 
 If these environment variables are not set, the application will use default values.
 
-### **Running the Project**
 
-To run the project, both the Python application and the Node.js server need to be started.  
-
-
-Make sure you're in the project's root directory before running the application.
-
-### **Starting the Python Application**
-
-Navigate to the project directory in your terminal and run the following command:
-
-```bash
-python app.py
-```
-
-This command will start both the Python application and the Node.js server.  
 
 ### **Verifying the Application**
 
