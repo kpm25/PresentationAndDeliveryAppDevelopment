@@ -1,8 +1,7 @@
-# This file is the entry point of the application. blueprint_manager/shell_app.py is where the Flask application is created and configured.
-# The create_app function is the entry point of the application. It creates the Flask application instance, configures it, and registers the blueprints.
-# The create_app function is called in the manage.py file to run the application.
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import os
+from helper_file_methods import correct_ppt_filenames
 # from flask_migrate import Migrate
 from .config import Config
 
@@ -26,10 +25,17 @@ def create_app():
         from blueprint_manager.blueprints.core.routes import core_bp
         from blueprint_manager.blueprints.auth.routes import auth_bp
         from blueprint_manager.blueprints.blog.routes import blog_bp
+        from blueprint_manager.blueprints.ppt_manager.routes import ppt_manager_bp ,blueprint_base_url
+
+        # Correct the filenames in the 'ppts' directory
+        base_dir = os.path.abspath(os.path.dirname(__file__))
+        ppts_dir = os.path.join(base_dir, 'blueprints', blueprint_base_url, 'static', blueprint_base_url, 'ppts')
+        correct_ppt_filenames(ppts_dir)
 
         app.register_blueprint(core_bp, url_prefix='/blueprint')
         app.register_blueprint(auth_bp, url_prefix='/auth')
         app.register_blueprint(blog_bp, url_prefix='/blog')
+        app.register_blueprint(ppt_manager_bp, url_prefix='/ppt_manager')
 
         # Import the models after the blueprints
         from blueprint_manager.blueprints.auth.models import User

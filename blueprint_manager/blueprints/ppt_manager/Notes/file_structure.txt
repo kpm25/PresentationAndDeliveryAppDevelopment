@@ -1,0 +1,21 @@
+HTML5PointMiniWebappsFlaskProject/
+│
+├── static/
+│   ├── ppt_manager/
+│   │   ├── ppt_web_apps/
+│   │   │   ├── webapp1/
+│   │   │   ├── webapp2/
+│   │   │   └── ...
+│   │   └── ppts/
+│   │       ├── webapp1.pptx
+│   │       ├── webapp2.pptx
+│   │       └── ...
+├── app.py
+├── templates/
+│   ├── index.html
+│   └── ...
+└── ...
+
+In this structure, both the ppt_web_apps directory (which contains the web applications) and the ppts directory
+(which contains the .pptx files) are located inside the ppt_manager directory, which is in turn located inside
+ the static directory.

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Apps</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .webapp {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        iframe {
+            width: 100%;
+            height: 150px; /* Adjust as needed */
+            border: none;
+        }
+        .controls {
+            margin-bottom: 10px;
+        }
+        .ppt_button {
+            background-color: #f0f0f0; /* Light grey background */
+            color: #333; /* Dark text */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 3px 5px; /* Smaller padding */
+            font-size: 6px; /* Smaller font size */
+            margin: 2px; /* Spacing between buttons */
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .ppt_button:hover {
+            background-color: #e0e0e0; /* Slightly darker on hover */
+        }
+
+        .download_button {
+            background: none; /* No background */
+            border: none; /* No border */
+            color: blue; /* Blue text */
+            text-decoration: underline; /* Underlined text */
+            cursor: pointer; /* Pointer cursor */
+            font-size: 16px; /* Font size for clarity */
+            margin-top: 10px; /* Space above the button */
+        }
+
+        .download_button:hover {
+            color: darkblue; /* Darker blue on hover */
+        }
+        .download_button_text {
+            font-size: 0.4em; /* adjust as needed */
+            font-weight: bold;
+        }
+        .mini_ppt_title{
+            font-size: 8px;
+            font-weight: bold;
+            color: #f360f7;
+
+        }
+
+        #page_title {
+            text-align: center;
+            color: #63c0f9;
+        }
+
+
+        .floating-controls {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 10000; /* Ensure it appears above everything */
+        }
+
+
+
+
+
+
+    </style>
+<!--    <script src="path/to/player.js"></script>-->
+<!--    <script src="path/to/script.js"></script>-->
+</head>
+<body>
+    <h1 id="page_title">PPT Apps....</h1>
+    <div class="grid">
+        {% for webapp in webapps %}
+        <div class="webapp">
+            <h3 class="mini_ppt_title">{{ webapp }}</h3>
+            <div class="controls">
+                <button class="ppt_button" onclick="prevSlide('{{ webapp }}')">Prev</button>
+                <button class="ppt_button" onclick="playPresentation('{{ webapp }}')">Play</button>
+                <button class="ppt_button" onclick="pausePresentation('{{ webapp }}')">Pause</button>
+                <button class="ppt_button" onclick="nextSlide('{{ webapp }}')">Next</button>
+                <button class="ppt_button" onclick="toggleFullscreen('{{ webapp }}')">Fullscreen</button>
+            </div>
+
+
+  <!--          <iframe id="iframe-{{ webapp }}" src="{{ url_for('ppt_manager.static', filename='ppt_manager/ppt_web_apps/' + webapp + '/' + webapp + '.html') }}" onload="initializePresentation('{{ webapp }}')"></iframe>
+
+                <button  class="download_button" onclick="alert('webapp name is: ' + '{{webapp}}'); window.location.href='{{ url_for('ppt_manager.download', filename=webapp) }}'">
+                    <span class="download_button_text">Download {{ webapp }} Presentation</span>
+                </button>-->
+
+            <iframe id="iframe-{{ webapp }}" src="{{ url_for(g.ppt_manager_base_url + '.static', filename=g.ppt_manager_base_url + '/ppt_web_apps/' + webapp + '/' + webapp + '.html') }}" onload="initializePresentation('{{ webapp }}')" allowfullscreen></iframe>
+
+            <button  class="download_button" onclick="console.log('webapp name is: ' + '{{webapp}}'); window.location.href='{{ url_for(g.ppt_manager_base_url + '.download', filename=webapp) }}'">
+                <span class="download_button_text">Download {{ webapp }} Presentation</span>
+            </button>
+<!--                floating controls for fullscreen mode-->
+            <div id="controls-{{ webapp }}" class="floating-controls" style="display: none;">
+                <button class="ppt_button" onclick="prevSlide('{{ webapp }}')">Prev</button>
+                <button class="ppt_button" onclick="playPresentation('{{ webapp }}')">Play</button>
+                <button class="ppt_button" onclick="pausePresentation('{{ webapp }}')">Pause</button>
+                <button class="ppt_button" onclick="nextSlide('{{ webapp }}')">Next</button>
+                <button class="ppt_button" onclick="exitFullscreen('{{ webapp }}')">Exit Fullscreen</button>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <script>
+        function initializePresentation(webapp) {
+            const iframe = document.getElementById(`iframe-${webapp}`);
+
+            iframe.onload = function() {
+                const presentationPath = `static//${webapp}/data/pres`; // Update to your actual path
+                const player = iframe.contentWindow.Player;
+                const presentation = iframe.contentWindow.Presentation;
+
+                if (player && presentation) {
+                    presentation.SetRPath(presentationPath);
+                    presentation.LoadPres('pres');
+
+                    player.LoadingStart();
+                    player.LoadingEnd();
+                } else {
+                    console.error('Player or Presentation is not defined');
+                }
+            };
+        }
+
+        function playPresentation(webapp) {
+            const iframe = document.getElementById(`iframe-${webapp}`);
+            iframe.contentWindow.Presentation.Play();
+        }
+
+        function pausePresentation(webapp) {
+            const iframe = document.getElementById(`iframe-${webapp}`);
+            iframe.contentWindow.Presentation.Pause();
+        }
+
+        function nextSlide(webapp) {
+            const iframe = document.getElementById(`iframe-${webapp}`);
+            iframe.contentWindow.Presentation.Next();
+        }
+
+        function prevSlide(webapp) {
+            const iframe = document.getElementById(`iframe-${webapp}`);
+            iframe.contentWindow.Presentation.Prev();
+        }
+
+//        let isFullscreen = false;
+
+/*        function toggleFullscreen(webapp) {
+            const iframe = document.getElementById(`iframe-${webapp}`);
+            const controls = document.getElementById(`controls-${webapp}`);
+
+            if (!isFullscreen) {
+                if (iframe.requestFullscreen) {
+                    iframe.requestFullscreen();
+                } else if (iframe.mozRequestFullScreen) {
+                    iframe.mozRequestFullScreen();
+                } else if (iframe.webkitRequestFullscreen) {
+                    iframe.webkitRequestFullscreen();
+                } else if (iframe.msRequestFullscreen) {
+                    iframe.msRequestFullscreen();
+                }
+
+                // Show controls
+                controls.style.display = 'block';
+                isFullscreen = true;
+            } else {
+                exitFullscreen(webapp);
+            }
+        }*/
+
+/*        function toggleFullscreen(webapp) {
+            const iframe = document.getElementById(`iframe-${webapp}`);
+            const controls = document.getElementById(`controls-${webapp}`);
+
+            if (!isFullscreen) {
+                // Send a message to the iframe to go fullscreen
+                iframe.contentWindow.postMessage('enterFullscreen', '*');
+
+                // Show controls
+                controls.style.display = 'block';
+                isFullscreen = true;
+            } else {
+                exitFullscreen(webapp);
+            }
+        }
+
+
+        document.addEventListener('fullscreenchange', function() {
+            const webapp = ''; // Add logic to get the current webapp name as needed
+            const controls = document.getElementById(`controls-${webapp}`);
+
+            if (!document.fullscreenElement) {
+                controls.style.display = 'none'; // Hide when exiting fullscreen
+                isFullscreen = false; // Reset fullscreen state
+            }
+        });
+
+
+        function exitFullscreen(webapp) {
+           // alert(`Exiting fullscreen for: ${webapp}`);
+
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+
+            // Hide controls when exiting fullscreen
+            const controls = document.getElementById(`controls-${webapp}`);
+            controls.style.display = 'none';
+            isFullscreen = false; // Reset fullscreen state
+        }
+
+
+        //on document load add event listener to all iframes, with class name 'download_button' and setup an alert that will show the iframe id when clicked
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.contentWindow.document.addEventListener('click', function() {
+                    alert(iframe.id);
+                });
+            });
+        });*/
+
+
+         let isFullscreen = false;
+
+        function toggleFullscreen(webapp) {
+            const iframe = document.getElementById(`iframe-${webapp}`);
+            const controls = document.getElementById(`controls-${webapp}`);
+
+            if (!isFullscreen) {
+                if (iframe.requestFullscreen) {
+                    iframe.requestFullscreen();
+                } else if (iframe.mozRequestFullScreen) {
+                    iframe.mozRequestFullScreen();
+                } else if (iframe.webkitRequestFullscreen) {
+                    iframe.webkitRequestFullscreen();
+                } else if (iframe.msRequestFullscreen) {
+                    iframe.msRequestFullscreen();
+                }
+
+                // Show controls
+                controls.style.display = 'block';
+                isFullscreen = true;
+            } else {
+                exitFullscreen(webapp);
+            }
+        }
+
+
+        document.addEventListener('fullscreenchange', function() {
+            const webapp = ''; // Add logic to get the current webapp name as needed
+            const controls = document.getElementById(`controls-${webapp}`);
+
+            if (!document.fullscreenElement) {
+                controls.style.display = 'none'; // Hide when exiting fullscreen
+                isFullscreen = false; // Reset fullscreen state
+            }
+        });
+
+
+        function exitFullscreen(webapp) {
+           // alert(`Exiting fullscreen for: ${webapp}`);
+
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+
+            // Hide controls when exiting fullscreen
+            const controls = document.getElementById(`controls-${webapp}`);
+            controls.style.display = 'none';
+            isFullscreen = false; // Reset fullscreen state
+        }
+
+
+
+
+    </script>
+</body>
+</html>

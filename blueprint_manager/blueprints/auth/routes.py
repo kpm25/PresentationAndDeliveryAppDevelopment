@@ -25,6 +25,7 @@ auth_bp = Blueprint(blueprint_base_url, __name__, template_folder='templates')
 @auth_bp.before_request
 def before_request():
     g.blueprint_base_url = blueprint_base_url
+    g.auth_base_url = 'auth'
 
 
 @auth_bp.route('/')

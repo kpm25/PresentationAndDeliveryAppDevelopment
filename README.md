@@ -74,7 +74,7 @@ You can do this by navigating to the project directory in your terminal and runn
 Once the virtual environment is activated, you can start the application by running the following command:
 
 ```bash
-python app.py
+python routes.py
 ```
 
 This command will start both the Python application and the Node.js server. It will also generate the run_app.bat and .env files if they do not exist.

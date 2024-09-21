@@ -3,11 +3,9 @@
 import sys
 # import threading
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QMenuBar, QMenu, QAction
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QUrl
-from PyQt5.QtCore import QTimer
-from PyQt5.QtCore import QEvent
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QMenuBar, QMenu, QAction, QFileDialog
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile
+from PyQt5.QtCore import QUrl, QTimer, QEvent, QFileInfo
 
 import time
 
@@ -34,7 +32,7 @@ protocol = 'https' if USE_HTTPS else 'http'
 NODE_SERVER_URL = f"{protocol}:{os.getenv('NODE_SERVER_URL').replace('$IP_ADDRESS', IP_ADDRESS)}"
 FLASK_SERVER_URL = f"{protocol}:{os.getenv('FLASK_SERVER_URL').replace('$IP_ADDRESS', IP_ADDRESS)}"
 
-#debug the .env file
+# debug the .env file
 print(f"NODE_SERVER_URL: {NODE_SERVER_URL}")
 print(f"FLASK_SERVER_URL: {FLASK_SERVER_URL}")
 print(f"protocol: {protocol}")
@@ -57,6 +55,9 @@ class MainWindow(QMainWindow):
         self.browser = QWebEngineView()
         layout.addWidget(self.browser)
 
+        # Connect the downloadRequested signal to the on_download_requested method
+        QWebEngineProfile.defaultProfile().downloadRequested.connect(self.on_download_requested)
+
         # Get the menu bar
         menu_bar = self.menuBar()
 
@@ -67,6 +68,10 @@ class MainWindow(QMainWindow):
         # Create a menu
         options_menu = QMenu("Options", menu_bar)
         menu_bar.addMenu(options_menu)
+
+        # Create a Features menu
+        features_menu = QMenu("Features", menu_bar)
+        menu_bar.addMenu(features_menu)
 
         # Create a new menu
         file_menu = QMenu("File", menu_bar)
@@ -108,6 +113,14 @@ class MainWindow(QMainWindow):
         # Connect the dropzone action to the dropzone method
         dropzone_action.triggered.connect(self.dropzone)
 
+
+        # Create a ppt_manager action
+        ppt_manager_action = QAction("PPT Manager", self)
+        features_menu.addAction(ppt_manager_action)  # Add to features_menu
+
+        # Connect the ppt_manager action to the ppt_manager method
+        ppt_manager_action.triggered.connect(self.ppt_manager)
+
         # Create a home action
         home_action = QAction("Home", self)
         options_menu.addAction(home_action)  # Add to options_menu
@@ -118,8 +131,16 @@ class MainWindow(QMainWindow):
         # Display the home page by default
         self.home()
 
+    def on_download_requested(self, download):
+        old_path = download.path()
+        suffix = QFileInfo(old_path).suffix()
+        path, _ = QFileDialog.getSaveFileName(self, "Save File", old_path, "*." + suffix)
+        if path:
+            download.setPath(path)
+            download.accept()
 
-
+    def ppt_manager(self):
+        self.browser.setUrl(QUrl(f"{FLASK_SERVER_URL}/ppt_manager"))  # URL of your ppt_manager route
 
     def minimize(self):
         print("Minimize action triggered")  # Debugging print statement
@@ -150,7 +171,7 @@ class MainWindow(QMainWindow):
         self.browser.setUrl(QUrl(f"{FLASK_SERVER_URL}"))  # URL of your dropzone
 
     def home(self):
-        #self.browser.setUrl(QUrl(f"{protocol}://{FLASK_SERVER_URL}/home"))  # URL of your home route
+        # self.browser.setUrl(QUrl(f"{protocol}://{FLASK_SERVER_URL}/home"))  # URL of your home route
         # self.browser.setUrl(QUrl(f"{protocol}:{FLASK_SERVER_URL}/home"))  # URL of your home route
         self.browser.setUrl(QUrl(f"{FLASK_SERVER_URL}/home"))  # URL of your home route
         self.browser.loadFinished.connect(self.disable_scroll)
@@ -162,8 +183,6 @@ class MainWindow(QMainWindow):
         document.head.appendChild(styleElement);
         """
         self.browser.page().runJavaScript(disable_scroll_js)
-
-
 
 
 if __name__ == '__main__':

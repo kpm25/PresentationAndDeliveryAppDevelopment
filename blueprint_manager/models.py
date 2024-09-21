@@ -16,5 +16,9 @@ class MainModel(db.Model):
         return f'<MainModel {self.id}>'
 
 
+class AuthUser:
+    pass
 
 
+class BlogPost:
+    pass

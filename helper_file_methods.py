@@ -3,6 +3,7 @@ import math
 import subprocess
 import platform
 
+
 # def setup_folder_structure():
 #     lesson_folders = ['lesson1', 'lesson2', 'lesson3']
 #     file_types = ['zip', 'video', 'audio', 'image']
@@ -295,6 +296,21 @@ pause
 '''
     with open('run_app.bat', 'w') as f:
         f.write(batch_content)
+
+
+# method to correct ppt file names, such as replacing hyphens with underscores
+def correct_ppt_filenames(directory):
+    """
+    This function replaces hyphens with underscores in the filenames
+    in the given directory.
+    """
+    for filename in os.listdir(directory):
+        if '-' in filename:
+            new_filename = filename.replace('-', '_')
+            os.rename(os.path.join(directory, filename), os.path.join(directory, new_filename))
+            print("\033[96m" + "Renamed " + filename + " to " + new_filename + "\033[0m")
+        else:
+            print("\033[35m" + "No hyphens found in  ppt with name: " + filename + "\033[0m")
 
 
 if __name__ == '__main__':

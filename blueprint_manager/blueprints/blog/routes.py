@@ -1,8 +1,8 @@
 # blog/routes.py
-from flask import render_template, request, url_for, Blueprint, redirect
+from flask import render_template, request, url_for, Blueprint, redirect, g
 from .utils import PostSampleData, StaticMethod
 from .config import IS_BLUEPRINT
-from flask import g
+
 
 # Initialize db and Post as None
 db = None
@@ -23,6 +23,7 @@ blog_bp = Blueprint(blueprint_base_url, __name__, template_folder='templates')
 @blog_bp.before_request
 def before_request():
     g.blueprint_base_url = blueprint_base_url
+    g.blog_base_url = blueprint_base_url
 
 
 @blog_bp.route('/')

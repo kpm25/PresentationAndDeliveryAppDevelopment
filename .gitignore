@@ -17,6 +17,27 @@ new_cert.pem
 new_cert.pfx
 new_key_no_passphrase.pem
 
+#ppt_manager related
+# IGNORE ALL .ppt or .pptx files in the project
+*.pptx
+*.ppt
+
+
+# Ignore all .pptx and .ppt files in the specified directory
+/blueprint_manager/blueprints/ppt_manager/static/ppt_manager/ppts/*.pptx
+/blueprint_manager/blueprints/ppt_manager/static/ppt_manager/ppts/*.ppt
+
+
+# But do not ignore zoom_shrink_template.pptx
+!/blueprint_manager/blueprints/ppt_manager/static/ppt_manager/ppts/zoom_shrink_template.pptx
+
+# Ignore all folders in the specified directory
+/blueprint_manager/blueprints/ppt_manager/static/ppt_manager/ppt_web_apps/*
+
+# But do not ignore zoom_shrink_template folder
+!/blueprint_manager/blueprints/ppt_manager/static/ppt_manager/ppt_web_apps/zoom_shrink_template/
+
+
 # Ignore files in the dependencies directory except for the following files
 /static/dependencies/*
 
