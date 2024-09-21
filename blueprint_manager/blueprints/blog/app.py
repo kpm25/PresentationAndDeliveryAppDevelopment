@@ -1,4 +1,4 @@
-# blog/app.py
+# blog/shell_app.py
 
 import os
 from flask import Flask
@@ -10,7 +10,7 @@ from .utils import StaticMethod, get_local_ip
 # from blueprints.blog.models import db
 # from blueprints.blog.utils import StaticMethod, get_local_ip
 
-# Get the directory of the current file (blog/app.py)
+# Get the directory of the current file (blog/shell_app.py)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 

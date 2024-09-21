@@ -1,4 +1,4 @@
-# This file is the entry point of the application. blueprint_manager/app.py is where the Flask application is created and configured.
+# This file is the entry point of the application. blueprint_manager/shell_app.py is where the Flask application is created and configured.
 # The create_app function is the entry point of the application. It creates the Flask application instance, configures it, and registers the blueprints.
 # The create_app function is called in the manage.py file to run the application.
 from flask import Flask

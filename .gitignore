@@ -43,6 +43,8 @@ instance/
 # PyCharm related
 .idea/
 
+# no batch files
+*.bat
 
 
 # Distribution / packaging

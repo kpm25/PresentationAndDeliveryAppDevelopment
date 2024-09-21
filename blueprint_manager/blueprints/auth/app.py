@@ -1,4 +1,4 @@
-# auth/app.py
+# auth/shell_app.py
 
 import os
 from flask import Flask
@@ -10,7 +10,7 @@ from .utils import StaticMethod, get_blueprint_base_url, get_local_ip
 # from blueprints.auth.models import db
 # from blueprints.auth.utils import StaticMethod, get_local_ip
 
-# Get the directory of the current file (auth/app.py)
+# Get the directory of the current file (auth/shell_app.py)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 

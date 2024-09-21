@@ -281,6 +281,22 @@ def generate_default_env():
             print(result.stdout)
 
 
+# auto generate helper batch file to run the gui.py
+def create_batch_file():
+    drive_letter = os.getcwd()[:2]  # Get the drive letter from the current directory
+    batch_content = f'''@echo off
+{drive_letter}
+cd "{os.getcwd()}"
+call .venv\\Scripts\\activate
+python gui.py
+REM pause
+pause
+
+'''
+    with open('run_app.bat', 'w') as f:
+        f.write(batch_content)
+
+
 if __name__ == '__main__':
     option = 3
     if option == 1:

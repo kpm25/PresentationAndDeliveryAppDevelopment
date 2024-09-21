@@ -1,2 +1,7 @@
 # can update the requirements.txt file with the following command:
 # pip freeze > requirements.txt
+
+If you're running your script from the command line, you should navigate to the project root directory and then run your script. For example:
+
+cd D:\ProgrammingProjects\Python\DropZoneTestProjects\pythonDropZoneTest1
+python -m dropzone_window_shell_app.gui

@@ -100,9 +100,6 @@ if (USE_HTTPS) {
 
 
 
-
-
-
 //port and host
  // console.log(ansi.rgbBackground(0, 123, 123).rgbText(255, 165, 255).italic().bold().underline().text(`Port from env is: ${process.env.NODEJS_PORT}, Host from env is: ${process.env.NODEJS_HOST}`).getLine());
     new Ansi().bgRGB(0, 123, 123).rgb(255, 165, 255).italic().bold().underline().text(`Port from env is: ${process.env.NODEJS_PORT}, Host from env is: ${process.env.NODEJS_HOST}`).print();

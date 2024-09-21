@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from dropzone_blueprint import dropzone
 from dotenv import load_dotenv
-from helper_file_methods import generate_default_env
+from helper_file_methods import generate_default_env, create_batch_file
 import subprocess
 import os
 import sys
@@ -17,6 +17,10 @@ from logging import Filter
 # Generate the default .env file if it does not exist
 generate_default_env()
 
+# autogenerate the run_app.bat file
+# Call the function to create the batch file
+create_batch_file()
+
 # Load the environment variables
 load_dotenv()
 
@@ -27,19 +31,13 @@ IP_ADDRESS = os.getenv('IP_ADDRESS')
 # USE_HTTPS = os.getenv('USE_HTTPS', 'false')
 USE_HTTPS = os.getenv('USE_HTTPS', 'false').lower() == 'true'
 
-# NODE_SERVER_URL = f"{protocol}://192.168.1.24:5000"
-# FLASK_SERVER_URL = f"{protocol}://192.168.1.24:4000"
 # protocol = 'https' if USE_HTTPS == 'true' else 'http'
 protocol = 'https' if USE_HTTPS else 'http'
-# NODE_SERVER_URL = f"{protocol}:{os.getenv('NODE_SERVER_URL')}"
-# FLASK_SERVER_URL = f"{protocol}:{os.getenv('FLASK_SERVER_URL')}"
-# CONTENT_SERVER_URL = f"http:{os.getenv('CONTENT_SERVER_URL')}"
 
 # Replace $IP_ADDRESS with the actual IP address in the environment variables
 NODE_SERVER_URL = f"{protocol}:{os.getenv('NODE_SERVER_URL').replace('$IP_ADDRESS', IP_ADDRESS)}"
 FLASK_SERVER_URL = f"{protocol}:{os.getenv('FLASK_SERVER_URL').replace('$IP_ADDRESS', IP_ADDRESS)}"
 CONTENT_SERVER_URL = f"http:{os.getenv('CONTENT_SERVER_URL').replace('$IP_ADDRESS', IP_ADDRESS)}"
-
 
 # content folder name
 CONTENT_FOLDER = os.getenv('CONTENT_FOLDER')
@@ -64,7 +62,7 @@ else:
     # If USE_HTTPS is not true, set context to None
     context = None
 
-# this has been moved to the create_app method in the app.py file for testing adding blueprints
+# this has been moved to the create_app method in the shell_app.py file for testing adding blueprints
 # app = Flask(__name__, static_url_path='/static')
 
 # Import the create_app function from blueprint_manager.app to test the blueprint app modules
@@ -74,9 +72,9 @@ from blueprint_manager.blueprints.auth.models import User
 
 login_manager = LoginManager()
 
-
 # Create the Flask application instance
 app = create_app()
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -86,7 +84,6 @@ def load_user(user_id):
 # Register the blueprint with the main app
 app.register_blueprint(dropzone, url_prefix='/')
 
-
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024 * 1024  # 4GB
 app.config['SECRET_KEY'] = 'your-secret-key'
 
@@ -94,12 +91,6 @@ login_manager.init_app(app)
 
 node_process: Optional[subprocess.Popen] = None
 
-
-# route to give the server url
-# @app.route('/config')
-# def get_config():
-#     print(f"Node server url: {os.getenv('NODE_SERVER_URL')} Flask server url: {os.getenv('FLASK_SERVER_URL')}")
-#     return jsonify(nodeServerUrl=os.getenv('NODE_SERVER_URL'), flaskServerUrl=os.getenv('FLASK_SERVER_URL'))
 
 # route to give the server url
 @app.route('/config')
@@ -283,10 +274,13 @@ def stop_node_app():
 #         return '/socket.io/' not in record.getMessage()
 
 
-if __name__ == '__main__':
+def run_app(use_reloader=False):
     print(f"Debug mode: {app.debug}")
     print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")
     print(f"Flag file exists: {os.path.exists('node_server_flag.txt')}")
+
+    #debug in pink , use_reloader status
+    print(f"\033[95mUse reloader: {use_reloader}\033[0m")
 
     # does node server flag exist??
     if os.path.exists('node_server_flag.txt'):
@@ -304,5 +298,8 @@ if __name__ == '__main__':
     # Run the Flask app with the appropriate context
     atexit.register(stop_content_http_server)
     # run_simple('0.0.0.0', 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
-    run_simple(IP_ADDRESS, 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
+    run_simple(IP_ADDRESS, 4000, app, ssl_context=context, use_reloader=use_reloader, use_debugger=True)
 
+
+if __name__ == '__main__':
+    run_app(use_reloader=True)

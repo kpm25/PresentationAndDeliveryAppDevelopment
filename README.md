@@ -57,13 +57,40 @@ Make sure you're in the project's root directory before running the application.
 
 ### **Starting the Python Application**
 
-Navigate to the project directory in your terminal and run the following command:
+Before running the application, ensure that the Python virtual environment is activated. 
+You can do this by navigating to the project directory in your terminal and running the following command:
+    
+* On Windows:
+
+```bash
+    .venv\Scripts\activate
+```
+
+* On macOS and Linux:
+
+```bash
+    source .venv/bin/activate
+```
+Once the virtual environment is activated, you can start the application by running the following command:
 
 ```bash
 python app.py
 ```
 
-This command will start both the Python application and the Node.js server.  
+This command will start both the Python application and the Node.js server. It will also generate the run_app.bat and .env files if they do not exist.
+
+For ease of use, you can create a shortcut to the run_app.bat file and place it in a suitable location, such as your desktop.
+You can then set the icon of the shortcut as desired.
+
+Alternatively, you can start the application in a Python virtual environment terminal with the command:
+
+```
+ python gui.py
+
+```
+
+Please note that in future versions, raw web app link access will be removed for security reasons and the application will only be accessible with authorization.
+
 
 
 ### Environment Variables
@@ -74,7 +101,7 @@ You can modify the `.env` file to set the environment variables to your liking. 
 
 ```bash
 # IP address
-IP_ADDRESS=192.168.1.24
+IP_ADDRESS=192.168.1.26
 
 # Node.js server port
 NODEJS_PORT=5000
@@ -99,7 +126,7 @@ CONTENT_FOLDER=LessonFolders
 # Set USE_HTTPS to either 'true' or 'false' to use either HTTP or HTTPS in server setup
 USE_HTTPS=false
 ```
-Replace 192.168.1.24 with your own IP address. 
+Replace 192.168.1.26 with your own IP address. 
 If these environment variables are not set, the application will use default values.
 
 
