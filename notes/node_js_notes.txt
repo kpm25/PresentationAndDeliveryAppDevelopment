@@ -21,3 +21,19 @@ by pressing Ctrl+C. The function provided as the second argument to process.on i
 function that will be executed when the SIGINT event occurs. This is similar to how hooks work
 in other programming contexts, where a hook is a piece of code that is inserted or passed into
 another piece of code at specific points to alter or augment its behavior.
+
+
+//window terminal PORT process/kill commands
+
+To see which processes are running on port 9876 in Windows, you can use the netstat command with the
+ -a, -n, and -o options, and then filter the results with the findstr command. Here is the command:
+
+ netstat -ano | findstr 9876
+
+ This will display a list of all processes that are using port 9876. The last column of the output is the PID (Process ID).
+ To kill a process by its PID, you can use the taskkill command with the /F (force) and /PID options.
+ Replace yourPID with the actual PID of the process you want to kill:
+
+ taskkill /F /PID yourPID
+
+ Please replace yourPID with the actual PID of the process you want to kill.

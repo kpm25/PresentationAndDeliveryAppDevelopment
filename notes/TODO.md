@@ -7,4 +7,5 @@
 - [ ] Add ability to add ppt HTML5Point apps as .zip files, and they are auto extracted and added to the list
 - [ ] if a user uploads a HTML5Point webapp .zip file, the app  will show a warning  if accompanying raw .ppt file is unavailable to enable the user to download the original ppt file,
 - [ ] Continue to add features to the Features Menu list and organize them into categories
+- [ ] Fix nad complete option to run ppt_manager as a standalone app on a different port to the main app
 

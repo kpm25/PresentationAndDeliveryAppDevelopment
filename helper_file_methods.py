@@ -255,6 +255,9 @@ def generate_default_env():
                 "CONTENT_FOLDER=LessonFolders\n\n"
                 "# Set USE_HTTPS to either 'true' or 'false' so sets protocol to either http or https in server setup\n"
                 "USE_HTTPS=false\n"
+                "# run the ppt_manager on a different port\n"
+                "USE_PPT_MANAGER_SERVER=false\n"
+                "PPT_MANAGER_PORT=9876\n"
             )
 
             # debug message in blue

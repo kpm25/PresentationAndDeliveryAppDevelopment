@@ -140,7 +140,16 @@ class MainWindow(QMainWindow):
             download.accept()
 
     def ppt_manager(self):
-        self.browser.setUrl(QUrl(f"{FLASK_SERVER_URL}/ppt_manager"))  # URL of your ppt_manager route
+        # Get USE_PPT_MANAGER_SERVER and PPT_MANAGER_PORT from .env file
+        USE_PPT_MANAGER_SERVER = os.getenv('USE_PPT_MANAGER_SERVER', 'false').lower() == 'true'
+        PPT_MANAGER_PORT = int(os.getenv('PPT_MANAGER_PORT', '9876'))  # Convert the port to an integer
+
+        if USE_PPT_MANAGER_SERVER:
+            # If USE_PPT_MANAGER_SERVER is true, use the PPT_MANAGER_PORT for the URL
+            self.browser.setUrl(QUrl(f"{protocol}://{IP_ADDRESS}:{PPT_MANAGER_PORT}"))
+        else:
+            # If USE_PPT_MANAGER_SERVER is false, use the default Flask server URL
+            self.browser.setUrl(QUrl(f"{FLASK_SERVER_URL}/ppt_manager"))
 
     def minimize(self):
         print("Minimize action triggered")  # Debugging print statement

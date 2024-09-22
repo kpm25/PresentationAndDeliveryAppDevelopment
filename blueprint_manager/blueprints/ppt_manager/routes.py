@@ -105,3 +105,4 @@ def download(filename):
             return send_from_directory(os.path.join(base_dir, 'static', blueprint_base_url, 'ppts'), filename + '.ppt')
         except FileNotFoundError:
             abort(404)  # Return a 404 Not Found error if neither file exists
+

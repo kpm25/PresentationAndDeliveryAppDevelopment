@@ -38,6 +38,19 @@ new_key_no_passphrase.pem
 !/blueprint_manager/blueprints/ppt_manager/static/ppt_manager/ppt_web_apps/zoom_shrink_template/
 
 
+# Ignore all .pptx and .ppt files in the folder ppt_manager_microservice
+/ppt_manager_microservice/static/ppt_manager/ppts/*.pptx
+/ppt_manager_microservice/static/ppt_manager/ppts/*.ppt
+
+# But do not ignore zoom_shrink_template.pptx
+!/ppt_manager_microservice/static/ppt_manager/ppts/zoom_shrink_template.pptx
+
+# Ignore all folders in the specified directory
+/ppt_manager_microservice/static/ppt_manager/ppt_web_apps/*
+
+# But do not ignore zoom_shrink_template folder
+!/ppt_manager_microservice/static/ppt_manager/ppt_web_apps/zoom_shrink_template/
+
 # Ignore files in the dependencies directory except for the following files
 /static/dependencies/*
 

@@ -269,17 +269,93 @@ def stop_node_app():
         os.remove(dest_path)
 
 
+# THIS SECTION TO BE FIXED LATER !!!!
+
+# start and stop the ppt_manager server
+
+# ppt_manager_process = None
+
+# Will come back and fix this later so it runs as a microservice in a separate process as a blueprint
+# def start_ppt_manager_server():
+#     print("Starting ppt_manager server...")
+#     global ppt_manager_process
+#
+#     # Get the current directory
+#     current_dir = os.path.dirname(os.path.realpath(__file__))
+#
+#     # The path to the ppt_manager app
+#     ppt_manager_app_path = os.path.join(current_dir, 'blueprint_manager', 'blueprints', 'ppt_manager', 'app.py')
+#
+#     # The command to start the ppt_manager app
+#     command = f"python {ppt_manager_app_path}"
+#
+#     # Start the ppt_manager app as a subprocess
+#     ppt_manager_process = subprocess.Popen(command, shell=True)
+#
+#     # Create a flag file to indicate that the ppt_manager server is running
+#     with open('ppt_manager_server_flag.txt', 'w') as f:
+#         f.write('ppt_manager server is running')
+#
+#
+# def stop_ppt_manager_server():
+#     global ppt_manager_process
+#     if ppt_manager_process:
+#         print('Stopping ppt_manager server...')
+#         ppt_manager_process.terminate()
+#
+#     # Remove the flag file to indicate that the ppt_manager server has stopped
+#     if os.path.exists('ppt_manager_server_flag.txt'):
+#         os.remove('ppt_manager_server_flag.txt')
+
+
 # class IgnoreSocketIOFilter(Filter):
 #     def filter(self, record):
 #         return '/socket.io/' not in record.getMessage()
 
+
+ppt_manager_process = None
+
+
+def start_ppt_manager_server():
+    print("Starting ppt_manager server...")
+    global ppt_manager_process
+
+    # Get the current directory
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+
+    # The path to the ppt_manager microservice
+    ppt_manager_microservice_path = os.path.join(current_dir, 'ppt_manager_microservice')
+
+    # Activate the virtual environment and start the ppt_manager microservice
+    command = f"{os.path.join(ppt_manager_microservice_path, '.venv', 'Scripts', 'activate')} && python {os.path.join(ppt_manager_microservice_path, 'app.py')}"
+
+    # Start the ppt_manager microservice as a subprocess
+    ppt_manager_process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    # Create a flag file to indicate that the ppt_manager server is running
+    with open('ppt_manager_server_flag.txt', 'w') as f:
+        f.write('ppt_manager server is running')
+
+
+def stop_ppt_manager_server():
+    global ppt_manager_process
+    if ppt_manager_process:
+        print('Stopping ppt_manager server...')
+        ppt_manager_process.terminate()
+
+    # Remove the flag file to indicate that the ppt_manager server has stopped
+    if os.path.exists('ppt_manager_server_flag.txt'):
+        os.remove('ppt_manager_server_flag.txt')
+
+
+###############################################END OF SECTION TO BE FIXED LATER !!!! ABOUT PPT_MANAGER SERVER
 
 def run_app(use_reloader=False):
     print(f"Debug mode: {app.debug}")
     print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")
     print(f"Flag file exists: {os.path.exists('node_server_flag.txt')}")
 
-    #debug in pink , use_reloader status
+    # debug in pink , use_reloader status
     print(f"\033[95mUse reloader: {use_reloader}\033[0m")
 
     # does node server flag exist??
@@ -294,6 +370,15 @@ def run_app(use_reloader=False):
         print('******Starting Node.js app...')
         start_node_app()
         atexit.register(stop_node_app)
+
+    # THIS SECTION TO BE FIXED LATER !!!!
+    # Check if the ppt_manager server should be started
+    # use_ppt_manager_server = os.getenv('USE_PPT_MANAGER_SERVER', 'false').lower() == 'true'
+    # if use_ppt_manager_server and not os.path.exists('ppt_manager_server_flag.txt'):
+    #     print('******Starting ppt_manager server...')
+    #     start_ppt_manager_server()
+    #     atexit.register(stop_ppt_manager_server)
+
     # app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
     # Run the Flask app with the appropriate context
     atexit.register(stop_content_http_server)
