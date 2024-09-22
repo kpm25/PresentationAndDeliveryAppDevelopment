@@ -157,38 +157,47 @@ Please refer to the project's source code for more details on how to use the Ans
 
 ### PowerPoint Manager Microservice
 
-By default, the PowerPoint Manager does not run as a separate server. However, you can enable this feature for optimization purposes by setting 
+By default, the PowerPoint Manager does not run as a separate server. However, 
+you can enable this feature for optimization purposes by setting
 
-`USE_PPT_MANAGER_SERVER` to `true` 
+```commandline
+USE_PPT_MANAGER_SERVER=true
+```
+USE_PPT_MANAGER_SERVER to true in the .env file.  
 
-in the
-`.env` file. 
+When this feature is enabled, a separate application will be run in the ppt_manager_microservice folder. 
 
-When this feature is enabled, a separate application will be run in the
-
-`ppt_manager_microservice` 
-
-folder. 
-
-By default, this is set as
-
-`PPT_MANAGER_PORT=9876`.
-
+By default, this is set as 
+```commandline
+PPT_MANAGER_PORT=9876
+```
 From the Python GUI application, this feature is available under the Features menu. 
 
 Please note that the full-screen mode may not work as expected at the moment. 
 
-As a workaround, you can run the PowerPoint Manager in a standard web browser if needed. 
+As a workaround, you can run the PowerPoint Manager in a standard web browser if needed.  
 
-If you choose to run it in a browser, the address is
+If you choose to run it in a browser, the address is ip:9876 by default, or ip:4000/ppt_manager if not running a microservice PowerPoint Manager.  
 
-`ip:9876` 
+Currently, the PowerPoint Manager microservice needs to be started manually.
 
-by default, or 
+Here are the steps to do so:  
 
-`ip:4000/ppt_manager` 
+Open a terminal in the ppt_manager_microservice directory.  
+Start the virtual environment associated with the microservice. If you're using a Python virtual environment, you can do this with the following command:  
 
-if not running a microservice PowerPoint Manager.
+On Windows:
+<pre>.venv\Scripts\activate </pre>
+On macOS and Linux:
+<pre>source .venv/bin/activate </pre>
+
+Run the microservice with the following command:  
+
+<pre>python app.py </pre>
+
+This will start the PowerPoint Manager microservice, which can then be accessed at the addresses:
+
+ip:9876 or ip:4000/ppt_manager, depending on your configuration.
 
 ### HTTPS Configuration
 
