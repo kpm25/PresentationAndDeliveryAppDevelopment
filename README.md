@@ -155,6 +155,40 @@ new Ansi().yellow().bgGreen().bold().text(`Your text here`).print();
 This will print the text in bold, with a yellow font color and a green background.  
 Please refer to the project's source code for more details on how to use the Ansi class.
 
+### PowerPoint Manager Microservice
+
+By default, the PowerPoint Manager does not run as a separate server. However, you can enable this feature for optimization purposes by setting 
+
+`USE_PPT_MANAGER_SERVER` to `true` 
+
+in the
+`.env` file. 
+
+When this feature is enabled, a separate application will be run in the
+
+`ppt_manager_microservice` 
+
+folder. 
+
+By default, this is set as
+
+`PPT_MANAGER_PORT=9876`.
+
+From the Python GUI application, this feature is available under the Features menu. 
+
+Please note that the full-screen mode may not work as expected at the moment. 
+
+As a workaround, you can run the PowerPoint Manager in a standard web browser if needed. 
+
+If you choose to run it in a browser, the address is
+
+`ip:9876` 
+
+by default, or 
+
+`ip:4000/ppt_manager` 
+
+if not running a microservice PowerPoint Manager.
 
 ### HTTPS Configuration
 
