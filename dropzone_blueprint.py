@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 import uuid
 
-print(f'...current working time: {datetime.now().strftime('%B %d, %Y at %I:%M:%S %p')}')
+print(f"...current working time: {datetime.now().strftime('%B %d, %Y at %I:%M:%S %p')}")
 
 # Create a Blueprint object
 dropzone = Blueprint('dropzone', __name__)
