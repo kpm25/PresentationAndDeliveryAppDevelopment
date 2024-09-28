@@ -67,6 +67,7 @@ else:
 
 # Import the create_app function from blueprint_manager.app to test the blueprint app modules
 from blueprint_manager.app import create_app
+
 # from flask_login import LoginManager, login_required, UserMixin
 # from blueprint_manager.blueprints.auth.models import User
 
@@ -74,7 +75,6 @@ from blueprint_manager.app import create_app
 
 # Create the Flask application instance
 app = create_app()
-
 
 # @login_manager.user_loader
 # def load_user(user_id):
@@ -351,39 +351,49 @@ def stop_ppt_manager_server():
 ###############################################END OF SECTION TO BE FIXED LATER !!!! ABOUT PPT_MANAGER SERVER
 
 def run_app(use_reloader=False):
-    print(f"Debug mode: {app.debug}")
-    print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")
-    print(f"Flag file exists: {os.path.exists('node_server_flag.txt')}")
+    global node_process
+    try:
+        print(f"Debug mode: {app.debug}")
+        print(f"Run from reloader: {os.environ.get('WERKZEUG_RUN_MAIN')}")
+        print(f"Flag file exists: {os.path.exists('node_server_flag.txt')}")
 
-    # debug in pink , use_reloader status
-    print(f"\033[95mUse reloader: {use_reloader}\033[0m")
+        # debug in pink , use_reloader status
+        print(f"\033[95mUse reloader: {use_reloader}\033[0m")
 
-    # does node server flag exist??
-    if os.path.exists('node_server_flag.txt'):
-        print("Node server flag exists")
-    else:
-        print("Node server flag does not exist")
+        # does node server flag exist??
+        if os.path.exists('node_server_flag.txt'):
+            print("Node server flag exists")
+        else:
+            print("Node server flag does not exist")
 
-    # Only start the Node.js app if the Flask app is not in debug mode
-    # or if the current run is from the reloader
-    if not app.debug or (os.environ.get('WERKZEUG_RUN_MAIN') == 'true' and not os.path.exists('node_server_flag.txt')):
-        print('******Starting Node.js app...')
-        start_node_app()
-        atexit.register(stop_node_app)
+        # Only start the Node.js app if the Flask app is not in debug mode
+        # or if the current run is from the reloader
+        if not app.debug or (
+                os.environ.get('WERKZEUG_RUN_MAIN') == 'true' and not os.path.exists('node_server_flag.txt')):
+            print('******Starting Node.js app...')
+            start_node_app()
+            atexit.register(stop_node_app)
 
-    # THIS SECTION TO BE FIXED LATER !!!!
-    # Check if the ppt_manager server should be started
-    # use_ppt_manager_server = os.getenv('USE_PPT_MANAGER_SERVER', 'false').lower() == 'true'
-    # if use_ppt_manager_server and not os.path.exists('ppt_manager_server_flag.txt'):
-    #     print('******Starting ppt_manager server...')
-    #     start_ppt_manager_server()
-    #     atexit.register(stop_ppt_manager_server)
+        # THIS SECTION TO BE FIXED LATER !!!!
+        # Check if the ppt_manager server should be started
+        # use_ppt_manager_server = os.getenv('USE_PPT_MANAGER_SERVER', 'false').lower() == 'true'
+        # if use_ppt_manager_server and not os.path.exists('ppt_manager_server_flag.txt'):
+        #     print('******Starting ppt_manager server...')
+        #     start_ppt_manager_server()
+        #     atexit.register(stop_ppt_manager_server)
 
-    # app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
-    # Run the Flask app with the appropriate context
-    atexit.register(stop_content_http_server)
-    # run_simple('0.0.0.0', 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
-    run_simple(IP_ADDRESS, 4000, app, ssl_context=context, use_reloader=use_reloader, use_debugger=True)
+        # app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
+        # Run the Flask app with the appropriate context
+        atexit.register(stop_content_http_server)
+        # run_simple('0.0.0.0', 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
+        run_simple(IP_ADDRESS, 4000, app, ssl_context=context, use_reloader=use_reloader, use_debugger=True)
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        if node_process:
+            print('Stopping Node.js app due to an error...')
+            stop_node_app()
 
 
 if __name__ == '__main__':
