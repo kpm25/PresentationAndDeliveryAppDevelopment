@@ -3,8 +3,8 @@ from flask import render_template, request, url_for, Blueprint, redirect, flash
 from .utils import UserSampleData, StaticMethod
 from .config import IS_BLUEPRINT
 from flask import g
-from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.routing import url_parse
+# from flask_login import login_user, logout_user, login_required, current_user
+# from werkzeug.routing import url_parse
 
 # Initialize db and User as None
 db = None
@@ -36,37 +36,37 @@ def auth_index():
 
 
 #mock login for now...
-@auth_bp.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('auth.auth_index'))
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        # Mock login for user with username 'abc' and password 'abc'
-        if username == 'abc' and password == 'abc':
-            # user = User.query.filter_by(username=username).first()
-            # if user is None:
-            #     # Create a mock user if it does not exist
-            #     user = User(username=username, email='abc@example.com')
-            #     db.session.add(user)
-            #     db.session.commit()
-            #login_user(user, remember=request.form.get('remember_me', False))
-            login_user(User(username=username, email='abc@example.com'),
-                       remember=request.form.get('remember_me', False))
-            next_page = request.args.get('next')
-            if not next_page or url_parse(next_page).netloc != '':
-                next_page = url_for('auth.auth_index')
-            return redirect(next_page)
-        else:
-            flash('Invalid username or password')
-            return redirect(url_for('login'))
-    return render_template('login.html', title='Sign In')
-
-@auth_bp.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('auth_index'))
+# @auth_bp.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if current_user.is_authenticated:
+#         return redirect(url_for('auth.auth_index'))
+#     if request.method == 'POST':
+#         username = request.form['username']
+#         password = request.form['password']
+#         # Mock login for user with username 'abc' and password 'abc'
+#         if username == 'abc' and password == 'abc':
+#             # user = User.query.filter_by(username=username).first()
+#             # if user is None:
+#             #     # Create a mock user if it does not exist
+#             #     user = User(username=username, email='abc@example.com')
+#             #     db.session.add(user)
+#             #     db.session.commit()
+#             #login_user(user, remember=request.form.get('remember_me', False))
+#             login_user(User(username=username, email='abc@example.com'),
+#                        remember=request.form.get('remember_me', False))
+#             next_page = request.args.get('next')
+#             if not next_page or url_parse(next_page).netloc != '':
+#                 next_page = url_for('auth.auth_index')
+#             return redirect(next_page)
+#         else:
+#             flash('Invalid username or password')
+#             return redirect(url_for('login'))
+#     return render_template('login.html', title='Sign In')
+#
+# @auth_bp.route('/logout')
+# def logout():
+#     logout_user()
+#     return redirect(url_for('auth_index'))
 
 
 @auth_bp.route('/view_db')

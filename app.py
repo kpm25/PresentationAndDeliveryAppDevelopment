@@ -67,18 +67,18 @@ else:
 
 # Import the create_app function from blueprint_manager.app to test the blueprint app modules
 from blueprint_manager.app import create_app
-from flask_login import LoginManager, login_required, UserMixin
-from blueprint_manager.blueprints.auth.models import User
+# from flask_login import LoginManager, login_required, UserMixin
+# from blueprint_manager.blueprints.auth.models import User
 
-login_manager = LoginManager()
+# login_manager = LoginManager()
 
 # Create the Flask application instance
 app = create_app()
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User.query.get(int(user_id))
 
 
 # Register the blueprint with the main app
@@ -87,7 +87,7 @@ app.register_blueprint(dropzone, url_prefix='/')
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024 * 1024  # 4GB
 app.config['SECRET_KEY'] = 'your-secret-key'
 
-login_manager.init_app(app)
+# login_manager.init_app(app)
 
 node_process: Optional[subprocess.Popen] = None
 
