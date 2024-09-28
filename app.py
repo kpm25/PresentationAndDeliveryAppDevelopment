@@ -207,6 +207,26 @@ def get_content_server_status():
     return jsonify({'content_server_running': content_server_running}), 200
 
 
+# PPT Manager test routes
+from flask import redirect
+
+# Get USE_PPT_MANAGER_SERVER and PPT_MANAGER_PORT from .env file
+USE_PPT_MANAGER_SERVER = os.getenv('USE_PPT_MANAGER_SERVER', 'false').lower() == 'true'
+PPT_MANAGER_PORT = int(os.getenv('PPT_MANAGER_PORT', '9876'))  # Convert the port to an integer
+
+# this route is to test the ppt_manager server and will be fixed later
+@app.route('/ppt_manager_route')
+def ppt_manager_route():
+    if USE_PPT_MANAGER_SERVER:
+        # If USE_PPT_MANAGER_SERVER is true, use the PPT_MANAGER_PORT for the URL
+        #debug in pink
+        print(f"\033[95mRedirecting to PPT Manager server...\033[0m")
+        return redirect(f"{protocol}://{IP_ADDRESS}:{PPT_MANAGER_PORT}")
+    else:
+        # If USE_PPT_MANAGER_SERVER is false, use the default Flask server URL
+        return redirect(f"{FLASK_SERVER_URL}/ppt_manager")
+
+
 def start_node_app():
     print("Entered start_node_app method...")
     global node_process

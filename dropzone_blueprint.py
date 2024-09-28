@@ -40,6 +40,7 @@ def index():
     return render_template('dropzone.html')
 
 
+
 # home route render home.html
 @dropzone.route('/home')
 def home():

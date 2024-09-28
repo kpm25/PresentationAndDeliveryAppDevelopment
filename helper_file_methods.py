@@ -292,7 +292,8 @@ def create_batch_file():
 {drive_letter}
 cd "{os.getcwd()}"
 call .venv\\Scripts\\activate
-python gui.py
+REM python gui.py
+python app.py
 REM pause
 pause
 
