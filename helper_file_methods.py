@@ -256,7 +256,7 @@ def generate_default_env():
                 "# Set USE_HTTPS to either 'true' or 'false' so sets protocol to either http or https in server setup\n"
                 "USE_HTTPS=false\n"
                 "# run the ppt_manager on a different port\n"
-                "USE_PPT_MANAGER_SERVER=false\n"
+                "USE_PPT_MANAGER_SERVER=true\n"
                 "PPT_MANAGER_PORT=9876\n"
             )
 
@@ -286,7 +286,41 @@ def generate_default_env():
 
 
 # auto generate helper batch file to run the gui.py
-def create_batch_file():
+# def create_batch_file():
+#     drive_letter = os.getcwd()[:2]  # Get the drive letter from the current directory
+#     batch_content = f'''@echo off
+# {drive_letter}
+# cd "{os.getcwd()}"
+# call .venv\\Scripts\\activate
+# REM python gui.py
+# python app.py
+# REM pause
+# pause
+#
+# '''
+#     with open('run_app.bat', 'w') as f:
+#         f.write(batch_content)
+
+# def create_batch_file():
+#     drive_letter = os.getcwd()[:2]  # Get the drive letter from the current directory
+#     batch_content = f'''@echo off
+# {drive_letter}
+# cd "{os.getcwd()}"
+# call .venv\\Scripts\\activate
+# REM python gui.py
+# python app.py
+# pause
+#
+# cd "{os.getcwd()}\\ppt_manager_microservice"
+# call .venv\\Scripts\\activate
+# python app.py
+# pause
+# '''
+#     with open('run_app.bat', 'w') as f:
+#         f.write(batch_content)
+
+
+def create_main_batch_file():
     drive_letter = os.getcwd()[:2]  # Get the drive letter from the current directory
     batch_content = f'''@echo off
 {drive_letter}
@@ -294,11 +328,22 @@ cd "{os.getcwd()}"
 call .venv\\Scripts\\activate
 REM python gui.py
 python app.py
-REM pause
 pause
-
 '''
-    with open('run_app.bat', 'w') as f:
+    with open('run_main_app.bat', 'w') as f:
+        f.write(batch_content)
+
+
+def create_microservice_batch_file():
+    drive_letter = os.getcwd()[:2]  # Get the drive letter from the current directory
+    batch_content = f'''@echo off
+{drive_letter}
+cd "{os.getcwd()}\\ppt_manager_microservice"
+call .venv\\Scripts\\activate
+python app.py
+pause
+'''
+    with open('run_microservice_app.bat', 'w') as f:
         f.write(batch_content)
 
 

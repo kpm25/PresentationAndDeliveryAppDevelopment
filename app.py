@@ -1,7 +1,7 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect
 from dropzone_blueprint import dropzone
 from dotenv import load_dotenv
-from helper_file_methods import generate_default_env, create_batch_file
+from helper_file_methods import generate_default_env, create_main_batch_file, create_microservice_batch_file
 import subprocess
 import os
 import sys
@@ -18,8 +18,10 @@ from logging import Filter
 generate_default_env()
 
 # autogenerate the run_app.bat file
-# Call the function to create the batch file
-create_batch_file()
+# Call the function to create the main batch file and microservice batch file
+# create_batch_file()
+create_main_batch_file()
+create_microservice_batch_file()
 
 # Load the environment variables
 load_dotenv()
@@ -207,19 +209,14 @@ def get_content_server_status():
     return jsonify({'content_server_running': content_server_running}), 200
 
 
-# PPT Manager test routes
-from flask import redirect
-
-# Get USE_PPT_MANAGER_SERVER and PPT_MANAGER_PORT from .env file
-USE_PPT_MANAGER_SERVER = os.getenv('USE_PPT_MANAGER_SERVER', 'false').lower() == 'true'
-PPT_MANAGER_PORT = int(os.getenv('PPT_MANAGER_PORT', '9876'))  # Convert the port to an integer
-
-# this route is to test the ppt_manager server and will be fixed later
 @app.route('/ppt_manager_route')
 def ppt_manager_route():
+    # Get USE_PPT_MANAGER_SERVER and PPT_MANAGER_PORT from .env file
+    USE_PPT_MANAGER_SERVER = os.getenv('USE_PPT_MANAGER_SERVER', 'false').lower() == 'true'
+    PPT_MANAGER_PORT = int(os.getenv('PPT_MANAGER_PORT', '9876'))  # Convert the port to an integer
+
     if USE_PPT_MANAGER_SERVER:
         # If USE_PPT_MANAGER_SERVER is true, use the PPT_MANAGER_PORT for the URL
-        #debug in pink
         print(f"\033[95mRedirecting to PPT Manager server...\033[0m")
         return redirect(f"{protocol}://{IP_ADDRESS}:{PPT_MANAGER_PORT}")
     else:
