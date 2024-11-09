@@ -402,7 +402,7 @@ def run_app(use_reloader=False):
         # app.run(ssl_context=('new_cert.pem', 'new_key_no_passphrase.pem'), port=4000, host='0.0.0.0', debug=True)
         # Run the Flask app with the appropriate context
         atexit.register(stop_content_http_server)
-        # run_simple('0.0.0.0', 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
+        #run_simple('0.0.0.0', 4000, app, ssl_context=context, use_reloader=True, use_debugger=True)
         run_simple(IP_ADDRESS, 4000, app, ssl_context=context, use_reloader=use_reloader, use_debugger=True)
 
     except Exception as e:

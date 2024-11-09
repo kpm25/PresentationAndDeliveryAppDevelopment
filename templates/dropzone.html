@@ -3,25 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' http://192.168.1.24:4000; style-src 'self' http://192.168.1.24:4000;">-->
     <title>Layout Design</title>
-      <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
-
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
     <script src="/static/dependencies/dropzone.min.js"></script>
     <link rel="stylesheet" href="static/css/dropzone_styles.css">
     <script src="/static/dependencies/jquery-3.6.0.min.js"></script>
     <script src="/static/dependencies/socket.io.min.js"></script>
-<!--    toastr-->
     <script src="/static/dependencies/toastr.min.js"></script>
     <link rel="stylesheet" href="static/dependencies/toastr.min.css">
-     <script src="static/dependencies/ansi_text.js"></script>
-
-
+    <script src="static/dependencies/ansi_text.js"></script>
     <script src="static/js/javascript_tool_functions.js"></script>
-
     <style>
         .dropzone.dz-started .dz-message {
-
             display: block !important;
         }
         .dropzone-files {
@@ -33,112 +26,75 @@
             display: inline-flex;
             margin-right: 10px;
         }
-        /*        stop horiz and vert scroll*/
         body {
             overflow: hidden;
         }
-
         .select-button {
-            padding: 10px 20px; /* Increase the size of the buttons */
-            margin: 10px; /* Add space around the buttons */
-            border-radius: 20px; /* Make the buttons rounded */
-            font-size: 1.2em; /* Increase the font size */
-            border: 2px solid #007bff;    /* a bold blue border */
-            cursor: pointer; /* Change the cursor when hovering over the buttons */
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 20px;
+            font-size: 1.2em;
+            border: 2px solid #007bff;
+            cursor: pointer;
         }
-
-        /* You can also add some hover effects */
-        .select-button :hover {
-            background-color: #ddd; /* Change the background color */
-            color: #333; /* Change the text color */
+        .select-button:hover {
+            background-color: #ddd;
+            color: #333;
         }
-        /*        #historyLog {
-                    width: 100%;
-                    height: 200px; *//* Adjust as needed *//*
-            overflow: auto;
-        }*/
         .tiny-select-button {
-            padding: 1px 4px; /* Reduce padding */
+            padding: 1px 4px;
             margin: 2px;
-            border-radius: 2px; /* Reduce border radius */
-            font-size: 0.6em; /* Reduce font size */
+            border-radius: 2px;
+            font-size: 0.6em;
             border: 2px solid #ff0080;
             cursor: pointer;
             float: right;
             margin-bottom: 3px;
         }
-
-            #progressBarPopup {
-               position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                /*  width = 100*10px +(100-1)*1px +(2*left & right margin) = 1202px*/
-                width: 1202px;
-                height: 40px;
-                background-color: #ffffe0; /* Light yellow background */
-                border: 1px solid #000000; /* Thin black border */
-                z-index: 1000;
-            }
-
+        #progressBarPopup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1202px;
+            height: 40px;
+            background-color: #ffffe0;
+            border: 1px solid #000000;
+            z-index: 1000;
+        }
         .progress_square {
             width: 10px;
             height: 36px;
             background-color: #00FF00;
             display: inline-block;
-            margin-right: 1px; /* Add a 1px gap between the squares */
-            margin-left: 1px; /* Add a 1px gap between the squares */
-            margin-top: 2px; /* Add a 1px gap between the squares */
-
+            margin-right: 1px;
+            margin-left: 1px;
+            margin-top: 2px;
         }
-
         .progress-bar {
             display: flex;
-            align-items: center; /* Center the squares vertically */
-            justify-content: flex-start; /* Start the squares from the left */
+            align-items: center;
+            justify-content: flex-start;
             background-color: #028bd0;
             margin-left: 2px;
             margin-right: 2px;
-            /*margin-top: 10px;
-            margin-bottom: 10px;*/
-
         }
-
-            .uploading-text {
-                /*position: absolute;
-                top: -20px; *//* Adjust as needed *//*
-                left: 50%;
-                transform: translateX(-50%); *//* Center the text *//*
-                font-weight: bold;
-                font-style: italic;
-                color: navy;
-                position: absolute;
-                z-index: 2000;*/
-/*                I need the text to be displayed horizontally across the page along the length of the progress bar..in boold haeavy dark blue text.. centered in the progress bar area:*/
-                 font-weight: bold;
-                font-style: italic;
-                color: navy;
-                position: absolute;
-                z-index: 2;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-/*                larger font*/
-                font-size: 1.5em; /* Increase the font size */
-/*                center the text in parent*/
-                text-align: center;
-
-
-                 /*   align-items: center; *//* Center the squares vertically *//*
-                    justify-content: flex-start; *//* Start the squares from the left *//*
-                    background-color: #028bd0;
-                    margin-left: 2px;
-                    margin-right: 2px;
-                  display: inline-block;*/
-
-            }
+        .uploading-text {
+            font-weight: bold;
+            font-style: italic;
+            color: navy;
+            position: absolute;
+            z-index: 2;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            text-align: center;
+        }
         .log_label {
-           font-size: 0.6em; text-align: center; font-family: Arial, sans-serif;
+            font-size: 0.6em;
+            text-align: center;
+            font-family: Arial, sans-serif;
         }
     </style>
     <link rel="stylesheet" href="static/css/editable_table_styles.css" type="text/css">
@@ -146,28 +102,15 @@
 <body>
     <div class="container">
         <div class="left-half">
-
             <div class="left-header-label">
-              <span class="label-text">Semester</span>
-             <!-- <label class="radio-container" for="semester-radio">
-                <span id="reset-button">&nbsp&nbsp<button onclick="resetSelections();">Reset</button>&nbsp&nbsp</span>
-                  <input type="radio" id="semester-radio" name="semester-radio" value="semester" onclick="toggleSemesterDropzone()" unchecked>
-                  Show Semester Level Dropzone
-              </label>-->
-           </div>
-            <div class="semester-selector"  id="semester-selector">
+                <span class="label-text">Semester</span>
+            </div>
+            <div class="semester-selector" id="semester-selector">
                 <button id="semester1" class="semester" value="S1">1</button>
                 <button id="semester2" class="semester" value="S2">2</button>
             </div>
-            <!-- <div class="left-header-label">Grade <span id="test-data">&nbsp&nbsp<button onclick="test()">Test Button</button></span></div> -->
             <div class="left-header-label">
-              <span class="label-text">Grade</span>
-              
-     <!--         <label class="radio-container" for="grade-radio">
-                <span id="test-data">&nbsp&nbsp<button onclick="test()">Testing...</button>&nbsp&nbsp</span>
-                  <input type="radio" id="grade-radio" name="grade-radio" value="grade" onclick="toggleGradeDropzone()" unchecked>
-                  Show Grade Level Dropzone
-              </label>-->
+                <span class="label-text">Grade</span>
             </div>
             <div class="grade-selector" id="grade-selector">
                 <button id="grade1" class="grade" value="G1">1</button>
@@ -175,17 +118,11 @@
                 <button id="grade3" class="grade" value="G3">3</button>
                 <button id="grade4" class="grade" value="G4">4</button>
                 <button id="grade5" class="grade" value="G5">5</button>
-
             </div>
-
             <div class="header-container">
-              <div class="left-header-label">
-                <span class="label-text">Week</span>
-               <!-- <label class="radio-container" for="week-radio">
-                    <input type="radio" id="week-radio" name="week-radio" value="week" onclick="toggleWeekDropzone()" unchecked>
-                    Show Week Level Dropzone
-                </label>-->
-              </div>
+                <div class="left-header-label">
+                    <span class="label-text">Week</span>
+                </div>
             </div>
             <div class="week-selector" id="week-selector">
                 <button id="week1" class="week" value="W1">1</button>
@@ -208,239 +145,158 @@
                 <div class="empty"></div>
                 <div class="empty"></div>
                 <div class="empty"></div>
-
-
-                    <!-- Add this at the bottom -->
-                   <button class="select-button" id="uploadButton">Upload From Folder</button>
-                   <button  class="select-button" id="startUpload">Start Upload</button>
-                    <audio id="successAudio">
-                       <source src="/static/audio/sound.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
-
-                 <button  class="select-button" onclick="playSuccessSound()"   id="playButton">Play Success Sound</button>
-<!--                button with link to display route-->
-<!--                <button class="select-button" onclick="window.location.href='/display'">Display Files</button>-->
+            </div>
+            <div class="header-container">
+                <div class="left-header-label">
+                    <span class="label-text">Lesson</span>
+                </div>
+            </div>
+            <div class="lesson-selector" id="lesson-selector">
+                <button id="lesson1" class="lesson" data-target="singleDropzone" value="L1">Lesson 1</button>
+                <button id="lesson2" class="lesson" data-target="singleDropzone" value="L2">Lesson 2</button>
+                <button id="lesson3" class="lesson" data-target="singleDropzone" value="L3">Lesson 3</button>
+                <button id="lesson4" class="lesson" data-target="singleDropzone" value="L4">Lesson 4</button>
+                <button id="lesson5" class="lesson" data-target="singleDropzone" value="L5">Lesson 5</button>
+                <button id="lesson6" class="lesson" data-target="singleDropzone" value="L6">Lesson 6</button>
+                <button id="lesson7" class="lesson" data-target="singleDropzone" value="TP">Teaching Plans</button>
+                <button id="lesson8" class="lesson" data-target="singleDropzone" value="MS">Miscellaneous Materials</button>
+            </div>
+            <div class="button-container">
+                <button class="select-button" id="uploadButton">Upload From Folder</button>
+                <button class="select-button" id="startUpload">Start Upload</button>
+                <audio id="successAudio">
+                    <source src="/static/audio/sound.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="select-button" onclick="playSuccessSound()" id="playButton">Play Success Sound</button>
                 <button class="select-button" onclick="redirectToDisplayZone()">Display Files</button>
                 <button class="select-button" onclick="socketTest()">Socket Test</button>
             </div>
             <div class="history-log">
-               <h2 style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="display: flex; justify-content: space-between; align-items: center;">
                     History Log
                     <div>
                         <input type="checkbox" id="muteSound" name="muteSound">
-                        <label id="log_label" for="muteSound"  >Mute Sound</label>
+                        <label id="log_label" for="muteSound">Mute Sound</label>
                     </div>
-                   <button class="tiny-select-button" onclick="increaseHistoryLogFontSize()">+</button>
-                     <button class="tiny-select-button" onclick="decreaseHistoryLogFontSize()">-</button>
-                   <!--  <br/><br><a href="{{ url_for('dropzone.index') }}">Dropzone</a><br><br>-->
-                   <button class="tiny-select-button" onclick="window.location.href='{{ url_for('core.core_index') }}'">Test Blueprint Database Routes
-               <button class="tiny-select-button" onclick="window.location.href='{{ url_for('ppt_manager_route') }}'">Test PPT Manager Route</button>
+                    <button class="tiny-select-button" onclick="increaseHistoryLogFontSize()">+</button>
+                    <button class="tiny-select-button" onclick="decreaseHistoryLogFontSize()">-</button>
+                    <button class="tiny-select-button" onclick="window.location.href='{{ url_for('core.core_index') }}'">Test Blueprint Database Routes</button>
+                    <button class="tiny-select-button" onclick="window.location.href='{{ url_for('ppt_manager_route') }}'">Test PPT Manager Route</button>
                     <button class="tiny-select-button" onclick="clearHistoryLog()">Clear History Log</button>
-
                 </h2>
-<!--                <textarea id="historyLog" readonly></textarea>-->
-                <table id="history_log_editableTable" class="editable-table"> </table>
+                <table id="history_log_editableTable" class="editable-table"></table>
             </div>
-
-
-    </div> <!-- left-half -->
-
-
-
-    <div class="right-half">
-        <div class="right-header-label">Dropbox Container</div>
-        <div class="right-side-container">
-            <div class="lesson-labels-container">
-                <div class="lesson-label" id="lesson1" data-target="singleDropzone" data-value="L1">Lesson 1</div>
-                <div class="lesson-label" id="lesson2" data-target="singleDropzone" data-value="L2">Lesson 2</div>
-                <div class="lesson-label" id="lesson3" data-target="singleDropzone" data-value="L3">Lesson 3</div>
-                <div class="lesson-label" id="lesson4" data-target="singleDropzone" data-value="L4">Lesson 4</div>
-                <div class="lesson-label" id="lesson5" data-target="singleDropzone" data-value="L5">Lesson 5</div>
-                <div class="lesson-label" id="lesson6" data-target="singleDropzone" data-value="L6">Lesson 6</div>
-                <div class="lesson-label" id="lesson7" data-target="singleDropzone" data-value="TP">Teaching Plans</div>
-                <div class="lesson-label" id="lesson8" data-target="singleDropzone" data-value="MS">Miscellaneous Materials</div>
-            </div>
-
-            <div class="dropzone" id="singleDropzone">
-                <div class="drop-message">Drop Content Here</div>
-                <div class="dropzone-files">
-                    <!-- Files will be added here -->
+        </div>
+        <div class="right-half">
+            <div class="right-header-label">Dropbox Container</div>
+            <div class="right-side-container">
+                <div class="dropzone" id="singleDropzone">
+                    <div class="drop-message">Drop Content Here</div>
+                    <div class="dropzone-files">
+                        <!-- Files will be added here -->
+                    </div>
                 </div>
             </div>
         </div>
-    </div> <!-- right-half -->
-
-</div> <!-- container -->
-
-
-
-<!--    javascript references-->
-<script src="/static/js/config.js"></script>
-
-<script src="static/js/history_log.js"></script>
-
-<script src="static/js/dropzone_setup_script.js"></script>
-<script src="static/js/dropzone_html.js"></script>
-
-
-
-<script>
-
-
-    let isProgressBarRunning = false;
-
-
-
-    function showProgressBarPopup() {
-        let progressBarPopup = document.getElementById('progressBarPopup');
-           //debugging
-        new Ansi().red().bgWhite().bold().text('showProgressBarPopup.......').print();
-        if (!progressBarPopup) {
-            createProgressBarPopup();
-            progressBarPopup = document.getElementById('progressBarPopup');
-        }
-        // Check if progressBarPopup exists before trying to access its style property
-        if (progressBarPopup) {
-            progressBarPopup.style.display = 'block';
-            new Ansi().yellow().bgBlue().bold().text('Progress bar displayed').print();
-            // Add the text to the progress bar
-            let textElement = document.createElement('p');
-            textElement.className = 'uploading-text';
-            textElement.textContent = 'Files Uploading.....';
-//            progressBarPopup.children[0].appendChild(textElement);
-            //make sure only child of class uploading-text is added to the progress bar
-            if (progressBarPopup.getElementsByClassName('uploading-text').length === 0) {
-                progressBarPopup.children[0].appendChild(textElement);
-            }
-
-        }
-
-        isProgressBarRunning = true;
-    }
-
-
-
-    //hide progress bar popup
-    function hideProgressBarPopup() {
-        let progressBarPopup = document.getElementById('progressBarPopup');
-        //debugging
-        new Ansi().red().bgWhite().bold().text('hideProgressBarPopup.......').print();
-        if (!progressBarPopup) {
-            return;
-        }
-        // Remove all squares from the progress bar
-        removeAllSquaresFromProgressBarPopup();
-        progressBarPopup.style.display = 'none';
-        isProgressBarRunning = false;
-    }
-
-
-
-        //add a square to the progress bar popup
-    function addSquareToProgressBarPopup(id) {
-        let progressBarPopup = document.getElementById('progressBarPopup');
-          //debugging
-        new Ansi().red().bgWhite().bold().text('addSquareToProgressBarPopup.......').print();
-        if (!progressBarPopup) {
-            createProgressBarPopup();
-            progressBarPopup = document.getElementById('progressBarPopup');
-        }
-        let progressSquare = document.createElement('div');
-        progressSquare.className = 'progress_square';
-        progressSquare.id = `square-${id}`;
-        progressBarPopup.children[0].appendChild(progressSquare);
-
-
-
-    }
-
-    //remove a square from the progress bar popup
-    function removeSquareFromProgressBarPopup() {
-        let progressBarPopup = document.getElementById('progressBarPopup');
-        //debugging
-        new Ansi().red().bgWhite().bold().text('removeSquareFromProgressBarPopup.......').print();
-        if (!progressBarPopup) {
-            return;
-        }
-        let progressSquares = progressBarPopup.children[0].children;
-        if (progressSquares.length === 0) {
-            return;
-        }
-        progressBarPopup.children[0].removeChild(progressSquares[progressSquares.length - 1]);
-    }
-
-
-
-    //remove all squares from the progress bar popup
-    function removeAllSquaresFromProgressBarPopup() {
-        //debugging
-        new Ansi().red().bgWhite().bold().text('removeAllSquaresFromProgressBarPopup.......').print();
-        let progressBarPopup = document.getElementById('progressBarPopup');
-        if (!progressBarPopup) {
-            return;
-        }
-        progressBarPopup.children[0].innerHTML = '';
-    }
-
-
-
-            function testProgressBar() {
-                    // If the progress bar is already running, return immediately
-                    if (isProgressBarRunning) {
-                        return;
-                    }
-
-                    // Set the flag to true
-//                    isProgressBarRunning = true;
-
-                    // Show the progress bar popup
-                    showProgressBarPopup();
-
-                    // Add squares to the progress bar at intervals of 100 milliseconds
-                    let i = 1;
-                    let intervalId = setInterval(function() {
-                        if (i <= 100) {
-                            try {
-                                if (i<=100){
-                                      addSquareToProgressBarPopup(i);
-                                    // Make the square visible
-                                    document.getElementById(`square-${i}`).style.display = 'block';
-                                }
-
-                            } catch (error) {
-                                new Ansi().red().bgWhite().bold().text(`Error: ${error.message}`).print();
-                            }
-                            //flex the square vertically between top and bottom of uts parent, so its centered vertically
-                            // document.getElementById(`square-${i}`).style.alignSelf = 'center';
-                            new Ansi().yellow().bgBlue().bold().text(`Square ${i} added`).print();
-                            //debug the number of squares in the progress bar
-                            new Ansi().blue().bgOrange().bold().text(`Number of children squares: ${document.getElementById('progressBarPopup').children[0].children.length}`).print();
-                            i++;
-                        } else {
-                            // Log when the interval is being cleared
-                            new Ansi().yellow().bgRed().bold().text('Interval cleared').print();
-
-                            // After all squares have been added, hide the progress bar and clear the interval
-                            hideProgressBarPopup();
-                            clearInterval(intervalId);
-
-                            //on completion debug with green background, yellow text, BOLD
-                            new Ansi().yellow().bgGreen().bold().text('Progress bar completed').print();
-
-                            // Reset the flag to false
-//                            isProgressBarRunning = false;
-                        }
-                    }, 20);
-                }
-
-
-</script>
-
-<div id="progressBarPopup" style="display: none;">
-    <div class="progress-bar">
     </div>
-</div>
-
+    <script src="/static/js/config.js"></script>
+    <script src="static/js/history_log.js"></script>
+    <script src="static/js/dropzone_setup_script.js"></script>
+    <script src="static/js/dropzone_html.js"></script>
+    <script>
+        let isProgressBarRunning = false;
+        function showProgressBarPopup() {
+            let progressBarPopup = document.getElementById('progressBarPopup');
+            new Ansi().red().bgWhite().bold().text('showProgressBarPopup.......').print();
+            if (!progressBarPopup) {
+                createProgressBarPopup();
+                progressBarPopup = document.getElementById('progressBarPopup');
+            }
+            if (progressBarPopup) {
+                progressBarPopup.style.display = 'block';
+                new Ansi().yellow().bgBlue().bold().text('Progress bar displayed').print();
+                let textElement = document.createElement('p');
+                textElement.className = 'uploading-text';
+                textElement.textContent = 'Files Uploading.....';
+                if (progressBarPopup.getElementsByClassName('uploading-text').length === 0) {
+                    progressBarPopup.children[0].appendChild(textElement);
+                }
+            }
+            isProgressBarRunning = true;
+        }
+        function hideProgressBarPopup() {
+            let progressBarPopup = document.getElementById('progressBarPopup');
+            new Ansi().red().bgWhite().bold().text('hideProgressBarPopup.......').print();
+            if (!progressBarPopup) {
+                return;
+            }
+            removeAllSquaresFromProgressBarPopup();
+            progressBarPopup.style.display = 'none';
+            isProgressBarRunning = false;
+        }
+        function addSquareToProgressBarPopup(id) {
+            let progressBarPopup = document.getElementById('progressBarPopup');
+            new Ansi().red().bgWhite().bold().text('addSquareToProgressBarPopup.......').print();
+            if (!progressBarPopup) {
+                createProgressBarPopup();
+                progressBarPopup = document.getElementById('progressBarPopup');
+            }
+            let progressSquare = document.createElement('div');
+            progressSquare.className = 'progress_square';
+            progressSquare.id = `square-${id}`;
+            progressBarPopup.children[0].appendChild(progressSquare);
+        }
+        function removeSquareFromProgressBarPopup() {
+            let progressBarPopup = document.getElementById('progressBarPopup');
+            new Ansi().red().bgWhite().bold().text('removeSquareFromProgressBarPopup.......').print();
+            if (!progressBarPopup) {
+                return;
+            }
+            let progressSquares = progressBarPopup.children[0].children;
+            if (progressSquares.length === 0) {
+                return;
+            }
+            progressBarPopup.children[0].removeChild(progressSquares[progressSquares.length - 1]);
+        }
+        function removeAllSquaresFromProgressBarPopup() {
+            new Ansi().red().bgWhite().bold().text('removeAllSquaresFromProgressBarPopup.......').print();
+            let progressBarPopup = document.getElementById('progressBarPopup');
+            if (!progressBarPopup) {
+                return;
+            }
+            progressBarPopup.children[0].innerHTML = '';
+        }
+        function testProgressBar() {
+            if (isProgressBarRunning) {
+                return;
+            }
+            showProgressBarPopup();
+            let i = 1;
+            let intervalId = setInterval(function() {
+                if (i <= 100) {
+                    try {
+                        if (i <= 100) {
+                            addSquareToProgressBarPopup(i);
+                            document.getElementById(`square-${i}`).style.display = 'block';
+                        }
+                    } catch (error) {
+                        new Ansi().red().bgWhite().bold().text(`Error: ${error.message}`).print();
+                    }
+                    new Ansi().yellow().bgBlue().bold().text(`Square ${i} added`).print();
+                    new Ansi().blue().bgOrange().bold().text(`Number of children squares: ${document.getElementById('progressBarPopup').children[0].children.length}`).print();
+                    i++;
+                } else {
+                    new Ansi().yellow().bgRed().bold().text('Interval cleared').print();
+                    hideProgressBarPopup();
+                    clearInterval(intervalId);
+                    new Ansi().yellow().bgGreen().bold().text('Progress bar completed').print();
+                }
+            }, 20);
+        }
+    </script>
+    <div id="progressBarPopup" style="display: none;">
+        <div class="progress-bar"></div>
+    </div>
 </body>
 </html>

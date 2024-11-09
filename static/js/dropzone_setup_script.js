@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const gradeButtons = document.querySelectorAll('.grade');
   const semesterButtons = document.querySelectorAll('.semester');
   const weekButtons = document.querySelectorAll('.week');
-  const lessonLabels = document.querySelectorAll('.lesson-label');
+  const lessonLabels = document.querySelectorAll('.lesson');
   const dropzones = document.querySelectorAll('.dropzone');
 
   let currentLesson = '';
@@ -105,7 +105,7 @@ function addEventListeners(elements, setCurrentSelection) {
     const gradeButtons = document.querySelectorAll('.grade');
     const semesterButtons = document.querySelectorAll('.semester');
     const weekButtons = document.querySelectorAll('.week');
-    const lessonLabels = document.querySelectorAll('.lesson-label');
+    const lessonLabels = document.querySelectorAll('.lesson');
     const dropzones = document.querySelectorAll('.dropzone');
 
     gradeButtons.forEach(button => {

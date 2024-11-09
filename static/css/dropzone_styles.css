@@ -13,7 +13,7 @@ body, html {
 
 .container {
   display: flex;
-  width:  100vw;
+  width: 100vw;
   height: 100vh;
   overflow: hidden; /* Ensure no internal scrolling */
 }
@@ -22,7 +22,6 @@ body, html {
   flex: 1;
   display: flex;
   flex-direction: column;
-  /* padding: 3px; */
   padding: 0.5vw;
   overflow: hidden;
 }
@@ -40,9 +39,7 @@ body, html {
   flex-direction: column;
 }
 
-
-.grade-selector, .semester-selector, .week-selector {
-  /* margin-bottom: 20px; */
+.grade-selector, .semester-selector, .week-selector, .lesson-selector {
   margin-bottom: 2vw;
 }
 
@@ -52,72 +49,51 @@ body, html {
   align-items: center;
 }
 
-
-
-.grade, .semester, .week {
-  margin:  1vh;
+.grade, .semester, .week, .lesson-label {
+  margin: 1vh;
   padding: 2.5vh;
   font-size: 1.5rem;
   border: 5px solid #A6A6A6;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
-  /* radius */
   border-radius: 10px;
 }
 
-#grade-selector, #semester-selector , #week-selector {
-   /* border that has a main cyan color and a thin pink color outline */
+#grade-selector, #semester-selector, #week-selector, #lesson-selector {
   border: 3px solid #0FF;
-  border-radius:  1vh;
-  /* margin top */
-  margin-top:  0.5vh;
-  /* margin bottom */
+  border-radius: 1vh;
+  margin-top: 0.5vh;
   margin-bottom: 0.5vh;
-  /* padding */
   padding: 0.1vh;
-  /* background color */
   background-color: #FF0;
-  /* text color */
   color: #090909;
-  /* font size */
   font-size: 1.5rem;
-  
 }
 
-
-.grade, .semester {
+.grade, .semester, lesson {
   display: flex-inline;
   justify-content: space-around;
   align-items: center;
   text-align: center;
-  /* margin: 0 auto; */
 }
 
-/* widen children of  .grade-selector and .semester-selector but leave a little gap between each item*/
-.grade, .semester {
+.grade, .semester, .lesson{
   flex: 1;
   margin: 5px;
 }
-
 
 .week-selector {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.2vw;
-  /* prevent elements from overflowing the container boundary */
-  
 }
 
-/* ======================== */
+.week-selector .week {
+  padding: 0.1vh;
+  margin: 1.2vh;
+  font-size: 4rem;
+}
 
-/* Adjust selectors to not exceed their container's height */
- 
-
-/* Use flex instead of grid for week-selector to allow wrapping */
- 
- 
-
-/* ========================== */
 
 .week:nth-child(1), .week:nth-child(6), .week:nth-child(11), .week:nth-child(16) { background-color: #F88; }
 .week:nth-child(2), .week:nth-child(7), .week:nth-child(12), .week:nth-child(17) { background-color: #FF8; }
@@ -125,7 +101,7 @@ body, html {
 .week:nth-child(4), .week:nth-child(9), .week:nth-child(14) { background-color: #8FF; }
 .week:nth-child(5), .week:nth-child(10), .week:nth-child(15) { background-color: #88F; }
 
-.week:hover, .semester:hover, .grade:hover {
+.week:hover, .semester:hover, .grade:hover , .lesson:hover {
   background-color: #ff7ee5;
   transform: scale(1.05);
 }
@@ -146,13 +122,13 @@ body, html {
 }
 
 .right-side-container {
-  display: grid;
-  grid-template-columns: 25% 75%;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   gap: 5px;
 }
 
-.dropzone-labels, .dropzones {
+ .dropzone-labels, .dropzones {
   display: grid;
   grid-template-rows: repeat(8, 12.5%);
 }
@@ -165,53 +141,34 @@ body, html {
   border: 3px solid #FF0;
   cursor: pointer;
   text-align: center;
-  /* ----- */
-
   font-size: 2rem;
-  /* bold with gray shadow*/
   color: #090909;
   font-weight: bold;
   text-shadow: 2px 2px 4px #696767;
   margin-bottom: 10px;
-  
 }
 
 .right-header-label {
   text-align: center;
   font-size: 2rem;
-  /* bold with gray shadow*/
   color: #090909;
   font-weight: bold;
   text-shadow: 2px 2px 4px #696767;
   margin-bottom: 10px;
-
 }
 
- 
-.lesson-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #DCF4FC;
-  font-size: 1.5rem;
-  border: 5px solid #46B1E1;
-  cursor: pointer;
-  /* align text center */
-  text-align: center;
-  border-radius: 10px;
-  /* margin top */
-  margin-top: 5px;
-}
-
-
-
-.dropzone {
+.dropzone, .file-display {
   background-color: #EEFFEE;
   border: 3px solid #46B1E1;
   transition: background-color 0.3s;
   border-radius: 10px;
-  /* margin top */
   margin-top: 5px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
 }
 
 .dropzone.dropcontent {
@@ -224,9 +181,7 @@ body, html {
 
 .selected {
   border: 5px solid red;
-  /* pinkish blurry shadow on bottom left corner direction */
-  box-shadow:  -2px 2px 2px 0px #FF00FF;
-    
+  box-shadow: -2px 2px 2px 0px #FF00FF;
 }
 
 .unselected {
@@ -234,7 +189,7 @@ body, html {
 }
 
 .drop-message {
-  display: none; /* Initially hidden */
+  display: block; /* Ensure the message is always visible */
   text-align: center; /* Center the text */
   font-weight: bold; /* Make the font bold */
   font-size: 20px; /* Increase font size */
@@ -244,14 +199,11 @@ body, html {
   margin-top: 20px; /* Adjust as needed for vertical alignment */
 }
 
- 
-
 .radio-container {
   font-size: 0.8rem; /* Adjusts the font size to be smaller */
   display: flex;
   align-items: center; /* Ensures the radio button and label text are aligned */
 }
-
 
 .left-header-label {
   position: relative; /* Makes it a reference point for absolutely positioned children */
@@ -261,7 +213,6 @@ body, html {
 
 .label-text {
   display: inline-block; /* Allows block-level elements to respect text-align centering */
-  /* Additional styling to ensure it's centered if needed */
 }
 
 .radio-container {
@@ -271,41 +222,64 @@ body, html {
   transform: translateY(-50%); /* Adjusts the position to truly center it vertically */
   display: flex; /* Keeps the radio button and label inline */
   align-items: center; /* Centers items vertically within the container */
-  /* margin right */
   margin-right: 1vw;
 }
 
-.lesson-labels-container {
-    display: grid;
-    grid-template-rows: repeat(8, 12.5%);
-    overflow: auto; /* Add this line */
+.lesson-selector {
+  display: flex;
+  flex-wrap: nowrap; /* Ensure no wrapping */
+  justify-content: space-between; /* Distribute space evenly */
+  margin-top: 10px; /* Add some space between week-selector and lesson-selector */
+  overflow: auto; /* Allow scrolling if content overflows */
+  background-color: #f9f9f9; /* Add a background color for visibility */
+  padding: 5px; /* Add padding for better spacing */
+/*  no horiz or vert scroll wheels*/
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
-/*        toastr style*/
+ .lesson{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #DCF4FC;
+  font-size: 1.8rem;
+  border: 5px solid #46B1E1;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 10px;
 
+  margin: 0.2vh;
+  padding: 2.5vh;
+  flex: 1;
+  box-sizing: border-box;
+  color: #00008B;
+}
+
+
+/* Toastr style */
 #toast-container .toast-success {
-    background-color: #51A351;
-    color: white;
-    border-radius: 5px;
-    box-shadow: 0 0 6px #B9B9B9;
+  background-color: #51A351;
+  color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 6px #B9B9B9;
 }
 
 #toast-container .toast-success .toast-message {
-    font-size: 14px;
-    font-weight: bold;
+  font-size: 14px;
+  font-weight: bold;
 }
 
-/*        all toast messages in the screen vertical horizonatal middle*/
+/* All toast messages in the screen vertical horizontal middle */
 #toast-container {
-    position: fixed;
-    top: 0; /* Align to the top of the screen */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Adjust horizontal position to truly center it */
-
-    width: 100%;
-    max-width: 600px;
-    padding: 10px;
-    z-index: 9999;
+  position: fixed;
+  top: 0; /* Align to the top of the screen */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust horizontal position to truly center it */
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  z-index: 9999;
 }
 
 /* Media query for screens smaller than 600px (typical breakpoint for mobile devices) */
@@ -318,11 +292,18 @@ body, html {
     height: 50vh; /* Each half takes up half the viewport height */
   }
 
+  .button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 10px; /* Add some space between the buttons and the history log */
+  }
+
   .right-side-container {
     grid-template-columns: 1fr; /* Stack the labels and dropzones vertically */
   }
 
-  .grade, .semester, .week {
+  .grade, .semester, .week , .lesson {
     font-size: 3vw; /* Use viewport width units for font size to keep text readable */
   }
 
@@ -330,8 +311,8 @@ body, html {
     font-size: 4vw; /* Increase header font size for readability */
   }
 
-  .lesson-label {
-    font-size: 3.5vw; /* Increase lesson label font size for readability */
+  .lesson-{
+    font-size: 0.4vw; /* Increase lesson label font size for readability */
   }
 
 

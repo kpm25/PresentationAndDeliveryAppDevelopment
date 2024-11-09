@@ -35,12 +35,12 @@ let ansi = null; // Declare ansi in an outer scope
     // Function to update the click event for the lesson labels
     function updateLessonLabelClickEvent() {
         // Remove the existing click event
-        document.querySelectorAll('.lesson-label').forEach(function(label) {
+        document.querySelectorAll('.lesson').forEach(function(label) {
             label.removeEventListener('click', labelClickEvent);
         });
 
         // Add the updated click event
-        document.querySelectorAll('.lesson-label').forEach(function(label) {
+        document.querySelectorAll('.lesson').forEach(function(label) {
             label.addEventListener('click', labelClickEvent);
         });
     }
@@ -199,12 +199,13 @@ function RefreshFileList(selectedLabel) {
 
 
 
+
     //function to display lesson files but checks if semester, grade, week and lesson are selected
     function canLessonBeDisplayed() {
         const isAnySemesterSelected = Array.from(document.querySelectorAll('.semester')).some(semester => semester.classList.contains('selected'));
         const isAnyGradeSelected = Array.from(document.querySelectorAll('.grade')).some(grade => grade.classList.contains('selected'));
         const isAnyWeekSelected = Array.from(document.querySelectorAll('.week')).some(week => week.classList.contains('selected'));
-        const isAnyLessonSelected = Array.from(document.querySelectorAll('.lesson-label')).some(lesson => lesson.classList.contains('selected'));
+        const isAnyLessonSelected = Array.from(document.querySelectorAll('.lesson')).some(lesson => lesson.classList.contains('selected'));
 
             if (isAnySemesterSelected && isAnyGradeSelected && isAnyWeekSelected && isAnyLessonSelected) {
             const json = {
@@ -305,36 +306,38 @@ function RefreshFileList(selectedLabel) {
 
          //deletefile function
 
-       function deleteFile(filePath) {
-            console.log("filePath: ", filePath);
-            console.log("Deleting file:", filePath);
+        function deleteFile(filePath) {
+            if (confirm('Are you sure you want to delete this file?')) {
+                console.log("filePath: ", filePath);
+                console.log("Deleting file:", filePath);
 
-            // Send a DELETE request to the server to delete the file
-            fetch(`/delete_file`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "path": filePath
+                // Send a DELETE request to the server to delete the file
+                fetch(`/delete_file`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "path": filePath
+                    })
                 })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    // Extract the JSON body of the response
-                    return response.json().then(err => { throw err; });
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("File deleted successfully:", data);
-                // Refresh the file list
-                fetchAndDisplayFiles(); // Call the function that fetches and displays the file list
-                 playSuccessSound();
-            })
-            .catch(error => {
-                console.error('Error deleting file:', error);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        // Extract the JSON body of the response
+                        return response.json().then(err => { throw err; });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("File deleted successfully:", data);
+                    // Refresh the file list
+                    fetchAndDisplayFiles(); // Call the function that fetches and displays the file list
+                    playSuccessSound();
+                })
+                .catch(error => {
+                    console.error('Error deleting file:', error);
+                });
+            }
         }
 
 
@@ -343,7 +346,7 @@ function RefreshFileList(selectedLabel) {
      //function to reset the selections
     function fetchAndDisplayFiles() {
         //get a reference to the selected lesson  and call the labelClickEvent function
-        const selectedLesson = document.querySelector('.lesson-label.selected');
+        const selectedLesson = document.querySelector('.lesson.selected');
         if (selectedLesson) {
             labelClickEvent.call(selectedLesson);
         }
@@ -433,7 +436,7 @@ $(document).ready(async function() {
             toastr.success(`File uploaded successfully at path:  ${filepath}`);
 
 
-              RefreshFileList(getSelectedLabel('lesson-label'));
+              RefreshFileList(getSelectedLabel('lesson'));
 
                 ansi.bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text('A file was uploaded').print();
 
@@ -452,7 +455,7 @@ $(document).ready(async function() {
             toastr.success('File deleted successfully: ' + filepath);
 
             // Refresh the file list
-            RefreshFileList(getSelectedLabel('lesson-label'));
+            RefreshFileList(getSelectedLabel('lesson'));
 
                 ansi.bgRGB(255, 0, 0).rgb(255, 255, 255).bold().text('A file was deleted').print();
 
@@ -679,7 +682,7 @@ $(document).ready(async function() {
 
          //Refresh the file list if a lesson is selected
         if (selectedLesson) {
-            RefreshFileList(getSelectedLabel('lesson-label'));
+            RefreshFileList(getSelectedLabel('lesson'));
         }
 
 
